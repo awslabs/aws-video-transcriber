@@ -200,6 +200,7 @@ On the home page there is a button for entering your API key, find your API key 
 
 ## TODO
 
+* [ ] Bug when video autorewinds but does not reset caption index to zero
 * [ ] Validate video max length 2 hours
 * [ ] Multiple vocabularies / locales
 * [ ] Pick locale / vocabulary
