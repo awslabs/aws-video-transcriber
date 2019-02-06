@@ -42,6 +42,12 @@ exports.handler = async (event, context, callback) => {
         params.videoName = path.basename(params.inputKey);
         params.inputS3Path = "s3://" + params.inputBucket + "/" + params.inputKey;
 
+        if (params.inputKey === "videos/")
+        {
+            callback(null, "Skipping folder");
+            return;
+        }
+
         /**
          * Check for an existing video and use an existing video
          * id if provided
@@ -313,7 +319,7 @@ async function updateDynamoDB(params)
     };
 
     // Preserve description
-    if (params.videoDescription.length > 0)
+    if (params.videoDescription)
     {
         putParams.Item.description = { "S": params.videoDescription };
     }
