@@ -1,0 +1,11 @@
+{
+  "name": "aws-sdk-node-layer",
+  "version": "1.0.0",
+  "description": "AWS Node SDK Layer",
+  "main": "index.js",
+  "author": "Josh Passenger",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "aws-sdk": "^2.391.0"
+  }
+}

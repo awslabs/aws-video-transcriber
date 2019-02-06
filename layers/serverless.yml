@@ -1,0 +1,21 @@
+service: aws-node-sdk-layer
+
+provider:
+  name: aws
+  profile: transcribe
+  region: ap-southeast-2
+  stage: dev
+
+custom:
+  accountId: ${opt:accountId} 
+
+layers:
+  aws-node-sdk-layer:
+    path: package
+    name: aws-node-sdk-layer
+    description: 'Recent AWS node.js 8.10 SDK'
+    compatibleRuntimes:
+      - nodejs8.10
+    licenseInfo: 'Apache 2.0'
+    allowedAccounts:
+      - '${self:custom.accountId}'

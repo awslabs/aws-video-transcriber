@@ -1,0 +1,33 @@
+{{#if loading}}
+			<div class="text-center"><img src="img/loading.gif" class="img-fluid"/></div>
+{{else}}		
+	<div class="jumbotron">
+	  <p class="lead">A custom vocabulary is used by Amazon Transcribe to improve the quality of transcriptions. Please add your domain specific phrases and terms (up to 50k of text). After saving your vocabulary it takes a minute to be processed by Amazon Transcribe. <a href="https://docs.aws.amazon.com/transcribe/latest/dg/how-it-works.html#how-vocabulary">Read more about the Custom Vocabularies here</a>.</p>
+	</div>
+
+	<div class="px-2">
+		<form>
+			<div id="beingUpdated" style="display:none;">
+				<div class="card">
+					<div class="card-body">
+	            		<img src="img/loading_small.gif"/> Vocabulary is being compiled by Amazon Transcribe...
+	        		</div>
+				</div>	
+				<br>
+			</div>	
+			<div id="topButton" class="form-group" style="display:none;">
+				<button type="button" class="btn btn-primary mb-2" onclick="javascript:saveVocabulary($('#vocabulary').val()); return false;">Save vocabulary</button>
+			</div>		
+			<div class="form-group">
+				<textarea name="vocabulary" id="vocabulary" class="form-control" rows="10" placeholder="One entry per line">{{#each vocabulary}}
+{{this}}{{/each}}</textarea>
+			</div>
+			<div id="bottomButton" class="form-group" style="display:none;">
+				<button type="button" class="btn btn-primary mb-2" onclick="javascript:saveVocabulary($('#vocabulary').val()); return false;">Save vocabulary</button>
+			</div>
+		</form>
+	</div>
+	<script>
+		checkVocabularyReady();
+	</script>	
+{{/if}}
