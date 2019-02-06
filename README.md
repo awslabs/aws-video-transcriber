@@ -6,6 +6,10 @@ The code provides a serverless single page web application and set of supporting
 
 This library is licensed under the Apache 2.0 License. 
 
+## Architecture
+
+![Architecture](./web/img/architecture-001.png)
+
 ## Preparing for deployment
 
 ### Install or update your AWS CLI
