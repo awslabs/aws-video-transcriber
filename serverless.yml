@@ -1,0 +1,632 @@
+service: aws-captions
+
+plugins: 
+  - '@anttiviljami/serverless-stack-output'
+  - 'serverless-finch'
+  - 'serverless-plugin-scripts'
+
+provider:
+  name: aws
+  region: ap-southeast-2  
+  endpointType: REGIONAL
+  runtime: nodejs8.10
+  stage: dev
+  profile: transcribe
+  logRetentionInDays: 7
+  apiKeys:
+    - '${self:custom.stage}-${self:service}-001'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - 'arn:aws:lambda:${self:provider.region}:${self:custom.accountId}:function:${self:custom.stage}-${self:service}-extractaudio'
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 
+        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.videoTableName}'
+        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.videoTableName}/index/*'
+        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.configTableName}'
+        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.captionTableName}'
+    - Effect: Allow
+      Action:
+        - elastictranscoder:CreatePipeline
+        - elastictranscoder:Read*
+        - elastictranscoder:List*
+        - elastictranscoder:*Job
+        - elastictranscoder:*Preset
+      Resource: 
+        - '*'
+    - Effect: Allow
+      Action:
+        - transcribe:CreateVocabulary
+        - transcribe:UpdateVocabulary
+        - transcribe:StartTranscriptionJob
+        - transcribe:ListVocabularies
+        - transcribe:DeleteTranscriptionJob
+      Resource: 
+        - '*'        
+    - Effect: Allow
+      Action:
+        - 's3:*'
+      Resource: 
+        - 'arn:aws:s3:::${self:custom.videoBucket}'
+        - 'arn:aws:s3:::${self:custom.videoBucket}/*'
+        - 'arn:aws:s3:::${self:custom.audioBucket}'
+        - 'arn:aws:s3:::${self:custom.audioBucket}/*'
+        - 'arn:aws:s3:::${self:custom.transcribeBucket}'
+        - 'arn:aws:s3:::${self:custom.transcribeBucket}/*'
+        - 'arn:aws:s3:::mkt-anz/*'
+    - Effect: Allow
+      Action:
+        - iam:PassRole
+      Resource:
+        - '${self:custom.transcoderRoleARN}'
+package:
+  individually: true
+
+custom:
+  # Account Id is required for bucket name scoping
+  accountId: ${opt:accountId}
+  stage: '${opt:stage, self:provider.stage}'
+  awsNodeSdkLayerArn: 'arn:aws:lambda:ap-southeast-2:${self:custom.accountId}:layer:aws-node-sdk-layer:1'
+  videoTableName: '${self:custom.stage}-${self:service}-videos'  
+  configTableName: '${self:custom.stage}-${self:service}-config'
+  captionTableName: '${self:custom.stage}-${self:service}-captions'
+  videoBucket: '${self:custom.stage}-${self:service}-video-${self:provider.region}-${self:custom.accountId}'
+  audioBucket: '${self:custom.stage}-${self:service}-audio-${self:provider.region}-${self:custom.accountId}'
+  webBucket: '${self:custom.stage}-${self:service}-site-${self:provider.region}-${self:custom.accountId}'
+  transcribeBucket: '${self:custom.stage}-${self:service}-transcribe-${self:provider.region}-${self:custom.accountId}'
+  transcribeLanguage: 'en-AU'
+  transcoderAudioPipelineName: '${self:custom.stage}-${self:service}-extractaudio'
+  transcoderVideoPipelineName: '${self:custom.stage}-${self:service}-transcodevideo'
+  transcoderRoleARN: 'arn:aws:iam::${self:custom.accountId}:role/Elastic_Transcoder_Default_Role'
+  vocabularyName: '${self:custom.stage}-${self:service}'
+  output:
+    handler: 'scripts/bootstrap.handler'
+    file: 'scripts/${self:service}-outputs.json' 
+  client:
+    bucketName: ${self:custom.webBucket}
+    distributionFolder: web
+    indexDocument: index.html
+    objectHeaders:
+      ALL_OBJECTS:
+        - name: 'Cache-Control'
+          value: 'max-age=60'   
+  scripts:
+    hooks:
+      # Force a CORS policy onto the videos bucket via the AWS CLI
+      'after:aws:deploy:deploy:updateStack': "aws s3api put-bucket-cors --profile transcribe --bucket ${self:custom.videoBucket} --cors-configuration file://config/s3-cors.json"
+
+functions:
+
+  extractaudio:
+    handler: lambda/extractaudio.handler
+    name: ${self:custom.stage}-${self:service}-extractaudio
+    description: 'Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos'
+    events:
+      - s3: 
+          bucket: ${self:custom.videoBucket}
+          event: s3:ObjectCreated:*
+          cors: 
+          rules:
+            - prefix: videos/    
+    environment:    
+      INPUT_BUCKET: ${self:custom.videoBucket}
+      OUTPUT_AUDIO_BUCKET: ${self:custom.audioBucket}
+      OUTPUT_VIDEO_BUCKET: ${self:custom.videoBucket}
+      OUTPUT_AUDIO_KEY_PREFIX: 'audio'
+      OUTPUT_VIDEO_KEY_PREFIX: 'transcoded'
+      TRANSCODER_AUDIO_PIPELINE_NAME: '${self:custom.transcoderAudioPipelineName}'
+      TRANSCODER_VIDEO_PIPELINE_NAME: '${self:custom.transcoderVideoPipelineName}'
+      TRANSCODER_ROLE: '${self:custom.transcoderRoleARN}'
+      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/extractaudio.js'
+    memorySize: 128
+    timeout: 15
+
+  transcribeaudio:
+    handler: lambda/transcribeaudio.handler
+    name: ${self:custom.stage}-${self:service}-transcribeaudio
+    description: 'Uses Transcribe to extract text from audio'
+    events:
+      - s3: 
+          bucket: ${self:custom.audioBucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: audio/
+            - suffix: .mp3      
+    environment:      
+      OUTPUT_BUCKET: ${self:custom.transcribeBucket}
+      OUTPUT_KEY_PREFIX: 'transcribe'
+      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
+      REGION: ${self:provider.region}
+      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+      TRANSCRIBE_LANGUAGE: '${self:custom.transcribeLanguage}'
+    layers:
+      - '${self:custom.awsNodeSdkLayerArn}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/transcribeaudio.js' 
+    memorySize: 128
+    timeout: 15        
+
+  createcaptions:
+    handler: lambda/createcaptions.handler
+    name: ${self:custom.stage}-${self:service}-createcaptions
+    description: 'Creates captions for videos from transcription results'
+    events:
+      - s3: 
+          bucket: ${self:custom.transcribeBucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .json      
+    environment:  
+      INPUT_BUCKET: ${self:custom.transcribeBucket}    
+      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
+      DYNAMO_CAPTION_TABLE: ${self:custom.captionTableName}
+      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/createcaptions.js'
+    memorySize: 512
+    timeout: 60       
+
+  getvideos:
+    handler: lambda/getvideos.handler
+    name: ${self:custom.stage}-${self:service}-getvideos
+    description: 'Loads videos from DynamoDB table: ${self:custom.videoTableName}'
+    environment: 
+      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/getvideos.js'      
+    events:
+      - http:
+          path: videos
+          method: get
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29 
+
+  getvideo:
+    handler: lambda/getvideo.handler
+    name: ${self:custom.stage}-${self:service}-getvideo
+    description: 'Loads a single video from DynamoDB table: ${self:custom.videoTableName}'
+    environment: 
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
+      REGION: '${self:provider.region}'
+      VIDEO_BUCKET: '${self:custom.videoBucket}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/getvideo.js'      
+    events:
+      - http:
+          path: video/{videoId}
+          method: get
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29 
+
+  updatevideostatus:
+    handler: lambda/updatevideostatus.handler
+    name: ${self:custom.stage}-${self:service}-updatevideostatus
+    description: 'Updates the status of a video in DynamoDB table: ${self:custom.videoTableName}'
+    environment: 
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      REGION: '${self:provider.region}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/updatevideostatus.js'      
+    events:
+      - http:
+          path: videostatus/{videoId}
+          method: post
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29  
+
+  updatevideoname:
+    handler: lambda/updatevideoname.handler
+    name: ${self:custom.stage}-${self:service}-updatevideoname
+    description: 'Updates the name of a video in DynamoDB table: ${self:custom.videoTableName}'
+    environment: 
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      REGION: '${self:provider.region}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/updatevideoname.js'      
+    events:
+      - http:
+          path: videoname/{videoId}
+          method: post
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29  
+
+  updatevideodescription:
+    handler: lambda/updatevideodescription.handler
+    name: ${self:custom.stage}-${self:service}-updatevideodescription
+    description: 'Updates the description of a video in DynamoDB table: ${self:custom.videoTableName}'
+    environment: 
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      REGION: '${self:provider.region}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/updatevideodescription.js'      
+    events:
+      - http:
+          path: videodescription/{videoId}
+          method: post
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29          
+
+  deletevideo:
+    handler: lambda/deletevideo.handler
+    name: ${self:custom.stage}-${self:service}-deletevideo
+    description: 'Purges a single video from the system'
+    environment: 
+      REGION: '${self:provider.region}'      
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
+      VIDEO_BUCKET: '${self:custom.videoBucket}'
+      AUDIO_BUCKET: '${self:custom.audioBucket}'
+      TRANSCRIBE_BUCKET: '${self:custom.transcribeBucket}'
+    layers:
+      - '${self:custom.awsNodeSdkLayerArn}'      
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/deletevideo.js' 
+    events:
+      - http:
+          path: video/{videoId}
+          method: delete
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29
+
+  reprocessvideo:
+    handler: lambda/reprocessvideo.handler
+    name: ${self:custom.stage}-${self:service}-reprocessvideo
+    description: 'Reprocesses a video'
+    environment: 
+      REGION: '${self:provider.region}'      
+      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
+      VIDEO_BUCKET: '${self:custom.videoBucket}'
+      AUDIO_BUCKET: '${self:custom.audioBucket}'
+      TRANSCRIBE_BUCKET: '${self:custom.transcribeBucket}'
+      EXTRACT_AUDIO_FUNCTION: '${self:custom.stage}-${self:service}-extractaudio'
+    layers:
+      - '${self:custom.awsNodeSdkLayerArn}'      
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/reprocessvideo.js' 
+    events:
+      - http:
+          path: video/{videoId}
+          method: patch
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29    
+
+  getupload:
+    handler: lambda/getupload.handler
+    name: ${self:custom.stage}-${self:service}-getupload
+    description: 'Fetches a signed URL for uploading video into S3'
+    environment: 
+      REGION: '${self:provider.region}'
+      VIDEO_BUCKET: '${self:custom.videoBucket}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/getupload.js'      
+    events:
+      - http:
+          path: upload/{uploadFile}
+          method: get
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29     
+
+  putcaption:
+    handler: lambda/putcaption.handler
+    name: ${self:custom.stage}-${self:service}-putcaption
+    description: 'Saves captions to DynamoDB table: ${self:custom.captionTableName}'
+    environment: 
+      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
+      REGION: '${self:provider.region}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/putcaption.js'      
+    events:
+      - http:
+          path: caption/{videoId}
+          method: put
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29
+
+  getcaption:
+    handler: lambda/getcaption.handler
+    name: ${self:custom.stage}-${self:service}-getcaption
+    description: 'Fetches captions in WEBVTT format'
+    environment: 
+      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
+      REGION: '${self:provider.region}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/getcaption.js'      
+    events:
+      - http:
+          path: caption/{videoId}
+          method: get
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29    
+
+  getvocabulary:
+    handler: lambda/getvocabulary.handler
+    name: ${self:custom.stage}-${self:service}-getvocabulary
+    description: 'Loads vocabulary from DynamoDB table: ${self:custom.configTableName}'
+    environment: 
+      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
+      REGION: ${self:provider.region}
+      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/getvocabulary.js'      
+    events:
+      - http:
+          path: vocabulary
+          method: get
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29 
+
+  headvocabulary:
+    handler: lambda/headvocabulary.handler
+    name: ${self:custom.stage}-${self:service}-headvocabulary
+    description: 'Checks if vocabulary is ready to save'
+    environment: 
+      REGION: ${self:provider.region}
+      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/headvocabulary.js'      
+    events:
+      - http:
+          path: vocabulary
+          method: head
+          cors: true
+          private: true
+    memorySize: 128
+    timeout: 29 
+
+  putvocabulary:
+    handler: lambda/putvocabulary.handler
+    name: '${self:custom.stage}-${self:service}-putvocabulary'
+    description: 'Saves vocabulary to DynamoDB table: ${self:custom.configTableName}'
+    environment: 
+      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
+      REGION: ${self:provider.region}
+      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+      TRANSCRIBE_LANGUAGE: '${self:custom.transcribeLanguage}'
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/putvocabulary.js' 
+    events:
+      - http:
+          path: vocabulary
+          method: put
+          cors: true
+          private: true 
+    memorySize: 128
+    timeout: 29           
+
+  gettweaks:
+    handler: lambda/gettweaks.handler
+    name: ${self:custom.stage}-${self:service}-gettweaks
+    description: 'Loads tweaks from DynamoDB table: ${self:custom.configTableName}'
+    environment: 
+      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/gettweaks.js'      
+    events:
+      - http:
+          path: tweaks
+          method: get
+          cors: true
+          private: true 
+    memorySize: 128
+    timeout: 29           
+
+  puttweaks:
+    handler: lambda/puttweaks.handler
+    name: ${self:custom.stage}-${self:service}-puttweaks
+    description: 'Saves tweaks to DynamoDB table: ${self:custom.configTableName}'
+    environment: 
+      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/puttweaks.js'       
+    events:
+      - http:
+          path: tweaks
+          method: put
+          cors: true
+          private: true  
+    memorySize: 128
+    timeout: 29 
+
+  bootstrap:
+    handler: lambda/bootstrap.handler
+    name: ${self:custom.stage}-${self:service}-bootstrap
+    description: 'Bootstraps videos to process into S3 bucket: ${self:custom.videoBucket}'
+    environment: 
+      OUTPUT_BUCKET: ${self:custom.videoBucket}
+      REGION: ${self:provider.region}
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/bootstrap.js'       
+    memorySize: 2048
+    timeout: 900
+
+resources:
+  Resources:
+
+    VideoDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: '${self:custom.videoTableName}'        
+        AttributeDefinitions:
+          - AttributeName: videoId
+            AttributeType: S
+          - AttributeName: s3VideoPath
+            AttributeType: S             
+        KeySchema:
+          - AttributeName: videoId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: s3VideoPathIndex
+            KeySchema:
+            - AttributeName: s3VideoPath
+              KeyType: HASH
+            - AttributeName: videoId
+              KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+    ConfigDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: '${self:custom.configTableName}'         
+        AttributeDefinitions:
+          - AttributeName: configId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: configId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    CaptionDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: '${self:custom.captionTableName}'         
+        AttributeDefinitions:
+          - AttributeName: videoId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: videoId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+  Outputs:
+    Region:
+      Description: The deployed region
+      Value: ${self:provider.region} 
+    Stage:
+      Description: The deployed stage
+      Value: ${self:custom.stage}  
+    APIUrl:
+      Description: The API Gateway base url
+      Value:
+        Fn::Join:
+          - ""
+          - - "https://"
+            - Ref: ApiGatewayRestApi
+            - ".execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}"
+    ConfigDynamoDBTable:
+      Description: The name of the config DynamoDB table
+      Value: ${self:custom.configTableName}
+    VideoDynamoDBTable:
+      Description: The name of the video DynamoDB table
+      Value: ${self:custom.videoTableName}
+    CaptionDynamoDBTable:
+      Description: The name of the caption DynamoDB table
+      Value: ${self:custom.captionTableName}        
+    VideoBucket:
+      Description: The bucket containing the raw video
+      Value: ${self:custom.videoBucket}
+    AudioBucket:
+      Description: The bucket containing the processed audio
+      Value: ${self:custom.audioBucket}
+    TranscribeBucket:
+      Description: The bucket containing the raw transcriptions
+      Value: ${self:custom.transcribeBucket}
+    WebBucket:
+      Description: The bucket containing the website after client deploy
+      Value: ${self:custom.webBucket}      
+    TranscoderAudioPipelineName:
+      Description: The name of the audio elastic transcoder pipepline
+      Value: ${self:custom.transcoderAudioPipelineName}
+    TranscoderVideoPipelineName:
+      Description: The name of the video elastic transcoder pipepline
+      Value: ${self:custom.transcoderVideoPipelineName}      
+    TranscoderRoleARN:
+      Description: The ARN of the IAM role created
+      Value: ${self:custom.transcoderRoleARN}

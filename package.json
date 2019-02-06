@@ -1,0 +1,18 @@
+{
+  "name": "VideoTranscriber",
+  "version": "1.0.0",
+  "description": "Welcome to the AWS Video Transcriber demo. This code base aims to deomonstrate development of a serverless framework for creating closed captions from video content and uses a variety of AWS services.",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/VideoTranscriber"
+  },
+  "keywords": [],
+  "author": "Josh Passenger jospas@mazon.com",
+  "license": "Apache License",
+  "dependencies": {
+    "@anttiviljami/serverless-stack-output": "^0.3.1",
+    "aws-sdk": "^2.347.0",
+    "serverless-finch": "^2.3.2",
+    "serverless-plugin-scripts": "^1.0.2"
+  }
+}
