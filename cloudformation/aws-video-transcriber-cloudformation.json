@@ -214,9 +214,7 @@
             "OUTPUT_VIDEO_KEY_PREFIX": "transcoded",
             "TRANSCODER_AUDIO_PIPELINE_NAME": "prod-aws-captions-extractaudio",
             "TRANSCODER_VIDEO_PIPELINE_NAME": "prod-aws-captions-transcodevideo",
-            "TRANSCODER_ROLE": {
-              "Ref": "TranscoderRole"
-            },
+            "TRANSCODER_ROLE": { "Fn::GetAtt" : [ "TranscoderRole", "Arn"] },
             "DYNAMO_VIDEO_TABLE": {
               "Ref": "VideoDynamoDBTable"
             },

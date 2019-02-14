@@ -65,7 +65,7 @@ functions:
       OUTPUT_VIDEO_KEY_PREFIX: 'transcoded'
       TRANSCODER_AUDIO_PIPELINE_NAME: '${self:custom.stage}-${self:service}-extractaudio'
       TRANSCODER_VIDEO_PIPELINE_NAME: '${self:custom.stage}-${self:service}-transcodevideo'
-      TRANSCODER_ROLE: !Ref TranscoderRole
+      TRANSCODER_ROLE: !GetAtt TranscoderRole.Arn
       DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
       REGION: !Ref AWS::Region
     package:
