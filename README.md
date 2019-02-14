@@ -6,6 +6,7 @@ The code provides a serverless single page web application and set of supporting
 - [License](#license)
 - [Architecture](#architecture)
 - [Deploying](#deploying)
+- [Removing](#removing)
 - [Pricing](#pricing)
 - [Entering your API Key](#entering-your-api-key)
 - [Creating a Vocabulary](#creating-a-vocabulary)
@@ -25,7 +26,7 @@ This library is licensed under the Apache 2.0 License.
 
 Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elastic Transcoder. Click a button below to deploy to your region of choice.
 
-When launching the template, you will need to enter a stack name and an API key, this is the key you will provide to users to access the system, use a strong, random, alpha-numeric API key up to 70 characters long.
+When launching the template, you will need to enter a stack name and an API key, this is the key you will provide to users to access the system, use a strong, random, alpha-numeric API key between 20 and 70 characters long.
 
 ### Once click deployment
 
