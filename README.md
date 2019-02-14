@@ -47,6 +47,12 @@ After launching the parameters will also provide the link to access the deployed
 
 IAM roles and policies are global and are prefixed with the stack name, if you get conflicts, simply use a different stack name in each deployed region.
 
+## Removing
+
+To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied to video, audio and transcribe buckets.
+
+TODO add emptying these buckets to custom resource
+
 ## Pricing
 
 You are responsible for the cost of the AWS services used while running the video transcription solution. As of the date of publication, the cost for running this solution in the US East (N.

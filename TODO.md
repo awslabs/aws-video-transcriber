@@ -1,6 +1,7 @@
 
 ## TODO
 
+* [ ] Empty all buckets and add depends on buckets to custom resource
 * [ ] Create Custom Vocabulary - in custom resource
 * [ ] Create transcoder pipelines - in custom resource
 * [x] Bug when video autorewinds but does not reset caption index to zero

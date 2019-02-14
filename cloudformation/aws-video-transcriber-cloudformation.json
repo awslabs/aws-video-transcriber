@@ -4335,29 +4335,6 @@
       "Export": {
         "Name": "prod-aws-captions-apikey"
       }
-    },
-    "APIUrl": {
-      "Description": "The API Gateway base url",
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            "https://",
-            {
-              "Ref": "ApiGatewayRestApi"
-            },
-            ".execute-api.",
-            {
-              "Ref": "AWS::Region"
-            },
-            ".amazonaws.com/",
-            "prod"
-          ]
-        ]
-      },
-      "Export": {
-        "Name": "prod-aws-captions-api-url"
-      }
     }
   },
   "Parameters": {
