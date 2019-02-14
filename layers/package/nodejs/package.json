@@ -1,5 +1,5 @@
 {
-  "name": "aws-sdk-node-layer",
+  "name": "aws-captions-node-sdk-layer",
   "version": "1.0.0",
   "description": "AWS Node SDK Layer",
   "main": "index.js",

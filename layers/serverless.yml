@@ -1,21 +1,21 @@
-service: aws-node-sdk-layer
+service: aws-captions-node-sdk-layer
 
 provider:
   name: aws
   profile: transcribe
   region: ap-southeast-2
-  stage: dev
+  stage: prod
 
 custom:
-  accountId: ${opt:accountId} 
+  stage: '${opt:stage, self:provider.stage}'
 
 layers:
-  aws-node-sdk-layer:
+  aws-captions-node-sdk-layer:
     path: package
-    name: aws-node-sdk-layer
-    description: 'Recent AWS node.js 8.10 SDK'
+    name: ${self:custom.stage}-${self:service}
+    description: 'Recent Node.js 8.10 AWS Node SDK'
     compatibleRuntimes:
       - nodejs8.10
-    licenseInfo: 'Apache 2.0'
-    allowedAccounts:
-      - '${self:custom.accountId}'
+    licenseInfo: 'Apache-2.0'
+    # allowedAccounts:
+    #   - !Join [ '', [ !Ref AWS::AccountId ]]

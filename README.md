@@ -2,6 +2,16 @@
 
 The code provides a serverless single page web application and set of supporting API Gateway end points and Lambda functions which allow users to upload videos into S3 and compute and edit closed captions.
 
+## On this Page
+- [License](#license)
+- [Architecture](#architecture)
+- [Deploying](#deploying)
+- [Pricing](#pricing)
+- [User Interface](#user-interface)
+- [Entering your API Key](#entering-your-api-key)
+- [Creating a Vocabulary](#creating-a-vocabulary)
+- [Creating Tweaks](#creating-tweaks)
+
 ## License
 
 This library is licensed under the Apache 2.0 License. 
@@ -10,346 +20,65 @@ This library is licensed under the Apache 2.0 License.
 
 ![Architecture](./web/img/architecture-001.png)
 
-## Preparing for deployment
+## Deploying
 
-### Install or update your AWS CLI
+Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elastic Transcoder. Click a button below to deploy to your region of choice now.
 
-	pip install --upgrade awscli
+When launching the template, you will need to enter a stack name and an API key, this is the key you will provide to users to access the system, use a strong, random, alpha-numeric API key up to 70 characters long. The API Key is available from the CloudFormation parameter section.
 
-### Create an IAM user
+After launching the parameters will also provide the link to access the deployed website.
 
-The deployment files are configured to rely on a [local named AWS profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html) called **transcribe**. 
+| Region | Region Id | Deploy now |
+| ---- | ----  | ---- |
+| US East (N. Virginia) | us-east-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-east-1&stackName=&templateURL=https://s3-us-east-1.amazonaws.com/aws-captions-deployment-us-east-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| US West (N. California) | us-west-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-west-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-west-1&stackName=&templateURL=https://s3-us-west-1.amazonaws.com/aws-captions-deployment-us-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| US West (Oregon) | us-west-2 | [![Launch Stack](web/img/launch-stack.svg)](https://us-west-2.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-west-2&stackName=&templateURL=https://s3-us-west-2.amazonaws.com/aws-captions-deployment-us-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| EU (Ireland) | eu-west-1 | [![Launch Stack](web/img/launch-stack.svg)](https://eu-west-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=eu-west-1&stackName=&templateURL=https://s3-eu-west-1.amazonaws.com/aws-captions-deployment-eu-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| Asia Pacific (Singapore) | ap-southeast-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-southeast-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-southeast-1&stackName=&templateURL=https://s3-ap-southeast-1.amazonaws.com/aws-captions-deployment-ap-southeast-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| Asia Pacific (Sydney) | ap-southeast-2 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-southeast-2&stackName=&templateURL=https://s3-ap-southeast-2.amazonaws.com/aws-captions-deployment-ap-southeast-2/cloudformation/aws-video-transcriber-cloudformation.json) |
+| Asia Pacific (Mumbai) | ap-south-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-south-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-south-1&stackName=&templateURL=https://s3-ap-south-1.amazonaws.com/aws-captions-deployment-ap-south-1/cloudformation/aws-video-transcriber-cloudformation.json) |
 
-Create an user with IAM Admin permissions and generate an AWS IAM Access Key and Secret key using the AWS console.
+## Pricing
 
-*Note your AWS Account number from the IAM console, you will need this later.*
-
-### Created the named AWS profile
-
-Create the named profile with these credentials using:
-
-	aws configure --profile transcribe
-	
-Entering your access key and secret key wehn prompted and for region use us-west-2, leaving the output default as JSON.
-
-### Install Homebrew and Node.js
-
-The system uses [Node.js](https://nodejs.org/en/) and the [Serverless Framework](https://serverless.com/) for deployment and relies on several Serverless plugins. These must be setup preior to deployment.
-
-Follow the instructions [here](https://www.dyclassroom.com/howto-mac/how-to-install-nodejs-and-npm-on-mac-using-homebrew) to install Homebrew and Node.js.
-
-If you have an old Node.js update it to 6.4.1+ with:
-
-	npm i -g npm
-
-### Install Serverless
-
-[Install the serverless framework](https://serverless.com/framework/docs/providers/aws/guide/installation/):
-
-	npm install -g serverless
-	
-### Install the required Serverless plugins
-
-These are referenced in the package.json
-
-	npm install
-	
-### Deploy the AWS Node.js SDK Layer
-
-The system relies on some later features in the AWS SDK (noteably deleting existing Transcribe jobs) so a Lambda Layer has been prepared to reduce the weight of delpoyed Lambda code.
-
-To build and deploy the layer run:
-
-	cd layers/nodejs
-	npm install
-	cd ..
-	serverless deploy --accountId <accountId>
-	
-Several Lambda functions deployed later will rely on this layer and will fail to run without it.
-	
-## Create a default role for Elastic Transcoder
-
-Create a new IAM role for Elastic Transcoder if it doesn't exist called:
-
-	Elastic_Transcoder_Default_Role
-	
-Add a trust relationship to: 
-
-	elastictranscoder.amazonaws.com
-	
-Use this IAM JSON policy:
-
-~~~~
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:Put*",
-                "s3:ListBucket",
-                "s3:*MultipartUpload*",
-                "s3:Get*"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "sns:Publish",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Deny",
-            "Action": [
-                "s3:*Delete*",
-                "s3:*Policy*",
-                "sns:*Remove*",
-                "sns:*Delete*",
-                "sns:*Permission*"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-~~~~
-
-## Deploying to AWS
-
-### Deploying the AWS server components
-
-The following steps deploy the system to your AWS account. You will need your AWS account number and to substitute it in the commands below.
-
-To deploy to AWS use:
-
-	serverless deploy \
-		--accountId <your AWS account id> \
-		[--stage <stage name>]
-	
-To undeploy from AWS use:
-
-	serverless remove \
-		--accountId <your AWS account id> \
-		[--stage <stage name>]
+You are responsible for the cost of the AWS services used while running the video transcription solution. As of the date of publication, the cost for running this solution in the US East (N.
+Virginia) Region is shown in the table below. The cost depends on the number of length of uploaded videos, and does not include data transfer fees, which will vary
+depending on the number of users and frequency of viewing.
 		
-Stage name is optional and defaults to:
+Video transcoding costs (for non-MP4 videos):
+
+	$0.03 per minute
+
+Audio Transcoding costs:
+
+	$0.0045 per minute
+
+Transcribe costs:
+
+	$0.024 per minute
 	
-	dev
+[Amazon Transcribe Pricing](https://aws.amazon.com/transcribe/pricing/)
 
-Note that you may need to empty your S3 buckets before you can remove, or manually remove the CloudFormation stack from the AWS Console if you get stuck undeploying.
+[Amazon Elastic Transcoder Pricing](https://aws.amazon.com/elastictranscoder/pricing/)
 
-The above steps deploy a CloudFormation template that creates S3 buckets, DynamoDB tables, API Gateway end points and Lambda functions.
+Pricing is quoyed per minute but Amazon Transcribe charges per second. Prices are subject to
+change. For full details, see the pricing webpage for each AWS service in the region you deploy the solution to.
 
-### Deploying the static web site to S3
+## User Interface
 
-The [Serverless Finch](https://github.com/fernando-mc/serverless-finch) plugin is used to deploy the client web application to S3. A configuration file is created in the previous step and is deployed with the public website:
+TODO: Screen shots and UI breakdown here
 
-	web/site_config.json
-	
-This contains the latest API Gateway URL for the client to use.
-
-To deploy the client to AWS, creating a new bucket use:
-
-	serverless client deploy \
-		--accountId <your AWS account id> \
-		[--stage <stage name>]
-	
-**Note that this will create a public S3 bucket which is frowned upon especially for AWS staff!**
-
-To create a non-public bucket with public objects use the following deployment command:
-
-	serverless client deploy \
-		--accountId <your AWS account id> \
-		--no-policy-change \
-		--no-config-change \
-		[--stage <stage name>]
-	
-You will currently need to make all content public using the S3 console, a [feature request raised to the Serverless Finch team](https://github.com/fernando-mc/serverless-finch/issues/69).
-
-In the interim you may make all files in the site bucket public using the following script:
-	
-	node scripts/makePublic.js
-
-Removal of the client can be achieved through:
-
-	serverless client remove \
-		--accountId <your AWS account id> \
-		[--stage <stage name>]
-	
-## Creating a Transcribe Vocabulary
-
-Prior to uploading your first video, use the Vocabulary menu in the web app to create a vocabulary, a sample is available in the source code at:
-
-	config/sample_vocabulary.txt
-	
-## Testing remotely
-
-The link published in the terminal by Serverless Finch is not optimal as it doesn't support HTTPS. Use the following format:
-
-	https://s3-<region>.amazonaws.com/<stage>-aws-captions-site-<region>-<account id>/index.html#
-
-## Testing locally
-
-Open a terminal prompt and change into the web folder. Use the following command to open a local HTTP server on port 8000:
-
-	cd web/
-	python -m http.server
-	
 ## Entering your API key
 
 On the home page there is a button for entering your API key, find your API key using the AWS Console in the API Gateway after deployment.
-
-## TODO
-
-* [ ] Bug when video autorewinds but does not reset caption index to zero
-* [ ] Validate video max length 2 hours
-* [ ] Multiple vocabularies / locales
-* [ ] Pick locale / vocabulary
-* [ ] Expert mode see all captions and edit?
-* [ ] Validate caption times on save
-* [ ] Make content public after deploy (manual step)
-* [ ] Blog
-* [ ] Serverless Finch open tickets
-* [x] Private GitHub repository
-* [x] Preserve name and description during re-runs
-* [x] Rename videos and edit description
-* [x] Search videos based on description
-* [x] Hide view video links for Processing tab
-* [x] Mark as complete
-* [x] Namespace table and buckets using service name
-* [x] Delete videos
-* [x] Reprocess videos
-* [x] Tab badges for videos
-* [x] Select last tab
-* [x] Default tab to last selected for videos
-* [x] Add caption blocks past the end of video bug
-* [x] Play to end of video play bug
-* [x] Document Elastic Transcoder service linked role
-* [x] Delete previous transcribe jobs
-* [x] List of errored jobs
-* [x] Handle transcribe service limits (retry)
-* [x] Refresh on videos page
-* [x] Login system
-* [x] Auth system for Lambda (API keys)
-* [x] API Gateway end points
-* [x] Video caption editor
-* [x] Download of captions
-* [x] Lambda for Transcode
-* [x] Lambda for Transcribe
-* [x] Lambda for Captions
-* [x] Lambda for Comprehend
-* [x] Lambda IAM role per function
-* [x] Dynamo Schema
-* [x] Cloudformation - serverless
-* [x] Update diagram
-* [x] Upload video function
-* [x] S3 CORS
-* [x] Auto save captions every 20 seconds
-
-
-# Data below this is just rough notes
-
-## Custom vocabularies
-
-	https://docs.aws.amazon.com/transcribe/latest/dg/how-it-works.html#how-vocabulary
-
-## Building the front end
-
-	https://www.sitepoint.com/single-page-app-without-framework/
 	
-	https://github.com/Graidenix/vanilla-router
+## Creating a Vocabulary
+
+After deployment log into your site, click on the Vocabulary tab and create a custom vocabulary with at least one term. You might consider using:
+
+	A.W.S.
 	
-	https://getbootstrap.com/docs/4.0/getting-started/introduction/
-	
-	http://handlebarsjs.com/
-	
-	https://medium.com/codingthesmartway-com-blog/getting-started-with-axios-166cb0035237
-	
-	https://datatables.net/
-	
-	https://loading.io/
+## Creating Tweaks
 
-## Convert DynamoDB responses:
+After deployment log into your site, click on the Tweaks tab and create a custom tweak configuration with at least one term. You might consider using:
 
-	https://gist.github.com/igorzg/c80c0de4ad5c4028cb26cfec415cc600
-
-## Define GSI
-
-	https://gist.github.com/DavidWells/c7df5df9c3e5039ee8c7c888aece2dd5
-
-## Async Lambda node 8.10
-
-	https://aws.amazon.com/blogs/compute/node-js-8-10-runtime-now-available-in-aws-lambda/
-
-## Deploying using Serverless
-
-pip install --upgrade awscli
-
-Install globally:
-
-	npm i -g serverless
-	npm i serverless-stack-output
-	npm i serverless-finch
-	npm i serverless-plugin-scripts
-	npm i aws-sdk (Optional)
-
-	https://serverless.com/blog/serverless-express-rest-api/
-	
-	https://github.com/serverless/examples/blob/master/aws-node-rest-api-with-dynamodb/serverless.yml
-	
-	https://github.com/serverless/examples/tree/master/aws-node-env-variables
-	
-List of all lifecycle events in Serverless:
-
-	https://gist.github.com/HyperBrain/bba5c9698e92ac693bb461c99d6cfeec#package
-
-## Limit increase for Transcribe
-
-And handle errors when queue is full
-
-## CORS survival guide
-
-	https://serverless.com/blog/cors-api-gateway-survival-guide/
-	
-## Lifecycle hooks:
-	
-	https://gist.github.com/HyperBrain/50d38027a8f57778d5b0f135d80ea406
-	
-## Bug for S3 bucket events CORS:
-
-	Created
-
-## Update available 5.3.0 → 6.4.1
-
-	Run npm i -g npm to update 
-
-## Elastic transcoder
-
-	https://github.com/ACloudGuru/serverless-framework-video-example/blob/master/backend/transcode-video-firebase-enabled/index.js
-
-## Blog examples
-
-	https://aws.amazon.com/blogs/machine-learning/discovering-and-indexing-podcast-episodes-using-amazon-transcribe-and-amazon-comprehend/
-
-	https://aws.amazon.com/blogs/compute/implementing-serverless-video-subtitles/
-
-	https://aws.amazon.com/blogs/machine-learning/get-started-with-automated-metadata-extraction-using-the-aws-media-analysis-solution/
-
-## Dropzone upload directly to S3
-
-	https://stackoverflow.com/questions/34526851/upload-files-to-amazon-s3-with-dropzone-js-issue
-	
-	starts-with signing
-	https://cwhite.me/avoiding-the-burden-of-file-uploads/
-	
-	https://gist.github.com/chrisseto/8828186#file-put-upload-to-s3-via-dropzone-js
-	
-	https://tutorialzine.com/2017/07/javascript-async-await-explained
-
-## Styling dropzone
-
-	https://codepen.io/fuxy22/pen/pyYByO
-
-## Step functions
-
-	https://serverless.com/blog/how-to-manage-your-aws-step-functions-with-serverless/
-
+	A.W.S.=AWS

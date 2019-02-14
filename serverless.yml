@@ -1,9 +1,7 @@
 service: aws-captions
 
-plugins: 
-  - '@anttiviljami/serverless-stack-output'
-  - 'serverless-finch'
-  - 'serverless-plugin-scripts'
+plugins:
+  - 'serverless-parameters'
 
 provider:
   name: aws
@@ -13,121 +11,63 @@ provider:
   stage: dev
   profile: transcribe
   logRetentionInDays: 7
-  apiKeys:
-    - '${self:custom.stage}-${self:service}-001'
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - lambda:InvokeFunction
-      Resource:
-        - 'arn:aws:lambda:${self:provider.region}:${self:custom.accountId}:function:${self:custom.stage}-${self:service}-extractaudio'
-    - Effect: Allow
-      Action:
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:Query
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: 
-        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.videoTableName}'
-        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.videoTableName}/index/*'
-        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.configTableName}'
-        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.captionTableName}'
-    - Effect: Allow
-      Action:
-        - elastictranscoder:CreatePipeline
-        - elastictranscoder:Read*
-        - elastictranscoder:List*
-        - elastictranscoder:*Job
-        - elastictranscoder:*Preset
-      Resource: 
-        - '*'
-    - Effect: Allow
-      Action:
-        - transcribe:CreateVocabulary
-        - transcribe:UpdateVocabulary
-        - transcribe:StartTranscriptionJob
-        - transcribe:ListVocabularies
-        - transcribe:DeleteTranscriptionJob
-      Resource: 
-        - '*'        
-    - Effect: Allow
-      Action:
-        - 's3:*'
-      Resource: 
-        - 'arn:aws:s3:::${self:custom.videoBucket}'
-        - 'arn:aws:s3:::${self:custom.videoBucket}/*'
-        - 'arn:aws:s3:::${self:custom.audioBucket}'
-        - 'arn:aws:s3:::${self:custom.audioBucket}/*'
-        - 'arn:aws:s3:::${self:custom.transcribeBucket}'
-        - 'arn:aws:s3:::${self:custom.transcribeBucket}/*'
-        - 'arn:aws:s3:::mkt-anz/*'
-    - Effect: Allow
-      Action:
-        - iam:PassRole
-      Resource:
-        - '${self:custom.transcoderRoleARN}'
+
 package:
   individually: true
 
 custom:
-  # Account Id is required for bucket name scoping
-  accountId: ${opt:accountId}
   stage: '${opt:stage, self:provider.stage}'
-  awsNodeSdkLayerArn: 'arn:aws:lambda:ap-southeast-2:${self:custom.accountId}:layer:aws-node-sdk-layer:1'
-  videoTableName: '${self:custom.stage}-${self:service}-videos'  
-  configTableName: '${self:custom.stage}-${self:service}-config'
-  captionTableName: '${self:custom.stage}-${self:service}-captions'
-  videoBucket: '${self:custom.stage}-${self:service}-video-${self:provider.region}-${self:custom.accountId}'
-  audioBucket: '${self:custom.stage}-${self:service}-audio-${self:provider.region}-${self:custom.accountId}'
-  webBucket: '${self:custom.stage}-${self:service}-site-${self:provider.region}-${self:custom.accountId}'
-  transcribeBucket: '${self:custom.stage}-${self:service}-transcribe-${self:provider.region}-${self:custom.accountId}'
-  transcribeLanguage: 'en-AU'
-  transcoderAudioPipelineName: '${self:custom.stage}-${self:service}-extractaudio'
-  transcoderVideoPipelineName: '${self:custom.stage}-${self:service}-transcodevideo'
-  transcoderRoleARN: 'arn:aws:iam::${self:custom.accountId}:role/Elastic_Transcoder_Default_Role'
-  vocabularyName: '${self:custom.stage}-${self:service}'
-  output:
-    handler: 'scripts/bootstrap.handler'
-    file: 'scripts/${self:service}-outputs.json' 
-  client:
-    bucketName: ${self:custom.webBucket}
-    distributionFolder: web
-    indexDocument: index.html
-    objectHeaders:
-      ALL_OBJECTS:
-        - name: 'Cache-Control'
-          value: 'max-age=60'   
-  scripts:
-    hooks:
-      # Force a CORS policy onto the videos bucket via the AWS CLI
-      'after:aws:deploy:deploy:updateStack': "aws s3api put-bucket-cors --profile transcribe --bucket ${self:custom.videoBucket} --cors-configuration file://config/s3-cors.json"
+
+  parameters:
+    TranscribeLanguage:
+      Type: String
+      AllowedValues: 
+        - 'en-AU'
+        - 'en-US'
+        - 'en-GB'
+        - 'es-US'
+        - 'de-DE'
+        - 'pt-BR'
+        - 'fr-CA'
+        - 'fr-FR'
+        - 'it-IT'
+      Default: 'en-AU'
+      Description: 'The language that Transcribe uses' 
+
+    APIKey:
+      Type: String
+      MinLength: 10
+      MaxLength: 70
+      AllowedPattern: '[a-zA-Z0-9]*'
+      ConstraintDescription: 'must only contain letters (uppercase and lowercase) and numbers, min length 10, max length 70'
+      Default: 'JustATestApiKey'
+      Description: 'An API key to use for accessing the website'      
 
 functions:
 
-  extractaudio:
+  ExtractAudio:
     handler: lambda/extractaudio.handler
-    name: ${self:custom.stage}-${self:service}-extractaudio
+    name: '${self:custom.stage}-${self:service}-extractaudio'
     description: 'Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos'
+    role: !GetAtt LambdaRole.Arn
+    depends: S3BucketVideo
     events:
       - s3: 
-          bucket: ${self:custom.videoBucket}
+          bucket: video
           event: s3:ObjectCreated:*
-          cors: 
           rules:
             - prefix: videos/    
     environment:    
-      INPUT_BUCKET: ${self:custom.videoBucket}
-      OUTPUT_AUDIO_BUCKET: ${self:custom.audioBucket}
-      OUTPUT_VIDEO_BUCKET: ${self:custom.videoBucket}
+      INPUT_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      OUTPUT_AUDIO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      OUTPUT_VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       OUTPUT_AUDIO_KEY_PREFIX: 'audio'
       OUTPUT_VIDEO_KEY_PREFIX: 'transcoded'
-      TRANSCODER_AUDIO_PIPELINE_NAME: '${self:custom.transcoderAudioPipelineName}'
-      TRANSCODER_VIDEO_PIPELINE_NAME: '${self:custom.transcoderVideoPipelineName}'
-      TRANSCODER_ROLE: '${self:custom.transcoderRoleARN}'
-      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
-      REGION: ${self:provider.region}
+      TRANSCODER_AUDIO_PIPELINE_NAME: '${self:custom.stage}-${self:service}-extractaudio'
+      TRANSCODER_VIDEO_PIPELINE_NAME: '${self:custom.stage}-${self:service}-transcodevideo'
+      TRANSCODER_ROLE: !Ref TranscoderRole
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -136,26 +76,28 @@ functions:
     memorySize: 128
     timeout: 15
 
-  transcribeaudio:
+  TranscribeAudio:
     handler: lambda/transcribeaudio.handler
-    name: ${self:custom.stage}-${self:service}-transcribeaudio
+    name: '${self:custom.stage}-${self:service}-transcribeaudio'
     description: 'Uses Transcribe to extract text from audio'
+    role: !GetAtt LambdaRole.Arn
+    depends: S3BucketAudio
     events:
       - s3: 
-          bucket: ${self:custom.audioBucket}
+          bucket: audio
           event: s3:ObjectCreated:*
           rules:
             - prefix: audio/
             - suffix: .mp3      
     environment:      
-      OUTPUT_BUCKET: ${self:custom.transcribeBucket}
+      OUTPUT_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       OUTPUT_KEY_PREFIX: 'transcribe'
-      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
-      REGION: ${self:provider.region}
-      VOCABULARY_NAME: '${self:custom.vocabularyName}'
-      TRANSCRIBE_LANGUAGE: '${self:custom.transcribeLanguage}'
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
+      VOCABULARY_NAME: !Join [ '', [ '${self:custom.stage}-${self:service}-', !Ref TranscribeLanguage ] ]
+      TRANSCRIBE_LANGUAGE: !Ref TranscribeLanguage
     layers:
-      - '${self:custom.awsNodeSdkLayerArn}'
+      - !Ref LambdaLayer
     package:
       exclude:
         - '**'
@@ -164,22 +106,24 @@ functions:
     memorySize: 128
     timeout: 15        
 
-  createcaptions:
+  CreateCaptions:
     handler: lambda/createcaptions.handler
-    name: ${self:custom.stage}-${self:service}-createcaptions
+    name: '${self:custom.stage}-${self:service}-createcaptions'
     description: 'Creates captions for videos from transcription results'
+    role: !GetAtt LambdaRole.Arn
+    depends: S3BucketTranscribe
     events:
       - s3: 
-          bucket: ${self:custom.transcribeBucket}
+          bucket: transcribe
           event: s3:ObjectCreated:*
           rules:
             - suffix: .json      
     environment:  
-      INPUT_BUCKET: ${self:custom.transcribeBucket}    
-      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
-      DYNAMO_CAPTION_TABLE: ${self:custom.captionTableName}
-      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
-      REGION: ${self:provider.region}
+      INPUT_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      DYNAMO_CAPTION_TABLE: !Ref CaptionDynamoDBTable
+      DYNAMO_CONFIG_TABLE: !Ref ConfigDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -188,13 +132,14 @@ functions:
     memorySize: 512
     timeout: 60       
 
-  getvideos:
+  GetVideos:
     handler: lambda/getvideos.handler
-    name: ${self:custom.stage}-${self:service}-getvideos
-    description: 'Loads videos from DynamoDB table: ${self:custom.videoTableName}'
+    name: '${self:custom.stage}-${self:service}-getvideos'
+    description: 'Loads videos from DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_VIDEO_TABLE: ${self:custom.videoTableName}
-      REGION: ${self:provider.region}
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -209,15 +154,16 @@ functions:
     memorySize: 128
     timeout: 29 
 
-  getvideo:
+  GetVideo:
     handler: lambda/getvideo.handler
-    name: ${self:custom.stage}-${self:service}-getvideo
-    description: 'Loads a single video from DynamoDB table: ${self:custom.videoTableName}'
+    name: '${self:custom.stage}-${self:service}-getvideo'
+    description: 'Loads a single video from DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
-      REGION: '${self:provider.region}'
-      VIDEO_BUCKET: '${self:custom.videoBucket}'
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      DYNAMO_CAPTION_TABLE: !Ref CaptionDynamoDBTable
+      REGION: !Ref AWS::Region
+      VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
     package:
       exclude:
         - '**'
@@ -232,13 +178,14 @@ functions:
     memorySize: 128
     timeout: 29 
 
-  updatevideostatus:
+  UpdateVideoStatus:
     handler: lambda/updatevideostatus.handler
-    name: ${self:custom.stage}-${self:service}-updatevideostatus
-    description: 'Updates the status of a video in DynamoDB table: ${self:custom.videoTableName}'
+    name: '${self:custom.stage}-${self:service}-updatevideostatus'
+    description: 'Updates the status of a video in DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      REGION: '${self:provider.region}'
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -253,13 +200,14 @@ functions:
     memorySize: 128
     timeout: 29  
 
-  updatevideoname:
+  UpdateVideoName:
     handler: lambda/updatevideoname.handler
-    name: ${self:custom.stage}-${self:service}-updatevideoname
-    description: 'Updates the name of a video in DynamoDB table: ${self:custom.videoTableName}'
+    name: '${self:custom.stage}-${self:service}-updatevideoname'
+    description: 'Updates the name of a video in DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      REGION: '${self:provider.region}'
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -274,13 +222,14 @@ functions:
     memorySize: 128
     timeout: 29  
 
-  updatevideodescription:
+  UpdateVideoDescription:
     handler: lambda/updatevideodescription.handler
-    name: ${self:custom.stage}-${self:service}-updatevideodescription
-    description: 'Updates the description of a video in DynamoDB table: ${self:custom.videoTableName}'
+    name: '${self:custom.stage}-${self:service}-updatevideodescription'
+    description: 'Updates the description of a video in DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      REGION: '${self:provider.region}'
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -295,19 +244,20 @@ functions:
     memorySize: 128
     timeout: 29          
 
-  deletevideo:
+  DeleteVideo:
     handler: lambda/deletevideo.handler
-    name: ${self:custom.stage}-${self:service}-deletevideo
+    name: '${self:custom.stage}-${self:service}-deletevideo'
     description: 'Purges a single video from the system'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      REGION: '${self:provider.region}'      
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
-      VIDEO_BUCKET: '${self:custom.videoBucket}'
-      AUDIO_BUCKET: '${self:custom.audioBucket}'
-      TRANSCRIBE_BUCKET: '${self:custom.transcribeBucket}'
+      REGION: !Ref AWS::Region      
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      DYNAMO_CAPTION_TABLE: !Ref CaptionDynamoDBTable
+      VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      AUDIO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      TRANSCRIBE_BUCKET: !Ref S3BucketTranscribe
     layers:
-      - '${self:custom.awsNodeSdkLayerArn}'      
+      - !Ref LambdaLayer     
     package:
       exclude:
         - '**'
@@ -322,19 +272,20 @@ functions:
     memorySize: 128
     timeout: 29
 
-  reprocessvideo:
+  ReprocessVideo:
     handler: lambda/reprocessvideo.handler
-    name: ${self:custom.stage}-${self:service}-reprocessvideo
+    name: '${self:custom.stage}-${self:service}-reprocessvideo'
     description: 'Reprocesses a video'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      REGION: '${self:provider.region}'      
-      DYNAMO_VIDEO_TABLE: '${self:custom.videoTableName}'
-      VIDEO_BUCKET: '${self:custom.videoBucket}'
-      AUDIO_BUCKET: '${self:custom.audioBucket}'
-      TRANSCRIBE_BUCKET: '${self:custom.transcribeBucket}'
+      REGION: !Ref AWS::Region      
+      DYNAMO_VIDEO_TABLE: !Ref VideoDynamoDBTable
+      VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      AUDIO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      TRANSCRIBE_BUCKET: !Ref S3BucketTranscribe
       EXTRACT_AUDIO_FUNCTION: '${self:custom.stage}-${self:service}-extractaudio'
     layers:
-      - '${self:custom.awsNodeSdkLayerArn}'      
+      - !Ref LambdaLayer     
     package:
       exclude:
         - '**'
@@ -347,15 +298,16 @@ functions:
           cors: true
           private: true
     memorySize: 128
-    timeout: 29    
+    timeout: 29 
 
-  getupload:
+  GetUpload:
     handler: lambda/getupload.handler
-    name: ${self:custom.stage}-${self:service}-getupload
+    name: '${self:custom.stage}-${self:service}-getupload'
     description: 'Fetches a signed URL for uploading video into S3'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      REGION: '${self:provider.region}'
-      VIDEO_BUCKET: '${self:custom.videoBucket}'
+      REGION: !Ref AWS::Region
+      VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
     package:
       exclude:
         - '**'
@@ -370,13 +322,14 @@ functions:
     memorySize: 128
     timeout: 29     
 
-  putcaption:
+  PutCaption:
     handler: lambda/putcaption.handler
-    name: ${self:custom.stage}-${self:service}-putcaption
-    description: 'Saves captions to DynamoDB table: ${self:custom.captionTableName}'
+    name: '${self:custom.stage}-${self:service}-putcaption'
+    description: 'Saves captions to DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
-      REGION: '${self:provider.region}'
+      DYNAMO_CAPTION_TABLE: !Ref CaptionDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -391,13 +344,14 @@ functions:
     memorySize: 128
     timeout: 29
 
-  getcaption:
+  GetCaption:
     handler: lambda/getcaption.handler
-    name: ${self:custom.stage}-${self:service}-getcaption
+    name: '${self:custom.stage}-${self:service}-getcaption'
     description: 'Fetches captions in WEBVTT format'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CAPTION_TABLE: '${self:custom.captionTableName}'
-      REGION: '${self:provider.region}'
+      DYNAMO_CAPTION_TABLE: !Ref CaptionDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -412,14 +366,15 @@ functions:
     memorySize: 128
     timeout: 29    
 
-  getvocabulary:
+  GetVocabulary:
     handler: lambda/getvocabulary.handler
-    name: ${self:custom.stage}-${self:service}-getvocabulary
-    description: 'Loads vocabulary from DynamoDB table: ${self:custom.configTableName}'
+    name: '${self:custom.stage}-${self:service}-getvocabulary'
+    description: 'Loads vocabulary from DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
-      REGION: ${self:provider.region}
-      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+      DYNAMO_CONFIG_TABLE: !Ref ConfigDynamoDBTable
+      REGION: !Ref AWS::Region
+      VOCABULARY_NAME: !Join [ '', [ '${self:custom.stage}-${self:service}-', !Ref TranscribeLanguage ] ]
     package:
       exclude:
         - '**'
@@ -434,13 +389,14 @@ functions:
     memorySize: 128
     timeout: 29 
 
-  headvocabulary:
+  HeadVocabulary:
     handler: lambda/headvocabulary.handler
-    name: ${self:custom.stage}-${self:service}-headvocabulary
+    name: '${self:custom.stage}-${self:service}-headvocabulary'
     description: 'Checks if vocabulary is ready to save'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      REGION: ${self:provider.region}
-      VOCABULARY_NAME: '${self:custom.vocabularyName}'
+      REGION: !Ref AWS::Region
+      VOCABULARY_NAME: !Join [ '', [ '${self:custom.stage}-${self:service}-', !Ref TranscribeLanguage ] ]
     package:
       exclude:
         - '**'
@@ -455,15 +411,16 @@ functions:
     memorySize: 128
     timeout: 29 
 
-  putvocabulary:
+  PutVocabulary:
     handler: lambda/putvocabulary.handler
     name: '${self:custom.stage}-${self:service}-putvocabulary'
-    description: 'Saves vocabulary to DynamoDB table: ${self:custom.configTableName}'
+    description: 'Saves vocabulary to DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
-      REGION: ${self:provider.region}
-      VOCABULARY_NAME: '${self:custom.vocabularyName}'
-      TRANSCRIBE_LANGUAGE: '${self:custom.transcribeLanguage}'
+      DYNAMO_CONFIG_TABLE: !Ref ConfigDynamoDBTable
+      REGION: !Ref AWS::Region
+      VOCABULARY_NAME: !Join [ '', [ '${self:custom.stage}-${self:service}-', !Ref TranscribeLanguage ] ]
+      TRANSCRIBE_LANGUAGE: !Ref TranscribeLanguage
     package:
       exclude:
         - '**'
@@ -478,13 +435,14 @@ functions:
     memorySize: 128
     timeout: 29           
 
-  gettweaks:
+  GetTweaks:
     handler: lambda/gettweaks.handler
-    name: ${self:custom.stage}-${self:service}-gettweaks
-    description: 'Loads tweaks from DynamoDB table: ${self:custom.configTableName}'
+    name: '${self:custom.stage}-${self:service}-gettweaks'
+    description: 'Loads tweaks from DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
-      REGION: ${self:provider.region}
+      DYNAMO_CONFIG_TABLE: !Ref ConfigDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -499,13 +457,14 @@ functions:
     memorySize: 128
     timeout: 29           
 
-  puttweaks:
+  PutTweaks:
     handler: lambda/puttweaks.handler
-    name: ${self:custom.stage}-${self:service}-puttweaks
-    description: 'Saves tweaks to DynamoDB table: ${self:custom.configTableName}'
+    name: '${self:custom.stage}-${self:service}-puttweaks'
+    description: 'Saves tweaks to DynamoDB'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      DYNAMO_CONFIG_TABLE: ${self:custom.configTableName}
-      REGION: ${self:provider.region}
+      DYNAMO_CONFIG_TABLE: !Ref ConfigDynamoDBTable
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -520,13 +479,14 @@ functions:
     memorySize: 128
     timeout: 29 
 
-  bootstrap:
+  BootStrap:
     handler: lambda/bootstrap.handler
-    name: ${self:custom.stage}-${self:service}-bootstrap
-    description: 'Bootstraps videos to process into S3 bucket: ${self:custom.videoBucket}'
+    name: '${self:custom.stage}-${self:service}-bootstrap'
+    description: 'Bootstraps videos to process into S3'
+    role: !GetAtt LambdaRole.Arn
     environment: 
-      OUTPUT_BUCKET: ${self:custom.videoBucket}
-      REGION: ${self:provider.region}
+      OUTPUT_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
+      REGION: !Ref AWS::Region
     package:
       exclude:
         - '**'
@@ -535,13 +495,269 @@ functions:
     memorySize: 2048
     timeout: 900
 
+  CustomResource:
+    handler: lambda/customresource.handler
+    name: '${self:custom.stage}-${self:service}-customresource'
+    description: 'Performs custom cloudformation initialisation'
+    role: !GetAtt LambdaRole.Arn
+    package:
+      exclude:
+        - '**'
+      include:
+        - 'lambda/customresource.js'
+        - 'node_modules/axios/**'
+        - 'node_modules/follow-redirects/**'
+        - 'node_modules/is-buffer/**'
+        - 'node_modules/debug/**'
+        - 'node_modules/ms/**'
+    memorySize: 128
+    timeout: 600
+
 resources:
   Resources:
+
+    LambdaLayer:
+      Type: 'AWS::Lambda::LayerVersion'
+      Properties:
+        CompatibleRuntimes: 
+          - nodejs8.10
+        Content: 
+          S3Bucket: aws-captions-deployment-ap-southeast-2
+          S3Key: layers/aws-captions-node-sdk-layer.zip
+        Description: 'Recent Node.js 8.10 AWS Node SDK'
+        LayerName: '${self:custom.stage}-aws-captions-node-sdk-layer'
+        LicenseInfo: Apache-2.0
+
+    LambdaLayerPermission:
+      Type: 'AWS::Lambda::LayerVersionPermission'
+      Properties:
+        Action: lambda:GetLayerVersion
+        LayerVersionArn: !Ref LambdaLayer
+        Principal: !Ref AWS::AccountId
+
+    MyCustomResource: 
+      Type: 'Custom::CustomResource'
+      Version: '1.0'
+      DependsOn: 
+        - 'CustomResourceLambdaFunction'
+      Properties: 
+        ServiceToken: !Join [':', [ 'arn:aws:lambda', !Ref AWS::Region, !Ref AWS::AccountId, 'function:${self:custom.stage}-${self:service}-customresource' ]]
+        InputManifest:
+          Bucket: aws-captions-deployment-ap-southeast-2
+          Key: web/manifest.json
+        WebDeploySource:
+          Bucket: aws-captions-deployment-ap-southeast-2
+        WebDeployTarget:
+          Bucket: !Ref PublicBucket
+          Key: 'web/'
+        APIGateway:
+          Url: !Join [ '', [ 'https://', !Ref ApiGatewayRestApi, '.execute-api.', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}' ]]
+          Id: !Ref ApiGatewayRestApi
+          Stage: '${self:custom.stage}'
+          PlanName: '${self:custom.stage}-${self:service}-usageplan'
+          Key:
+            Name: ${self:custom.stage}-${self:service}-apikey
+            Value: !Ref APIKey
+
+    LambdaPolicy:
+      Type: 'AWS::IAM::ManagedPolicy'
+      Properties:
+        ManagedPolicyName: !Join [ '', [ !Ref AWS::StackName, '-${self:custom.stage}-${self:service}-lambda-policy' ]]
+        Description: 'Managed policy for lambdas'
+        PolicyDocument: 
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - apigateway:*
+              Resource:
+                - '*'
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource:
+                - !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:ExtractAudio' ]]
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: 
+                - !Join [ ':', [ 'arn:aws:logs', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'log-group:/aws/lambda/*:*:*' ] ]
+            - Effect: Allow
+              Action:
+                - dynamodb:Scan
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:Query
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+              Resource: 
+                - !GetAtt VideoDynamoDBTable.Arn
+                - !Join [ '', [ !GetAtt VideoDynamoDBTable.Arn, '/index/*' ] ]
+                - !GetAtt CaptionDynamoDBTable.Arn
+                - !GetAtt ConfigDynamoDBTable.Arn
+            - Effect: Allow
+              Action:
+                - elastictranscoder:CreatePipeline
+                - elastictranscoder:Read*
+                - elastictranscoder:List*
+                - elastictranscoder:*Job
+                - elastictranscoder:*Preset
+              Resource: 
+                - '*'
+            - Effect: Allow
+              Action:
+                - transcribe:CreateVocabulary
+                - transcribe:UpdateVocabulary
+                - transcribe:StartTranscriptionJob
+                - transcribe:ListVocabularies
+                - transcribe:DeleteTranscriptionJob
+              Resource: 
+                - '*'        
+            - Effect: Allow
+              Action:
+                - 's3:*'
+              Resource: 
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]                
+            - Effect: Allow
+              Action:
+                - iam:PassRole
+              Resource:
+                - !Join [ '', [ 'arn:aws:iam::', !Ref AWS::AccountId, ':role/', !Ref AWS::StackName, '-${self:custom.stage}-${self:service}-elastic-transcoder-role' ]]
+
+    LambdaRole:
+      Type: 'AWS::IAM::Role'
+      Properties:
+        RoleName: !Join [ '', [ !Ref AWS::StackName, '-${self:custom.stage}-${self:service}-lambda-role' ]]
+        AssumeRolePolicyDocument: 
+          Version: '2012-10-17'
+          Statement: 
+            - Effect: 'Allow'
+              Principal: 
+                Service: 
+                  - 'lambda.amazonaws.com'
+              Action: 
+                - 'sts:AssumeRole'
+        ManagedPolicyArns:
+          - !Ref LambdaPolicy
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+
+    TrancoderPolicy:
+      Type: 'AWS::IAM::ManagedPolicy'
+      Properties:
+        ManagedPolicyName: !Join [ '', [ !Ref AWS::StackName, '-${self:custom.stage}-${self:service}-elastic-transcoder-policy' ]]
+        Description: 'Managed policy for invoking Elastic Trancoder'
+        PolicyDocument: 
+          Version: '2012-10-17'
+          Statement:
+            - Effect: 'Allow'
+              Action:
+                - 's3:Put*'
+                - 's3:ListBucket'
+                - 's3:*MultipartUpload*'
+                - 's3:Get*'
+              Resource:
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]
+            - Effect: 'Allow'
+              Action: 'sns:Publish'
+              Resource: '*'
+        
+    TranscoderRole:
+      Type: 'AWS::IAM::Role'
+      Properties:
+        RoleName: !Join [ '', [ !Ref AWS::StackName, '-${self:custom.stage}-${self:service}-elastic-transcoder-role' ]]
+        AssumeRolePolicyDocument: 
+          Version: '2012-10-17'
+          Statement: 
+            - Effect: 'Allow'
+              Principal: 
+                Service: 
+                  - 'elastictranscoder.amazonaws.com'
+              Action: 
+                - 'sts:AssumeRole'
+        ManagedPolicyArns:
+          - !Ref TrancoderPolicy
+
+    S3BucketVideo:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join [ '', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods: 
+                - 'PUT'
+                - 'POST'
+                - 'GET'
+              MaxAge: 3000
+
+    ExtractAudioLambdaPermissionVideoS3:
+      Type: 'AWS::Lambda::Permission'
+      Properties:
+        #FunctionName: !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:ExtractAudio' ]]
+        Principal: 's3.amazonaws.com'
+        Action: 'lambda:InvokeFunction'
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+
+    S3BucketAudio:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join [ '', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+
+    TranscribeAudioLambdaPermissionAudioS3:
+      Type: 'AWS::Lambda::Permission'
+      Properties:
+        #FunctionName: !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:TransscribeAudio' ]]
+        Principal: 's3.amazonaws.com'
+        Action: 'lambda:InvokeFunction'
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+
+    PublicBucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join [ '', [ '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods: 
+                - 'GET'
+              MaxAge: 3000
+
+    S3BucketTranscribe:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Join [ '', [ '${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+
+    CreateCaptionsLambdaPermissionTranscribeS3:
+      Type: 'AWS::Lambda::Permission'
+      Properties:
+        #FunctionName: !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:CreateCaptions' ]]
+        Principal: 's3.amazonaws.com'
+        Action: 'lambda:InvokeFunction'
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-transcribe-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
 
     VideoDynamoDBTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
-        TableName: '${self:custom.videoTableName}'        
+        TableName: '${self:custom.stage}-${self:service}-videos'
         AttributeDefinitions:
           - AttributeName: videoId
             AttributeType: S
@@ -564,7 +780,7 @@ resources:
     ConfigDynamoDBTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
-        TableName: '${self:custom.configTableName}'         
+        TableName: '${self:custom.stage}-${self:service}-config'     
         AttributeDefinitions:
           - AttributeName: configId
             AttributeType: S
@@ -576,7 +792,7 @@ resources:
     CaptionDynamoDBTable:
       Type: 'AWS::DynamoDB::Table'
       Properties:
-        TableName: '${self:custom.captionTableName}'         
+        TableName: '${self:custom.stage}-${self:service}-captions'
         AttributeDefinitions:
           - AttributeName: videoId
             AttributeType: S
@@ -586,47 +802,20 @@ resources:
         BillingMode: PAY_PER_REQUEST
 
   Outputs:
-    Region:
-      Description: The deployed region
-      Value: ${self:provider.region} 
-    Stage:
-      Description: The deployed stage
-      Value: ${self:custom.stage}  
+    
+    Website:
+      Description: Link to the public website
+      Value: !Join [ '', [ 'https://s3-', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/index.html' ]]
+      Export:
+        Name: ${self:custom.stage}-${self:service}-website
+    APIKey:
+      Description: API Key to use when accessing the site
+      Value: !Ref APIKey
+      Export:
+        Name: ${self:custom.stage}-${self:service}-apikey        
     APIUrl:
       Description: The API Gateway base url
-      Value:
-        Fn::Join:
-          - ""
-          - - "https://"
-            - Ref: ApiGatewayRestApi
-            - ".execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}"
-    ConfigDynamoDBTable:
-      Description: The name of the config DynamoDB table
-      Value: ${self:custom.configTableName}
-    VideoDynamoDBTable:
-      Description: The name of the video DynamoDB table
-      Value: ${self:custom.videoTableName}
-    CaptionDynamoDBTable:
-      Description: The name of the caption DynamoDB table
-      Value: ${self:custom.captionTableName}        
-    VideoBucket:
-      Description: The bucket containing the raw video
-      Value: ${self:custom.videoBucket}
-    AudioBucket:
-      Description: The bucket containing the processed audio
-      Value: ${self:custom.audioBucket}
-    TranscribeBucket:
-      Description: The bucket containing the raw transcriptions
-      Value: ${self:custom.transcribeBucket}
-    WebBucket:
-      Description: The bucket containing the website after client deploy
-      Value: ${self:custom.webBucket}      
-    TranscoderAudioPipelineName:
-      Description: The name of the audio elastic transcoder pipepline
-      Value: ${self:custom.transcoderAudioPipelineName}
-    TranscoderVideoPipelineName:
-      Description: The name of the video elastic transcoder pipepline
-      Value: ${self:custom.transcoderVideoPipelineName}      
-    TranscoderRoleARN:
-      Description: The ARN of the IAM role created
-      Value: ${self:custom.transcoderRoleARN}
+      Value: !Join [ '', [ 'https://', !Ref ApiGatewayRestApi, '.execute-api.', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}' ]]
+      Export:
+        Name: '${self:custom.stage}-${self:service}-api-url'
+

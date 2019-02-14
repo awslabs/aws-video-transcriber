@@ -11,8 +11,8 @@
   "license": "Apache License",
   "dependencies": {
     "@anttiviljami/serverless-stack-output": "^0.3.1",
-    "aws-sdk": "^2.347.0",
-    "serverless-finch": "^2.3.2",
-    "serverless-plugin-scripts": "^1.0.2"
+    "serverless-parameters": "0.0.7",
+    "axios": "0.18.0",
+    "debug": "4.1.1"
   }
 }
