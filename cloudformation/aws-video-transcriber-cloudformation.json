@@ -4134,7 +4134,38 @@
                       "/*"
                     ]
                   ]
-                }
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::prod-aws-captions-audio-",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::prod-aws-captions-audio-",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "-",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }                
               ]
             },
             {

@@ -667,6 +667,8 @@ resources:
               Resource:
                 - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
                 - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ]]
+                - !Join [ '', [ 'arn:aws:s3:::${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/*' ]]                
             - Effect: 'Allow'
               Action: 'sns:Publish'
               Resource: '*'

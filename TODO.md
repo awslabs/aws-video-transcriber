@@ -1,6 +1,7 @@
 
 ## TODO
 
+* [ ] Fix dynamo bugs on restart processing
 * [ ] Empty all buckets and add depends on buckets to custom resource
 * [ ] Create Custom Vocabulary - in custom resource
 * [ ] Create transcoder pipelines - in custom resource
