@@ -2,7 +2,7 @@
 
 # Publishes assets to ap-southeast-2 for replication
 
-aws s3 rm --recursive --profile transcribe s3://aws-captions-deployment-ap-southeast-2  
+# aws s3 rm --recursive --profile transcribe s3://aws-captions-deployment-ap-southeast-2  
 
 cd ../.serverless
 

@@ -576,7 +576,7 @@ resources:
               Action:
                 - lambda:InvokeFunction
               Resource:
-                - !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:ExtractAudio' ]]
+                - !Join [ '', [ 'arn:aws:lambda:', !Ref AWS::Region, ':', !Ref AWS::AccountId, ':function:${self:custom.stage}-${self:service}-extractaudio' ]]
             - Effect: Allow
               Action:
                 - logs:CreateLogGroup
@@ -805,7 +805,7 @@ resources:
     
     Website:
       Description: Link to the public website
-      Value: !Join [ '', [ 'https://s3-', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/index.html' ]]
+      Value: !Join [ '', [ 'https://s3.', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/index.html' ]]
       Export:
         Name: ${self:custom.stage}-${self:service}-website
     APIKey:

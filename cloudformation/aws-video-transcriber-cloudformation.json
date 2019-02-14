@@ -3777,7 +3777,7 @@
                       {
                         "Ref": "AWS::AccountId"
                       },
-                      ":function:ExtractAudio"
+                      ":function:prod-aws-captions-extractaudio"
                     ]
                   ]
                 }
@@ -4306,7 +4306,7 @@
         "Fn::Join": [
           "",
           [
-            "https://s3-",
+            "https://s3.",
             {
               "Ref": "AWS::Region"
             },
