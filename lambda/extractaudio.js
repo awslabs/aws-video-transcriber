@@ -191,7 +191,11 @@ async function checkForPriorProcessing(params)
         {
             params.videoId = queryResponse.Items[0].videoId.S;
             params.videoName = queryResponse.Items[0].name.S;
-            params.videoDescription = queryResponse.Items[0].description.S;
+
+            if (queryResponse.Items[0].description)
+            {
+                params.videoDescription = queryResponse.Items[0].description.S;    
+            }
         }
     }
     catch (error)
