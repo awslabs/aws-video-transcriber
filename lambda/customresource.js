@@ -71,13 +71,13 @@ exports.handler = async function(event, context)
         }
 
         console.log('[INFO] custom resource complete sending success');
-        await sendResponse(event, context, "SUCCESS", {}, resourceId);
+        await sendResponse(event, context, "SUCCESS", null, resourceId);
         
     }
     catch (error)
     {
         console.log("[ERROR] failed to process custom resource sending failure", error);
-        await sendResponse(event, context, "FAILED", {}, resourceId);
+        await sendResponse(event, context, "FAILED", error, resourceId);
     }
 
 };
@@ -487,9 +487,9 @@ async function deleteS3File(bucket, key)
 /**
  * Sends the response to the provided pre-signed url
  */
-async function sendResponse(event, context, responseStatus, responseData, physicalResourceId) 
+async function sendResponse(event, context, responseStatus, failureReason, physicalResourceId) 
 {
-    var reason = responseStatus == 'FAILED' ? ('See the details in CloudWatch Log Stream: ' + context.logStreamName) : undefined;
+    var reason = responseStatus == 'FAILED' ? ('Failure reason: ' + failureReason) : undefined;
 
     var responseBody = JSON.stringify({
         StackId: event.StackId,
@@ -498,7 +498,7 @@ async function sendResponse(event, context, responseStatus, responseData, physic
         Reason: reason,
         PhysicalResourceId: physicalResourceId || context.logStreamName,
         LogicalResourceId: event.LogicalResourceId,
-        Data: responseData
+        Data: { }
     });
  
     var responseOptions = 
