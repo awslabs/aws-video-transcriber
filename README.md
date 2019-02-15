@@ -1,6 +1,6 @@
 ## AWS Video Transcriber
 
-The code provides a serverless single page web application and set of supporting API Gateway end points and Lambda functions which allow users to upload videos into S3 and compute and edit closed captions.
+The solution provides a serverless, single page web application and set of supporting API Gateway end points and backing Lambda functions which allow users to upload videos into S3 and compute and edit closed captions.
 
 ## On this Page
 - [License](#license)
