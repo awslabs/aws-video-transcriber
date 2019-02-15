@@ -6,7 +6,6 @@ This solution provides a serverless, single page web application and set of supp
 - [License](#license)
 - [Architecture](#architecture)
 - [Deploying the Solution](#deploying-the-solution)
-- [Removing the Solution](#removing-the-solution)
 - [Solution Pricing](#solution-pricing)
 - [Launching the Website](#launching-the-website)
 - [Entering your API Key](#entering-your-api-key)
@@ -16,6 +15,10 @@ This solution provides a serverless, single page web application and set of supp
 - [Uploading Videos](#uploading-videos) 
 - [Editing Captions](#editing-captions)
 - [Downloading Captions](#downloading-captions)
+- Support Appendix
+  - [Troubleshooting Deployment](#troubleshooting-deployment)
+  - [Removing the Solution](#removing-the-solution)
+  - [Troubleshooting Solution Removal](#troubleshooting-solution-removal)
 
 ## License
 
@@ -31,7 +34,7 @@ Prebuilt CloudFormation templates and assets have been deployed to AWS regions w
 
 When launching the template, you will need to enter a stack name, an API key and choose a locale that Transcribe will use to process your video's audio data. 
 
-**The API Key is used to provide to users access to the system. You must provide a strong, random, alpha-numeric API key between 20 and 70 characters long!**
+*The API Key is used to provide to users access to the system. You must provide a strong, random, alpha-numeric API key between 20 and 70 characters long. Otherwise the stack will fail to launch and you will see [this error](#invalid-api-key).*
 
 ### One click deployment
 
@@ -46,16 +49,6 @@ When launching the template, you will need to enter a stack name, an API key and
 | Asia Pacific (Mumbai) | ap-south-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-south-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-south-1&stackName=&templateURL=https://s3.ap-south-1.amazonaws.com/aws-captions-deployment-ap-south-1/cloudformation/aws-video-transcriber-cloudformation.json) |
 
 ![Stack parameters](manual/img/StackParameters.png)
-
-### Deploying to multiple regions
-
-IAM roles and policies are global and are prefixed with the stack name, if you get conflicts, simply use a different stack name in each deployed region.
-
-## Removing the Solution
-
-To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied the video, audio and transcribe buckets created as part of the stack.
-
-*NOTE: after remove the stack occasionally the CloudWatch log group for the Lambda custom resource is left behind and must be manually removed before redeploying.*
 
 ## Solution Pricing
 
@@ -154,3 +147,57 @@ The *Auto save* function flushes edits regularly to DynamoDB.
 
 You can download completed cpations from the [Caption editing page](#editing-captions) or from the table on the completed videos tab.
 
+## Troubleshooting Deployment
+
+### Deploying to multiple regions
+
+IAM roles and policies are global and are prefixed with the stack name, if you get IAM role or policy conflicts, simply use a different stack name in each deployed region.
+
+### Invalid API Key
+
+If you see the following error while launching your CloudFormation stack:
+
+![Invalid API Key](manual/img/InvalidKey.png)
+
+Please verify the API Key you provided is between 20 and 70 characters long and only contains AlphaNumeric characters, it uses the following regex:
+
+	[a-zA-Z0-9]{20,70}
+	
+### CloudWatch log group already exists
+	
+If you are deploying to the same region after previously removing the stack you may see the following error:
+
+![Log group exists](manual/img/LogGroupExists.png)
+
+Simply delete the stack, go to the [CloudWatch Logs Console](https://console.aws.amazon.com/cloudwatch/home#logs) in the region and remove the dangling log group:
+
+	/aws/lambda/prod-aws-captions-customresource
+
+It can remain after a stack removal due to CloudWatch log flushing recreating the log group. Then simply deploy the CloudFormation stack once again.
+
+### Custom Resource Creation Failures
+
+Please raise a GitHub Issue with the the error reported in the stack and we will investigate.
+
+## Removing the Solution
+
+To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied the video, audio and transcribe buckets created as part of the stack.
+
+## Troubleshooting Solution Removal
+
+### CloudWatch log group not removed
+
+After remove the stack, the [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home#logs) for the Lambda custom resource is left behind and must be manually removed before redeploying:
+
+	/aws/lambda/prod-aws-captions-customresource
+
+### S3 buckets not empty
+
+CloudFormation will refuse to remove non-empty [S3 buckets](https://s3.console.aws.amazon.com/s3/home) so these must be manually emptied before removing the stack:
+
+	prod-aws-captions-audio-<region>-<accountId>
+	prod-aws-captions-video-<region>-<accountId>
+	prod-aws-captions-transcribe-<region>-<accountId>
+
+If you get this failure, empty the buckets using the [S3 console](https://s3.console.aws.amazon.com/s3/home) and try deleting the stack again.
+	
