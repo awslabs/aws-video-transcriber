@@ -43,7 +43,7 @@ When launching the template, you will need to enter a stack name and an API key.
 | Asia Pacific (Sydney) | ap-southeast-2 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-southeast-2&stackName=&templateURL=https://s3.ap-southeast-2.amazonaws.com/aws-captions-deployment-ap-southeast-2/cloudformation/aws-video-transcriber-cloudformation.json) |
 | Asia Pacific (Mumbai) | ap-south-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-south-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-south-1&stackName=&templateURL=https://s3.ap-south-1.amazonaws.com/aws-captions-deployment-ap-south-1/cloudformation/aws-video-transcriber-cloudformation.json) |
 
-[![Home page and API Key](manual/img/StackParameters.png)](manual/img/StackParameters.png)
+![Stack parameters](manual/img/StackParameters.png)
 
 ### Deploying to multiple regions
 
@@ -91,14 +91,13 @@ Pricing is quoted per minute but Amazon Transcribe charges per second. Prices ar
 
 Once you have deployed your stack the link to your new site is displayed in the *CloudFormation Outputs tab* along with your API Key. Click the *Website* link to access the site.
 
-[![CloudFormation outputs](manual/img/CloudFormationParameters.png)](manual/img/CloudFormationParameters.png)
+![CloudFormation outputs](manual/img/CloudFormationParameters.png)
 
 ## Entering your API key
 
 On the home page there a *Enter API Key* button used for entering your API key, locate your API key using the Outputs tab of the CloudFormation service after deployment and add it in to enable the other solution pages.
 
-[![Home page and API Key](manual/img/HomePage.png)](manual/img/HomePage.png)
-	
+![Home page and API Key](manual/img/HomePage.png)	
 ## Creating a Vocabulary
 
 After deployment and before uploading videos, log into your site, click on the Vocabulary tab and create a custom vocabulary with at least one term. You might consider using:
@@ -107,9 +106,11 @@ After deployment and before uploading videos, log into your site, click on the V
 	
 You can enter up to 50kb of custom vocacaulary terms, if you get a failure to save please read the [Amazon Transcribe formatting guide for custom vocabularies](https://github.com/awsdocs/amazon-transcribe-developer-guide/blob/master/doc_source/custom-vocabulary-files.md).
 	
-[![Vocabulary page](manual/img/VocabularyPage.png)](manual/img/VocabularyPage.png)
+![Vocabulary page](manual/img/VocabularyPage.png)
 
 You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
+
+After saving the vocabulary, Transcribe needs to train agianst the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocaulary is not in a ready state.
 	
 ## Creating Tweaks
 
@@ -119,19 +120,21 @@ After deployment log into your site, click on the Tweaks tab and create a custom
 	
 Tweaks are used to transform common transcription issues you might find and also to correct Amazon Transcribe custom vocabulary verbatim transcriptions.
 
-[![Tweaks page](manual/img/TweaksPage.png)](manual/img/TweaksPage.png)
+![Tweaks page](manual/img/TweaksPage.png)
 
 ## Listing Videos
 
 The Videos page shows the current videos in the system and organsises them in tabs based on their processing status. You can search for videos here, trigger reprocessing, delete videos and download captions for completed videos.
 
-[![Videos page](manual/img/VideosPage.png)](manual/img/VideosPage.png)
+![Videos page](manual/img/VideosPage.png)
 
 ## Uploading Videos
 
 You can upload videos from any browser and launching the site on mobile allows users to capture and upload videos directly from a mobile phone.
 
 Click on the *Upload Videos...* button to start the video upload process.
+
+New AWS accounts have a service limit of 10 concurrent transcription jobs, this limit can be raised with an AWS service ticket. Videos launched above this threshold will fail and can be relaunched from the error tab.
 
 ## Editing Captions
 
@@ -143,7 +146,7 @@ Once you have perfected the captions for a video, click the *Done* button to mov
 
 The *Auto save* function flushes edits regularly to DynamoDB.
 
-[![Video page](manual/img/VideoPage.png)](manual/img/VideoPage.png)
+![Video page](manual/img/VideoPage.png)
 
 ## Downloading Captions
 
