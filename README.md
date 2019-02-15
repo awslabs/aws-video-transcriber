@@ -79,7 +79,7 @@ Amazon S3 Storage costs:
 
 	$0.023 per GB per month
 
-Pricing is quoted per minute but Amazon Transcribe charges per second. Prices are subject to change. For full details, see the pricing webpage for each AWS service for the region you deploy the solution to.
+Pricing is quoted per minute but Amazon Transcribe actually charges per second. Prices are subject to change. For full details, see the pricing webpage for each AWS service for the region you deploy the solution to.
 
 [Amazon Transcribe Pricing](https://aws.amazon.com/transcribe/pricing/)
 
@@ -89,28 +89,28 @@ Pricing is quoted per minute but Amazon Transcribe charges per second. Prices ar
 
 ## Launching the Website
 
-Once you have deployed your stack the link to your new site is displayed in the *CloudFormation Outputs tab* along with your API Key. Click the *Website* link to access the site.
+Once you have deployed your stack, the link to your website is displayed in the *CloudFormation Outputs tab* along with your API Key. Click the *Website* link to access the site.
 
 ![CloudFormation outputs](manual/img/CloudFormationParameters.png)
 
 ## Entering your API key
 
-On the home page there a *Enter API Key* button used for entering your API key, locate your API key using the Outputs tab of the CloudFormation service after deployment and add it in to enable the other solution pages.
+On the home page there an *Enter API Key* button used for entering your API key, locate your API key using the *Outputs* tab of the CloudFormation service after deployment and enter it.
 
 ![Home page and API Key](manual/img/HomePage.png)	
 ## Creating a Vocabulary
 
-After deployment and before uploading videos, log into your site, click on the Vocabulary tab and create a custom vocabulary with at least one term. You might consider using:
+After deployment and before uploading videos, log into your site, click on the *Vocabulary* page and create a custom vocabulary with at least one term. You might consider using:
 
 	A.W.S.
 	
-You can enter up to 50kb of custom vocacaulary terms, if you get a failure to save please read the [Amazon Transcribe formatting guide for custom vocabularies](https://github.com/awsdocs/amazon-transcribe-developer-guide/blob/master/doc_source/custom-vocabulary-files.md).
+You can enter up to 50kb of custom vocabulary terms, if you get a failure to save please read the [Amazon Transcribe formatting guide for custom vocabularies](https://github.com/awsdocs/amazon-transcribe-developer-guide/blob/master/doc_source/custom-vocabulary-files.md).
 	
 ![Vocabulary page](manual/img/VocabularyPage.png)
 
 You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
 
-After saving the vocabulary, Transcribe needs to train agianst the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocaulary is not in a ready state.
+After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocaulary is not in a ready state.
 	
 ## Creating Tweaks
 
@@ -124,7 +124,7 @@ Tweaks are used to transform common transcription issues you might find and also
 
 ## Listing Videos
 
-The Videos page shows the current videos in the system and organsises them in tabs based on their processing status. You can search for videos here, trigger reprocessing, delete videos and download captions for completed videos.
+The Videos page shows the current videos in the system and organsises them into tabs based on their processing status. You can search for videos here, start the cpation editing process, trigger reprocessing, delete videos and download captions for completed videos.
 
 ![Videos page](manual/img/VideosPage.png)
 
@@ -134,7 +134,7 @@ You can upload videos from any browser and launching the site on mobile allows u
 
 Click on the *Upload Videos...* button to start the video upload process.
 
-New AWS accounts have a service limit of 10 concurrent transcription jobs, this limit can be raised with an AWS service ticket. Videos launched above this threshold will fail and can be relaunched from the error tab.
+New AWS accounts have a service limit of 10 concurrent transcription jobs, this limit can be raised with an AWS service ticket. Videos launched above this threshold will fail and can be relaunched from the *Errored tab*.
 
 ## Editing Captions
 
