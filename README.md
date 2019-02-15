@@ -29,7 +29,9 @@ This library is licensed under the Apache 2.0 License.
 
 Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elastic Transcoder. Click a button below to deploy to your region of choice.
 
-When launching the template, you will need to enter a stack name and an API key. The API Key is used to provide to users access to the system. You must provide astrong, random, alpha-numeric API key between 20 and 70 characters long.
+When launching the template, you will need to enter a stack name, an API key and choose a locale that Transcribe will use to process your video's audio data. 
+
+**The API Key is used to provide to users access to the system. You must provide a strong, random, alpha-numeric API key between 20 and 70 characters long!**
 
 ### One click deployment
 

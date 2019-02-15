@@ -4387,9 +4387,7 @@
     },
     "APIKey": {
       "Type": "String",
-      "MinLength": 20,
-      "MaxLength": 70,
-      "AllowedPattern": "[a-zA-Z0-9]*",
+      "AllowedPattern": "[a-zA-Z0-9]{20,70}",
       "ConstraintDescription": "must only contain letters (uppercase and lowercase) and numbers min length: 20 max length: 70",
       "Default": "JustAnApiKeyJustAnApiKey",
       "Description": "An API key to use for accessing the website"
