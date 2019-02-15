@@ -33,7 +33,7 @@ When launching the template, you will need to enter a stack name and an API key.
 
 ### One click deployment
 
-| Region | Region Id | Deploy now |
+| AWS Region Name | AWS Region Id | Deploy Solution |
 | ---- | ----  | ---- |
 | US East (N. Virginia) | us-east-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-east-1&stackName=&templateURL=https://s3.us-east-1.amazonaws.com/aws-captions-deployment-us-east-1/cloudformation/aws-video-transcriber-cloudformation.json) |
 | US West (N. California) | us-west-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-west-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-west-1&stackName=&templateURL=https://s3.us-west-1.amazonaws.com/aws-captions-deployment-us-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
@@ -45,27 +45,21 @@ When launching the template, you will need to enter a stack name and an API key.
 
 [![Home page and API Key](manual/img/StackParameters.png)](manual/img/StackParameters.png)
 
-### Accessing parameters after deployment
-
-After launching the parameters will also provide the link to access the deployed website and the API key you entered above.
-
 ### Deploying to multiple regions
 
 IAM roles and policies are global and are prefixed with the stack name, if you get conflicts, simply use a different stack name in each deployed region.
 
 ## Removing the Solution
 
-To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied to video, audio and transcribe buckets.
+To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied the video, audio and transcribe buckets created as part of the stack.
 
-*NOTE: after remove the stack occasionally the CloudWatch log for the Lambda custom resource is left behind and must be manually removed before deploying again.*
+*NOTE: after remove the stack occasionally the CloudWatch log group for the Lambda custom resource is left behind and must be manually removed before redeploying.*
 
 ## Solution Pricing
 
-You are responsible for the cost of the AWS services used while running the video transcription solution. As of the date of publication, the cost for running this solution in the US East (N.
-Virginia) Region is shown in the table below. 
+You are responsible for the cost of the AWS services used while running the video transcription solution. As of the date of publication, the costs for running this solution in the US East (N. Virginia) Region are shown in the table below. 
 
-The cost depends on the number of length of uploaded videos, and does not include data transfer fees, which will vary
-depending on the number of users and frequency of viewing.
+The cost depends on the number of and length of uploaded videos, and does not include data transfer fees, which will vary depending on the number of users and frequency of viewing.
 
 You will also be charged for stored video and audio files in S3.
 		
@@ -84,37 +78,38 @@ Transcribe costs:
 Amazon S3 Storage costs:
 
 	$0.023 per GB per month
-	
+
+Pricing is quoted per minute but Amazon Transcribe charges per second. Prices are subject to change. For full details, see the pricing webpage for each AWS service for the region you deploy the solution to.
+
 [Amazon Transcribe Pricing](https://aws.amazon.com/transcribe/pricing/)
 
 [Amazon Elastic Transcoder Pricing](https://aws.amazon.com/elastictranscoder/pricing/)
 
 [Amazon S3 Pricing](https://aws.amazon.com/s3/pricing/)
 
-Pricing is quoted per minute but Amazon Transcribe charges per second. Prices are subject to
-change. For full details, see the pricing webpage for each AWS service for the region you deploy the solution to.
-
 ## Launching the Website
 
-Once you have deployed your stack the link to your new site is displayed in the *CloudFormation Outputs tab* along with your API Key.
+Once you have deployed your stack the link to your new site is displayed in the *CloudFormation Outputs tab* along with your API Key. Click the *Website* link to access the site.
 
 [![CloudFormation outputs](manual/img/CloudFormationParameters.png)](manual/img/CloudFormationParameters.png)
 
 ## Entering your API key
 
-On the home page there is a button for entering your API key, locate your API key using the parameters tab of the CloudFormation service after deployment.
+On the home page there a *Enter API Key* button used for entering your API key, locate your API key using the Outputs tab of the CloudFormation service after deployment and add it in to enable the other solution pages.
 
 [![Home page and API Key](manual/img/HomePage.png)](manual/img/HomePage.png)
 	
 ## Creating a Vocabulary
 
-After deployment log into your site, click on the Vocabulary tab and create a custom vocabulary with at least one term. You might consider using:
+After deployment and before uploading videos, log into your site, click on the Vocabulary tab and create a custom vocabulary with at least one term. You might consider using:
 
 	A.W.S.
 	
 You can enter up to 50kb of custom vocacaulary terms, if you get a failure to save please read the [Amazon Transcribe formatting guide for custom vocabularies](https://github.com/awsdocs/amazon-transcribe-developer-guide/blob/master/doc_source/custom-vocabulary-files.md).
 	
 [![Vocabulary page](manual/img/VocabularyPage.png)](manual/img/VocabularyPage.png)
+
+You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
 	
 ## Creating Tweaks
 
@@ -134,9 +129,9 @@ The Videos page shows the current videos in the system and organsises them in ta
 
 ## Uploading Videos
 
-You cna upload videos from any browser and launching the site on mobile allows users to capture and upload videos directly from a mobile phone.
+You can upload videos from any browser and launching the site on mobile allows users to capture and upload videos directly from a mobile phone.
 
-Click on the *Upload Videos...* button to start the process.
+Click on the *Upload Videos...* button to start the video upload process.
 
 ## Editing Captions
 
