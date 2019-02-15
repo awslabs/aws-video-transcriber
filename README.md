@@ -105,7 +105,7 @@ You can enter up to 50kb of custom vocabulary terms, if you get a failure to sav
 
 You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
 
-After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocaulary is not in a ready state.
+After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocabulary is not in a ready state.
 	
 ## Creating Tweaks
 
@@ -119,7 +119,7 @@ Tweaks are used to transform common transcription issues you might find and also
 
 ## Listing Videos
 
-The Videos page shows the current videos in the system and organsises them into tabs based on their processing status. You can search for videos here, start the cpation editing process, trigger reprocessing, delete videos and download captions for completed videos.
+The Videos page shows the current videos in the system and organizes them into tabs based on their processing status. You can search for videos here, start the caption editing process, trigger reprocessing, delete videos and download captions for completed videos.
 
 ![Videos page](manual/img/VideosPage.png)
 
@@ -133,7 +133,7 @@ New AWS accounts have a service limit of 10 concurrent transcription jobs, this 
 
 ## Editing Captions
 
-Once your video has been transcribed you can tweak the captions to get things perfect. When first viewing the video, the system starts in a mode that pauses between each caption block, toggle this mode to view the video continously.
+Once your video has been transcribed you can tweak the captions to get things perfect. When first viewing the video, the system starts in a mode that pauses between each caption block, toggle this mode to view the video continuously.
 
 You can also edit the video name and description here to assist in searching for the video and organising your video collection.
 
@@ -145,7 +145,7 @@ The *Auto save* function flushes edits regularly to DynamoDB.
 
 ## Downloading Captions
 
-You can download completed cpations from the [Caption editing page](#editing-captions) or from the table on the completed videos tab.
+You can download completed captions from the [Caption editing page](#editing-captions) or from the table on the completed videos tab.
 
 ## Troubleshooting Deployment
 
@@ -153,13 +153,17 @@ You can download completed cpations from the [Caption editing page](#editing-cap
 
 IAM roles and policies are global and are prefixed with the stack name, if you get IAM role or policy conflicts, simply use a different stack name in each deployed region.
 
+### Deploying multiple solution instances to a single AWS region
+
+This is not currently supported but will be considered if there is customer demand. It will require all resources to be prefixed with the CloudFormation AWS::StackName pseudo parameter.
+
 ### Invalid API Key
 
 If you see the following error while launching your CloudFormation stack:
 
 ![Invalid API Key](manual/img/InvalidKey.png)
 
-Please verify the API Key you provided is between 20 and 70 characters long and only contains AlphaNumeric characters, it uses the following regex:
+Please verify the API Key you provided is between 20 and 70 characters long and only contains Alpha-Numeric characters, it uses the following regex:
 
 	[a-zA-Z0-9]{20,70}
 	
@@ -177,7 +181,7 @@ It can remain after a stack removal due to CloudWatch log flushing recreating th
 
 ### Custom Resource Creation Failures
 
-Please raise a GitHub Issue with the the error reported in the stack and we will investigate.
+Please raise a GitHub Issue with the error reported in the stack and we will investigate.
 
 ## Removing the Solution
 
