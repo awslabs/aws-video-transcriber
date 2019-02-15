@@ -236,7 +236,7 @@
         "FunctionName": {
           "Ref": "ExtractAudioLambdaFunction"
         },
-        "CodeSha256": "KW1Hb6+fh8hObJ5V6owbkgHqkIMr/ydY+PGQDlkCbUA=",
+        "CodeSha256": "oUB/BRh0AiaLBTNEFGgKcZRYol1YKz7yFhqUkqJnekU=",
         "Description": "Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos"
       }
     },

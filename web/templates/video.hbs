@@ -51,7 +51,7 @@
 							<i class="fa fa-step-forward fa-sm"></i>
 						</button>
 						<button type="button" class="btn btn-secondary 
-							media-button" 
+							media-button selected" 
 							onclick="repeatButton()" title="Pause after each caption">
 							<i id="repeatIcon" class="fa fa-redo fa-sm"></i>
 						</button>
@@ -318,13 +318,11 @@
 		{
 			if (video.paused) 
 			{
-				videoProgress.disabled = false;
 				$('#playPauseIcon').removeClass('fa-pause');
 				$('#playPauseIcon').addClass('fa-play');
 			}
 			else
 			{
-				videoProgress.disabled = true;
 				$('#playPauseIcon').removeClass('fa-play');
 				$('#playPauseIcon').addClass('fa-pause');		
 			}
