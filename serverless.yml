@@ -612,7 +612,13 @@ resources:
                 - transcribe:ListVocabularies
                 - transcribe:DeleteTranscriptionJob
               Resource: 
-                - '*'        
+                - '*'
+            - Effect: Allow
+              Action:
+                - 's3:GetObject'
+              Resource: 
+                - !Join [ '', [ 'arn:aws:s3:::aws-captions-deployment-', !Ref AWS::Region ]]
+                - !Join [ '', [ 'arn:aws:s3:::aws-captions-deployment-', !Ref AWS::Region, '/*' ]]
             - Effect: Allow
               Action:
                 - 's3:*'

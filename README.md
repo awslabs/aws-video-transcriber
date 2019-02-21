@@ -105,7 +105,7 @@ You can enter up to 50kb of custom vocabulary terms, if you get a failure to sav
 
 You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
 
-After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. you are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocabulary is not in a ready state.
+After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. You are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocabulary is not in a ready state.
 	
 ## Creating Tweaks
 

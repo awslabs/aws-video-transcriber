@@ -3882,6 +3882,37 @@
             {
               "Effect": "Allow",
               "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::aws-captions-deployment-",
+                      {
+                        "Ref": "AWS::Region"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::aws-captions-deployment-",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },           
+            {
+              "Effect": "Allow",
+              "Action": [
                 "s3:*"
               ],
               "Resource": [
