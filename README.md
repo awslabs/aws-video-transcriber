@@ -1,9 +1,8 @@
 ## AWS Video Transcriber
 
-This solution provides a serverless, single page web application and set of supporting API Gateway end points and backing Lambda functions which allow users to upload videos into S3 and compute and edit closed captions.
+This solution provides a serverless, single page web application and set of supporting Amazon API Gateway end points and backing AWS Lambda functions which allow users to upload videos into Amazon S3 and compute and edit closed captions.
 
 ## On this Page
-- [License](#license)
 - [Architecture](#architecture)
 - [Deploying the Solution](#deploying-the-solution)
 - [Solution Pricing](#solution-pricing)
@@ -19,10 +18,7 @@ This solution provides a serverless, single page web application and set of supp
   - [Troubleshooting Deployment](#troubleshooting-deployment)
   - [Removing the Solution](#removing-the-solution)
   - [Troubleshooting Solution Removal](#troubleshooting-solution-removal)
-
-## License
-
-This library is licensed under the Apache 2.0 License. 
+- [License](#license)
 
 ## Architecture
 
@@ -204,4 +200,8 @@ CloudFormation will refuse to remove non-empty [S3 buckets](https://s3.console.a
 	prod-aws-captions-transcribe-<region>-<accountId>
 
 If you get this failure, empty the buckets using the [S3 console](https://s3.console.aws.amazon.com/s3/home) and try deleting the stack again.
+
+## License
+
+This library is licensed under the Apache 2.0 License. 
 	
