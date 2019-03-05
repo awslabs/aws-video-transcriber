@@ -14,11 +14,12 @@ This solution provides a serverless, single page web application and set of supp
 - [Uploading Videos](#uploading-videos) 
 - [Editing Captions](#editing-captions)
 - [Downloading Captions](#downloading-captions)
+- [License](#license)
 - Support Appendix
   - [Troubleshooting Deployment](#troubleshooting-deployment)
   - [Removing the Solution](#removing-the-solution)
   - [Troubleshooting Solution Removal](#troubleshooting-solution-removal)
-- [License](#license)
+
 
 ## Architecture
 
@@ -139,6 +140,10 @@ The *Auto save* function flushes edits regularly to DynamoDB.
 
 ![Video page](manual/img/VideoPage.png)
 
+## License
+
+This library is licensed under the Apache 2.0 License.
+
 ## Downloading Captions
 
 You can download completed captions from the [Caption editing page](#editing-captions) or from the table on the completed videos tab.
@@ -200,8 +205,3 @@ CloudFormation will refuse to remove non-empty [S3 buckets](https://s3.console.a
 	prod-aws-captions-transcribe-<region>-<accountId>
 
 If you get this failure, empty the buckets using the [S3 console](https://s3.console.aws.amazon.com/s3/home) and try deleting the stack again.
-
-## License
-
-This library is licensed under the Apache 2.0 License. 
-	

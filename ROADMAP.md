@@ -1,20 +1,28 @@
 # List of requested features
 
+The following features have been requested by cusomers and Solution Architects. They are listed here in no particular order. 
+
+If you have an urgent feature request or find a bug, please raise it on GitHub.
+
 - Support translation of captions
 
 - Support multiple custom dictionaries in multiple locales
-
-- One click cloudformation deploy and scripting
 
 - Upload MP3 files (podcasts)
 
 - Support existing libraries of videos in S3 or HTTP(S) accessible
 
-- Really only stretch goal would be like an API to add videos, or a way to put a list of HTTP addresses to video files, or mp3 podcast files
+- API to add videos, or a way to put a list of HTTP addresses to video files, or mp3 podcast files
 
-- Turn on step jumping in video by default
-
-- 480p instead of 720p?
+- 480p default re-encode instead of 720p?
 
 - Expert view of all captions (https://www.rev.com)
+
+- Support word confidence hinting in UI and back end
+
+- Support adding sound effects and speaker labels
+
+- Export of SRT files
+
+- Landing page on launch to select vocabulary / language to use for transcription
 

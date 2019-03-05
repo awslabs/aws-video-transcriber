@@ -1,7 +1,7 @@
 
 ## TODO
 
-* [ ] Fix dynamo bugs on restart processing
+* [x] Fix dynamo bugs on restart processing
 * [ ] Empty all buckets and add depends on buckets to custom resource
 * [ ] Create Custom Vocabulary - in custom resource
 * [ ] Create transcoder pipelines - in custom resource
@@ -11,6 +11,7 @@
 * [x] Pick locale / vocabulary
 * [ ] Expert mode see all captions and edit?
 * [ ] Validate caption times on save
+* [ ] Word confidence
 * [ ] Blog
 * [x] Private GitHub repository
 * [x] Preserve name and description during re-runs
