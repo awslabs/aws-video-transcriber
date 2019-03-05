@@ -125,7 +125,6 @@ async function transcribeAudio(params)
     			MediaFileUri: params.mediaFileUrl
   			},
   			MediaFormat: "mp3",
-  			MediaSampleRateHertz: 44100,
   			TranscriptionJobName: params.videoId,
   			OutputBucketName: params.outputBucket,
  			Settings: 
