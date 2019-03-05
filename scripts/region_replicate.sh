@@ -18,7 +18,7 @@ do
    # aws s3 rb --region $region --profile transcribe "s3://$targetBucket" 
 
    aws s3 mb --region $region --profile transcribe "s3://$targetBucket" 
-   # aws s3 rm --recursive --profile transcribe "s3://$targetBucket"
+   aws s3 rm --recursive --profile transcribe "s3://$targetBucket"
    aws s3 sync "s3://$sourceBucket" "s3://$targetBucket" --acl public-read --profile transcribe
 
 done
