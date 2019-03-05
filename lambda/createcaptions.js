@@ -24,40 +24,40 @@ var s3 = new AWS.S3();
  * and saves them back into the captions table
  */
 exports.handler = async (event, context, callback) => {
-	
-	console.log("[INFO] handling event: %j", event);
+    
+    console.log("[INFO] handling event: %j", event);
 
     try
     {
-		var getObjectParams = {
-			Bucket: process.env.INPUT_BUCKET,
-			Key: decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "))
-		};
+        var getObjectParams = {
+            Bucket: process.env.INPUT_BUCKET,
+            Key: decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "))
+        };
 
-		var transcribeFile = path.basename(getObjectParams.Key);
-		var videoId = transcribeFile.substring(0, transcribeFile.length - 5);
+        var transcribeFile = path.basename(getObjectParams.Key);
+        var videoId = transcribeFile.substring(0, transcribeFile.length - 5);
 
-		console.log("[INFO] found video id: " + videoId);
+        console.log("[INFO] found video id: " + videoId);
 
-		var getObjectResponse = await s3.getObject(getObjectParams).promise();
+        var getObjectResponse = await s3.getObject(getObjectParams).promise();
 
-		var transcribeResponse = JSON.parse(getObjectResponse.Body.toString());
+        var transcribeResponse = JSON.parse(getObjectResponse.Body.toString());
 
-		console.log("[INFO] successfully loaded and parsed Transcribe result");
+        console.log("[INFO] successfully loaded and parsed Transcribe result");
 
-		var tweaks = await getTweaks();
+        var tweaks = await getTweaks();
 
-		console.log("[INFO] loaded tweaks: %j", tweaks);
+        console.log("[INFO] loaded tweaks: %j", tweaks);
 
-		var captions = computeCaptions(tweaks, transcribeResponse);
+        var captions = computeCaptions(tweaks, transcribeResponse);
 
-		console.log("[INFO] successfully made captions: %j", captions);
+        console.log("[INFO] successfully made captions: %j", captions);
 
-		await saveCaptions(videoId, captions);
+        await saveCaptions(videoId, captions);
 
-		await updateDynamoDB(videoId, "READY", "Ready for editing");
+        await updateDynamoDB(videoId, "READY", "Ready for editing");
         
-        callback(null, "Successfully computed captions");		
+        callback(null, "Successfully computed captions");       
     }
     catch (error)
     {
@@ -72,29 +72,29 @@ exports.handler = async (event, context, callback) => {
  */
 async function saveCaptions(videoId, captions)
 {
-	try
-	{
-	    var putParams = {
-	        TableName: process.env.DYNAMO_CAPTION_TABLE,
-	        Item: 
-	        {
-	            "videoId" : {"S": videoId},
-	            "captions": { "S": JSON.stringify(captions)},
-	            "processedDate":  {"S": new Date().toISOString() }
-	        }
-	    };
+    try
+    {
+        var putParams = {
+            TableName: process.env.DYNAMO_CAPTION_TABLE,
+            Item: 
+            {
+                "videoId" : {"S": videoId},
+                "captions": { "S": JSON.stringify(captions)},
+                "processedDate":  {"S": new Date().toISOString() }
+            }
+        };
 
-	    console.log("[INFO] saving captions using request: %j", putParams);  
-	    
-	    var putItemData = await dynamoDB.putItem(putParams).promise();
-	    
-	    console.log("[INFO] got response from Dyanmo: %j", putItemData);
-	}
-	catch (error)
-	{
+        console.log("[INFO] saving captions using request: %j", putParams);  
+        
+        var putItemData = await dynamoDB.putItem(putParams).promise();
+        
+        console.log("[INFO] got response from Dyanmo: %j", putItemData);
+    }
+    catch (error)
+    {
         console.log("[ERROR] Failed to save captions", error);
         throw error;
-	}
+    }
 
 }
 
@@ -103,8 +103,8 @@ async function saveCaptions(videoId, captions)
  */
 function computeCaptions(tweaks, transcribeResponse)
 {
-	var startTime = 0.0;
-	var endTime = 0.0;
+    var startTime = 0.0;
+    var endTime = 0.0;
     var maxLength = 50;
     var wordCount = 0;
     var maxWords = 12;
@@ -116,38 +116,39 @@ function computeCaptions(tweaks, transcribeResponse)
 
     for (var i in tweaks.tweaks)
     {
-    	var tweak = tweaks.tweaks[i];
+        var tweak = tweaks.tweaks[i];
 
-    	var splits = tweak.split("=");
-    	if (splits.length == 2)
-    	{
-    		tweaksMap.set(splits[0].toLowerCase().trim(), splits[1].trim());
-    	}
+        var splits = tweak.split("=");
+        if (splits.length == 2)
+        {
+            tweaksMap.set(splits[0].toLowerCase().trim(), splits[1].trim());
+        }
     }
 
     for (var i in transcribeResponse.results.items) {
 
-    	var item = transcribeResponse.results.items[i];
+        var item = transcribeResponse.results.items[i];
 
-		var isPunctuation = (item.type == "punctuation");
+        var isPunctuation = (item.type == "punctuation");
 
-    	if (!caption)
-    	{
-    		// Start of a line with punction, skip it
-	    	if (isPunctuation)
-	    	{
-	    		continue;
-	    	}
+        if (!caption)
+        {
+            // Start of a line with punction, skip it
+            if (isPunctuation)
+            {
+                continue;
+            }
 
-	    	caption = {
-	    		start: Number(item.start_time),
-	    		caption: ""
-	    	};
-	    }
+            caption = {
+                start: Number(item.start_time),
+                caption: "",
+                wordConfidence: []
+            };
+        }
 
-	    if (!isPunctuation)
-    	{
-    		endTime = Number(item.end_time);
+        if (!isPunctuation)
+        {
+            endTime = Number(item.end_time);
 
             if (startTime == 0.0)
             {
@@ -160,17 +161,28 @@ function computeCaptions(tweaks, transcribeResponse)
 
         /**
          * Process tweaks
- 		 * TODO handle multiple alternatives
+         * TODO handle multiple alternatives if these ever appear
          */
         var text = item.alternatives[0].content;
+        var confidence = item.alternatives[0].confidence;
         var textLower = text.toLowerCase();
 
         if (tweaksMap.has(textLower))
         {
-        	text = tweaksMap.get(textLower);
+            text = tweaksMap.get(textLower);
         }
 
         caption.caption += text;
+
+        /**
+         * Track raw word confidence
+         */
+        caption.wordConfidence.push(
+            {
+                word: text.toLowerCase(),
+                confidence: confidence
+            }
+        );
 
         /**
          * Count words
@@ -182,10 +194,10 @@ function computeCaptions(tweaks, transcribeResponse)
          */
         if (wordCount >= maxWords || caption.caption.length >= maxLength)
         {
-        	caption.end = endTime;
-        	captions.push(caption);
-        	wordCount = 0;
-        	caption = null;
+            caption.end = endTime;
+            captions.push(caption);
+            wordCount = 0;
+            caption = null;
         }
     }
 
@@ -208,7 +220,7 @@ function computeCaptions(tweaks, transcribeResponse)
  */
 async function getTweaks()
 {
-	try
+    try
     {
 
         var getItemParams = {
@@ -232,7 +244,7 @@ async function getTweaks()
         else
         {
             return { 
-            	"tweaks": [ ]
+                "tweaks": [ ]
             };  
         }        
     }
@@ -240,7 +252,7 @@ async function getTweaks()
     {
         console.log("Failed to load tweaks from DynamoDB", error);
         throw error;
-    }	
+    }   
 }
 
 
