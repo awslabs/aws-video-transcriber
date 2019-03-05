@@ -319,7 +319,7 @@
         "FunctionName": {
           "Ref": "TranscribeAudioLambdaFunction"
         },
-        "CodeSha256": "4NiqrvCSxnjoDc/B0zxMewT4LK04htVQ7hyFR6KMmJ4=",
+        "CodeSha256": "J+kFqHr8luLRH673/HKv/FC3l69Rho1MFPr3wLF5OSk=",
         "Description": "Uses Transcribe to extract text from audio"
       }
     },
