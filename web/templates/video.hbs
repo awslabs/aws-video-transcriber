@@ -34,7 +34,7 @@
 
 				<div style="display:none;" id="videoControls">
 					<div class="slide-container">
-						<input type="range" min="0" max="0" value="0" class="slider" id="videoProgress" disabled="true"/>
+						<input type="range" min="0" max="0" value="0" class="slider" id="videoProgress"/>
 					</div>
 
 					<div class="text-center">
@@ -86,11 +86,15 @@
 							<label for="currentTime">Caption timing</label>
 							<input type="text" class="form-control input-sm" id="startTime" placeholder="Start time" readonly/>
 							<input type="text" class="form-control input-sm" id="endTime" placeholder="End time" readonly/>
-						</div>	
+						</div>							
 						<div class="form-group">
 							<label for="caption">Caption</label>
 							<textarea rows="3" class="form-control input-sm" id="caption" placeholder="Caption text"/>
 						</div>
+						<div class="form-group">
+							<label for="confidenceHighlight">Highlight words with confidence less than</label>
+							<input type="text" class="form-control input-sm" id="confidenceHighlight" placeholder="Confidence highlight" value="0.75"/>
+						</div>						
 						<div class="form-group float-right">
 							<input type="checkbox" name="autosave" id="autosave" checked>
 								Auto save
@@ -178,6 +182,7 @@
 		var speedOverlay = document.getElementById("speedOverlay");
 		var autosave = document.getElementById("autosave");
 		var saveButton = document.getElementById("saveButton");
+		var confidenceHighlight = document.getElementById("confidenceHighlight");
 
 		var duration = 0;
 		var progressMax = 10000;
@@ -185,6 +190,7 @@
 		var pausePerCaption = true;
 		var playSpeed = 1.0;
 		var dirty = false;
+		var confidence = 0.75;
 
 		toastr.success('Loading video and captions...');
 
@@ -215,13 +221,44 @@
 		}
 
 		function renderCaption() {
-			captionOverlay.innerHTML = captionData[captionIndex].caption;
+
+			var final = captionData[captionIndex].caption.replace(/([\w'-]+)/g, function(m) {
+				var lower = m.toLowerCase();
+				for (var i = 0; i < captionData[captionIndex].wordConfidence.length; i++)
+				{
+					if (captionData[captionIndex].wordConfidence[i].w === lower &&
+						captionData[captionIndex].wordConfidence[i].c < confidence)
+					{
+						return '<mark>' + m + '</mark>';
+					}
+				}
+
+			    return m;
+			});
+
+			captionOverlay.innerHTML = final;
 		}
 
 		function updateCaptionEditor() {
 			captionEdit.value = captionData[captionIndex].caption;
 			startTimeEdit.value = captionData[captionIndex].start;
 			endTimeEdit.value = captionData[captionIndex].end;
+		}
+
+		confidenceHighlight.oninput = function() {
+
+			confidence = parseFloat(this.value);
+
+			if (confidence == NaN)
+			{
+				confidence = 0.75;
+			}
+			else
+			{
+				console.log('Got value new confidence: ' + confidence);
+			}
+			
+			renderCaption();
 		}
 
 		captionEdit.oninput = function() {
@@ -405,10 +442,7 @@
 
 		function stepBackward(seek, autoPlay)
 		{
-			if (captionData[captionIndex].start == video.currentTime)
-			{
-				captionIndex--;
-			}
+			captionIndex--;
 
 			if (captionIndex < 0)
 			{

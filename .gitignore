@@ -4,3 +4,4 @@ package-lock.json
 .serverless/
 aws-captions-outputs.json
 site_config.json
+data/
