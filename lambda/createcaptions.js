@@ -177,12 +177,15 @@ function computeCaptions(tweaks, transcribeResponse)
         /**
          * Track raw word confidence
          */
-        caption.wordConfidence.push(
-            {
-                word: text.toLowerCase(),
-                confidence: confidence
-            }
-        );
+        if (!isPunctuation)
+        {
+            caption.wordConfidence.push(
+                {
+                    w: text.toLowerCase(),
+                    c: parseFloat(confidence)
+                }
+            );            
+        }
 
         /**
          * Count words
