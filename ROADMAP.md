@@ -22,7 +22,9 @@ If you have an urgent feature request or find a bug, please raise it on GitHub.
 
 - Support adding sound effects and speaker labels
 
-- Export of SRT files
+- Export of SRT files - done
+
+- Detect silence and split captions - defect raised
 
 - Landing page on launch to select vocabulary / language to use for transcription
 

@@ -19,7 +19,7 @@ var dynamoDB = new AWS.DynamoDB();
 var s3 = new AWS.S3();
 
 /**
- * Fetches captions in WEBVTT format
+ * Fetches captions in WEBVTT or SRT formats
  */
 exports.handler = async (event, context, callback) => {
 
@@ -27,6 +27,21 @@ exports.handler = async (event, context, callback) => {
 
     try
     {
+        var format = "webvtt";
+        var contentType = 'text/vtt';
+
+        if (event.queryStringParameters && event.queryStringParameters.format)
+        {
+            format = event.queryStringParameters.format;
+        }
+
+        if (format === 'srt')
+        {
+            contentType = 'text/srt';
+        }
+
+        console.log('[INFO] exporting in: %s format', format);
+
         var videoId = event.pathParameters.videoId;
 
         var getParams = {
@@ -41,31 +56,25 @@ exports.handler = async (event, context, callback) => {
         var getResponse = await dynamoDB.getItem(getParams).promise();
         console.log("[INFO] getItem response from Dynamo: %j", getResponse);
 
+
         if (getResponse.Item)
         {
             var captions = JSON.parse(getResponse.Item.captions.S);
 
-            var webvtt = 'WEBVTT\n\n';
-
-            for (var i in captions)
-            {
-                var caption = captions[i];
-
-                webvtt += formatTime(caption.start) + ' --> ' + formatTime(caption.end) + '\n';
-                webvtt += caption.caption + '\n\n';
-            }
+            var result = await exportCaptions(format, captions);
 
             var responseHeaders = {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Credentials': true,
-                'Content-Type': 'text/vtt'
+                'Content-Type': contentType
             };
             const response = {
                 statusCode: 200,
                 headers: responseHeaders,
-                body: webvtt
+                body: result
             };
             console.log('[INFO] response: %j', response);
+
             callback(null, response);
         }
         else
@@ -91,10 +100,49 @@ exports.handler = async (event, context, callback) => {
     }
 };
 
+async function exportCaptions(format, captions)
+{
+    if (format === 'webvtt')
+    {
+        var webvtt = 'WEBVTT\n\n';
+
+        for (var i in captions)
+        {
+            var caption = captions[i];
+
+            webvtt += formatTimeWEBVTT(caption.start) + ' --> ' + formatTimeWEBVTT(caption.end) + '\n';
+            webvtt += caption.caption + '\n\n';
+        }
+
+        return webvtt;
+    }
+    else if (format === 'srt') 
+    {
+        var srt = '';
+
+        var index = 1;
+
+        for (var i in captions)
+        {
+            var caption = captions[i];
+            srt += index + '\n';
+            srt += formatTimeSRT(caption.start) + ' --> ' + formatTimeSRT(caption.end) + '\n';
+            srt += caption.caption + '\n\n';
+            index++;
+        }
+
+        return srt;
+    }
+    else
+    {
+        throw new Error("Invalid format requested: " + format);
+    }
+}
+
 /**
- * Format a timestamp in HH:MM:SS.mmm
+ * Format a VTT timestamp in HH:MM:SS.mmm
  */
-function formatTime(timeSeconds)
+function formatTimeWEBVTT(timeSeconds)
 {
     const ONE_HOUR = 60 * 60;
     const ONE_MINUTE = 60;
@@ -109,5 +157,26 @@ function formatTime(timeSeconds)
     return (hours + '').padStart(2, '0') + ':' +
             (minutes + '').padStart(2, '0') + ':' +
             (seconds + '').padStart(2, '0') + '.' +
-            Math.floor(millis * 1000);
+            (Math.floor(millis * 1000) + '').padStart(3, '0');
+}
+
+/**
+ * Format an SRT timestamp in HH:MM:SS,mmm
+ */
+function formatTimeSRT(timeSeconds)
+{
+    const ONE_HOUR = 60 * 60;
+    const ONE_MINUTE = 60;
+    var hours = Math.floor(timeSeconds / ONE_HOUR);
+    var remainder = timeSeconds - (hours * ONE_HOUR);
+    var minutes = Math.floor(remainder / 60);
+    remainder = remainder - (minutes * ONE_MINUTE);
+    var seconds = Math.floor(remainder);
+    remainder = remainder - seconds;
+    var millis = remainder;
+
+    return (hours + '').padStart(2, '0') + ':' +
+            (minutes + '').padStart(2, '0') + ':' +
+            (seconds + '').padStart(2, '0') + ',' +
+            (Math.floor(millis * 1000) + '').padStart(3, '0');
 }
