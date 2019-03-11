@@ -237,10 +237,10 @@ function reprocessVideo(videoId)
 /**
  * Downloads captions in WEBVTT format
  */
-function downloadCaptions(videoId, videoName)
+function downloadCaptionsVTT(videoId, videoName)
 {
-	var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId;
-	console.log('[INFO] downloading captions: ' + api);
+	var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=webvtt';
+	console.log('[INFO] downloading WEBVTT captions: ' + api);
 	let axiosConfig = {
 		headers: {
 			'Content-Type': 'application/json;charset=UTF-8',
@@ -250,15 +250,43 @@ function downloadCaptions(videoId, videoName)
 	axios.get(api, axiosConfig)
 	.then(function (response) 
 	{
-		toastr.success('Generated captions');
+		toastr.success('Generated WEBVTT captions');
 		var blob = new Blob([response.data], 
 			{type: "text/vtt;charset=utf-8"});
 		saveAs(blob, videoName + '.vtt');
 	})
 	.catch(function (error) 
 	{
-		console.log('[ERROR] error while generating captions" ' + error);
-		toastr.error('Failed to generate captions');
+		console.log('[ERROR] error while generating WEBVTT captions" ' + error);
+		toastr.error('Failed to generate WEBVTT captions');
+	});
+}
+
+/**
+ * Downloads captions in SRT format
+ */
+function downloadCaptionsSRT(videoId, videoName)
+{
+	var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=srt';
+	console.log('[INFO] downloading SRT captions: ' + api);
+	let axiosConfig = {
+		headers: {
+			'Content-Type': 'application/json;charset=UTF-8',
+			'X-Api-Key': localStorage.apiKey
+	  	}
+	};
+	axios.get(api, axiosConfig)
+	.then(function (response) 
+	{
+		toastr.success('Generated SRT captions');
+		var blob = new Blob([response.data], 
+			{type: "text/srt;charset=utf-8"});
+		saveAs(blob, videoName + '.srt');
+	})
+	.catch(function (error) 
+	{
+		console.log('[ERROR] error while generating SRT captions" ' + error);
+		toastr.error('Failed to generate SRT captions');
 	});
 }
 

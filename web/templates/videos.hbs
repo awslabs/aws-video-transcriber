@@ -168,7 +168,16 @@
 					<tbody>
 					{{#each completedVideos}}
 					<tr>
-						<td><a href="javascript: downloadCaptions('{{videoId}}', '{{name}}');"><i class="fa fa-cloud-download-alt fa-sm" title="Download captions"></i></a></td>
+						<td>
+							<div class="dropdown show">
+								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cloud-download-alt fa-sm"></i></a>
+
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}')">SRT</a>
+								</div>
+							</div>
+						</td>
 						<td>{{formattedDate}}</td>
 						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
 						<td class="wrappable">{{description}}</td>

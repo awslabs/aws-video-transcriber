@@ -978,7 +978,7 @@
         "FunctionName": {
           "Ref": "GetCaptionLambdaFunction"
         },
-        "CodeSha256": "UpXTGYgeAjQYz72AMyiDEJTce136i4xmCZ43pu2A7VE=",
+        "CodeSha256": "kv9lTU94A9e5xmcQiUgzefEr345TUUXO6IEuNWNiMD0=",
         "Description": "Fetches captions in WEBVTT format"
       }
     },

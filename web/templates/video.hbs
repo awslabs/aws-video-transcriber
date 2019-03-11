@@ -75,10 +75,16 @@
 							control-button" onclick="saveCaptionsLocal()" title="Save captions" id="saveButton">
 							<i class="fa fa-save fa-sm"></i> Save
 						</button>
-						<button type="button" class="btn btn-secondary control-button" 
-							onclick="downloadCaptionsLocal()" title="Download captions">
+						<span class="dropdown show">
+							<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fa fa-cloud-download-alt fa-sm"></i> Download
-						</button>
+							</a>
+
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+								<a class="dropdown-item" onclick="downloadCaptionsVTTLocal()">WEBVTT</a>
+								<a class="dropdown-item" onclick="downloadCaptionsSRTLocal()">SRT</a>
+							</div>
+						</span>
 						<span id="statusButton"></span>
 					</div>		
 					<form class="form">
@@ -496,9 +502,14 @@
 			markDirty(false);
 		}
 
-		function downloadCaptionsLocal()
+		function downloadCaptionsSRTLocal()
 		{
-			downloadCaptions(videoId, videoName);
+			downloadCaptionsSRT(videoId, videoName);
+		}
+
+		function downloadCaptionsVTTLocal()
+		{
+			downloadCaptionsVTT(videoId, videoName);
 		}
 
 		function markDirty(dirtyFlag)
