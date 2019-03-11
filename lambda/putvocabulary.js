@@ -45,19 +45,11 @@ exports.handler = async (event, context, callback) => {
         /**
          * Check to see if the vocabulary exists
          */
-        var listVocabularyParams = {
-            NameContains: vocabularyName
-        };
+        var vocabularies = await getVocabularies(null);
 
-        console.log('[INFO] listing vocabularies using params: %j', listVocabularyParams);        
-
-        var listVocabularyResponse = await transcribe.listVocabularies(listVocabularyParams).promise();
-
-        console.log('[INFO] got list vocabulary response: %j', listVocabularyResponse);
-
-        if (listVocabularyResponse.Vocabularies && listVocabularyResponse.Vocabularies[0])
+        if (vocabularies.length > 0)
         {
-            console.log('[INFO] existing vocabulary found');
+            console.log('[INFO] existing vocabulary found: %j', vocabularies[0]);
 
             /**
              * Update the vocabulary
@@ -132,3 +124,49 @@ exports.handler = async (event, context, callback) => {
         callback(null, response);
     }
 };
+
+
+/**
+ * Fetch vocabularies recursively filtering by vocabulary name
+ */
+async function getVocabularies(nextToken)
+{
+    try
+    {
+        var vocabularies = [];
+
+        var vocabularyName = process.env.VOCABULARY_NAME;
+
+        var listVocabularyParams = {
+            NameContains: vocabularyName
+        };
+
+        if (nextToken)
+        {
+            listVocabularyParams.NextToken = nextToken;
+        }
+
+        console.log('[INFO] listing vocabularies using params: %j', listVocabularyParams);
+
+        var listVocabularyResponse = await transcribe.listVocabularies(listVocabularyParams).promise();
+
+        console.log('[INFO] got list vocabulary response: %j', listVocabularyResponse);
+
+        if (listVocabularyResponse.Vocabularies)
+        {
+            vocabularies = vocabularies.concat(listVocabularyResponse.Vocabularies);
+        }
+
+        if (listVocabularyResponse.NextToken)
+        {
+            vocabularies = vocabularies.concat(await getVocabularies(listVocabularyResponse.NextToken));
+        }
+
+        return vocabularies;
+    }
+    catch (error)
+    {
+        console.log('[ERROR] failed to list vocabularies');
+        throw error;
+    }
+}

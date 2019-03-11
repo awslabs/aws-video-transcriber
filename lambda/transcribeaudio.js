@@ -30,7 +30,7 @@ exports.handler = async (event, context, callback) => {
     
 	try
 	{
-		var params = computeParameters(event);
+		var params = await computeParameters(event);
 		await transcribeAudio(params);
 		await updateDynamoDB(params);
 		callback(null, "Successfully launched Transcribe job");
@@ -48,7 +48,7 @@ exports.handler = async (event, context, callback) => {
 /**
  * Computes parameters
  */
-function computeParameters(event)
+async function computeParameters(event)
 {
 	var inputKey =
         decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));    
@@ -69,10 +69,18 @@ function computeParameters(event)
 		region: process.env.REGION,
 		transcribeLanguage: process.env.TRANSCRIBE_LANGUAGE,
 		vocabularyName: process.env.VOCABULARY_NAME,
+		vocabularyExists: false,
 		dynamoVideoTable: process.env.DYNAMO_VIDEO_TABLE,
 		status: "PROCESSING",
 		statusText: "Transcribing audio"
 	};
+
+	var vocabularies = await getVocabularies(null);
+
+	if (vocabularies.length > 0)
+	{
+		params.vocabularyExists = true;
+	}
 
 	console.log("[INFO] computed initial parameters: %j", params);
 
@@ -126,12 +134,20 @@ async function transcribeAudio(params)
   			},
   			MediaFormat: "mp3",
   			TranscriptionJobName: params.videoId,
-  			OutputBucketName: params.outputBucket,
- 			Settings: 
- 			{
-			    VocabularyName: params.vocabularyName
-  			}
+  			OutputBucketName: params.outputBucket
 		};
+
+		if (params.vocabularyExists)
+		{
+			console.log('[INFO] found existing vocabulary enabling');
+			transcribeParams.Settings = {
+				VocabularyName: params.vocabularyName
+			};
+		}
+		else
+		{
+			console.log('[INFO] no existing vocabulary found, skipping vocabulary use');
+		}
 
 		console.log("[INFO] about to launch Transcribe job with params: %j", 
 			transcribeParams);
@@ -187,4 +203,49 @@ async function updateDynamoDB(params)
 		console.log("[ERROR] to update DynamoDB status", error);
         throw error;
 	}
+}
+
+/**
+ * Fetch vocabularies recursively filtering by vocabulary name
+ */
+async function getVocabularies(nextToken)
+{
+    try
+    {
+        var vocabularies = [];
+
+        var vocabularyName = process.env.VOCABULARY_NAME;
+
+        var listVocabularyParams = {
+            NameContains: vocabularyName
+        };
+
+        if (nextToken)
+        {
+            listVocabularyParams.NextToken = nextToken;
+        }
+
+        console.log('[INFO] listing vocabularies using params: %j', listVocabularyParams);
+
+        var listVocabularyResponse = await transcribe.listVocabularies(listVocabularyParams).promise();
+
+        console.log('[INFO] got list vocabulary response: %j', listVocabularyResponse);
+
+        if (listVocabularyResponse.Vocabularies)
+        {
+            vocabularies = vocabularies.concat(listVocabularyResponse.Vocabularies);
+        }
+
+        if (listVocabularyResponse.NextToken)
+        {
+            vocabularies = vocabularies.concat(await getVocabularies(listVocabularyResponse.NextToken));
+        }
+
+        return vocabularies;
+    }
+    catch (error)
+    {
+        console.log('[ERROR] failed to list vocabularies');
+        throw error;
+    }
 }

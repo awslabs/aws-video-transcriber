@@ -319,7 +319,7 @@
         "FunctionName": {
           "Ref": "TranscribeAudioLambdaFunction"
         },
-        "CodeSha256": "J+kFqHr8luLRH673/HKv/FC3l69Rho1MFPr3wLF5OSk=",
+        "CodeSha256": "3yrEPLyw2Bz8R96WcvmYrSpNdefjP8c9Q00LNarjWn8=",
         "Description": "Uses Transcribe to extract text from audio"
       }
     },
@@ -1093,7 +1093,7 @@
         "FunctionName": {
           "Ref": "HeadVocabularyLambdaFunction"
         },
-        "CodeSha256": "huJFarKhPDihy0+Jr7s3TSJ0OziwodRKAGl/G2liaGA=",
+        "CodeSha256": "kJ+tqS5GW5aN9wSy7gRFdwbldmdIzc0CFEyQ59DjWFk=",
         "Description": "Checks if vocabulary is ready to save"
       }
     },
@@ -1155,7 +1155,7 @@
         "FunctionName": {
           "Ref": "PutVocabularyLambdaFunction"
         },
-        "CodeSha256": "ilGzK1BrBhXo1YWum1y1LKXBeaQGrs90NGmMZFn0Z94=",
+        "CodeSha256": "XnLZkHqnWXXMl009rgdfMgRtEhXfd34+sbMKxrRD+vQ=",
         "Description": "Saves vocabulary to DynamoDB"
       }
     },
