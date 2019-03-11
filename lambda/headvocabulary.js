@@ -28,21 +28,16 @@ exports.handler = async (event, context, callback) => {
     {
 		var canUpdate = true;
 
-        var vocabularyName = process.env.VOCABULARY_NAME;
+        /**
+         * Load vocabularies handling pagination
+         */
+        var vocabularies = await getVocabularies(null);
 
-        var listVocabularyParams = {
-            NameContains: vocabularyName
-        };
+        console.log('[INFO] found vocabularies: %j', vocabularies);
 
-        console.log('[INFO] listing vocabularies using params: %j', listVocabularyParams);
-
-        var listVocabularyResponse = await transcribe.listVocabularies(listVocabularyParams).promise();
-
-        console.log('[INFO] got list vocabulary response: %j', listVocabularyResponse);
-
-        if (listVocabularyResponse.Vocabularies && listVocabularyResponse.Vocabularies[0])
+        if (vocabularies.length > 0)
         {
-            var status = listVocabularyResponse.Vocabularies[0].VocabularyState;
+            var status = vocabularies[0].VocabularyState;
 
             console.log('[INFO] found vocabulary status: ' + status);
 
@@ -54,6 +49,7 @@ exports.handler = async (event, context, callback) => {
             else
             {
             	console.log('[INFO] vocabulary can be updated now');
+                canUpdate = true;
             }
         }
         else
@@ -71,6 +67,7 @@ exports.handler = async (event, context, callback) => {
             statusCode: canUpdate ? 200 : 204,
             headers: responseHeaders
         };
+
         callback(null, response);
     }
     catch (error)
@@ -84,4 +81,49 @@ exports.handler = async (event, context, callback) => {
         callback(null, response);
     }
 
+};
+
+/**
+ * Fetch vocabularies recursively filtering by vocabulary name
+ */
+async function getVocabularies(nextToken)
+{
+    try
+    {
+        var vocabularies = [];
+
+        var vocabularyName = process.env.VOCABULARY_NAME;
+
+        var listVocabularyParams = {
+            NameContains: vocabularyName
+        };
+
+        if (nextToken)
+        {
+            listVocabularyParams.NextToken = nextToken;
+        }
+
+        console.log('[INFO] listing vocabularies using params: %j', listVocabularyParams);
+
+        var listVocabularyResponse = await transcribe.listVocabularies(listVocabularyParams).promise();
+
+        console.log('[INFO] got list vocabulary response: %j', listVocabularyResponse);
+
+        if (listVocabularyResponse.Vocabularies)
+        {
+            vocabularies = vocabularies.concat(listVocabularyResponse.Vocabularies);
+        }
+
+        if (listVocabularyResponse.NextToken)
+        {
+            vocabularies = vocabularies.concat(await getVocabularies(listVocabularyResponse.NextToken));
+        }
+
+        return vocabularies;
+    }
+    catch (error)
+    {
+        console.log('[ERROR] failed to list vocabularies');
+        throw error;
+    }
 }
