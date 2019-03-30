@@ -384,7 +384,17 @@
 		{ 
 			if (video.paused) 
 			{
-				video.play(); 
+				if (video.currentTime == video.duration)
+				{
+					captionIndex = 0;
+					captionSelected(true);
+					video.play();
+				}
+				else
+				{
+					video.play(); 
+				}
+				
 			}
 			else 
 			{
