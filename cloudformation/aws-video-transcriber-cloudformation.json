@@ -388,7 +388,7 @@
         "FunctionName": {
           "Ref": "CreateCaptionsLambdaFunction"
         },
-        "CodeSha256": "WIBErF3O2K2AOALSZrnxxksmFn+3Qctt/Spp2dL7BNE=",
+        "CodeSha256": "4BthB25T0YyKBiHputY1BpABmPPXA7Y7zP1+rznCQ3A=",
         "Description": "Creates captions for videos from transcription results"
       }
     },
