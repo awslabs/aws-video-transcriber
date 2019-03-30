@@ -103,11 +103,13 @@ async function saveCaptions(videoId, captions)
  */
 function computeCaptions(tweaks, transcribeResponse)
 {
-    var startTime = 0.0;
     var endTime = 0.0;
     var maxLength = 50;
     var wordCount = 0;
     var maxWords = 12;
+    var maxSilence = 1.5;
+    
+    console.log('[INFO] computing captions with max silence: ' + maxSilence);
 
     var captions = [];
     var caption = null;
@@ -133,12 +135,17 @@ function computeCaptions(tweaks, transcribeResponse)
 
         if (!caption)
         {
-            // Start of a line with punction, skip it
+            /**
+             * Start of a line with punction, just skip it
+             */
             if (isPunctuation)
             {
                 continue;
             }
 
+            /**
+             * Create a new caption line
+             */
             caption = {
                 start: Number(item.start_time),
                 caption: "",
@@ -148,12 +155,29 @@ function computeCaptions(tweaks, transcribeResponse)
 
         if (!isPunctuation)
         {
-            endTime = Number(item.end_time);
+            var startTime = Number(item.start_time);
 
-            if (startTime == 0.0)
+            /**
+             * Check to see if there has been a long silence
+             * between the last recorded word and start a new
+             * caption if this is the case, ending the last time
+             * as this one starts.
+             */
+            if ((caption.caption.length > 0) && ((endTime + maxSilence) < startTime))
             {
-                startTime = Number(item.start_time);
+                caption.end = startTime;
+                captions.push(caption);
+
+                caption = {
+                    start: Number(startTime),
+                    caption: "",
+                    wordConfidence: []
+                };
+                
+                wordCount = 0;
             }
+
+            endTime = Number(item.end_time);
         }
             
         var requiresSpace = !isPunctuation && (caption.caption.length > 0);
