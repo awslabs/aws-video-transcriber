@@ -11,7 +11,7 @@
 * [x] Pick locale / vocabulary
 * [ ] Expert mode see all captions and edit?
 * [ ] Validate caption times on save
-* [ ] Word confidence
+* [x] Word confidence
 * [ ] Blog
 * [x] Private GitHub repository
 * [x] Preserve name and description during re-runs

@@ -28,3 +28,4 @@ If you have an urgent feature request or find a bug, please raise it on GitHub.
 
 - Landing page on launch to select vocabulary / language to use for transcription
 
+- Add step functions for process control

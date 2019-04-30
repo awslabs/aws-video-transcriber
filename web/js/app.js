@@ -43,6 +43,13 @@ var vocabularyTemplate = null;
 var appDiv = null;
 
 /**
+ * 2 second time out for toasts
+ */
+console.log('Default toast time out: ' + toastr.options.timeOut);
+toastr.options.timeOut = 2;
+console.log('New toast time out: ' + toastr.options.timeOut);
+
+/**
  * Formats a date for display
  */
 function formatDate(date) 
