@@ -198,6 +198,11 @@
 		var dirty = false;
 		var confidence = 0.75;
 
+		/**
+		 * Clear all timers on page load to prevent event bleed
+		 */
+		clearTimers();
+
 		toastr.success('Loading video and captions...');
 
 		renderStatusButton(videoId, videoStatus);
@@ -345,9 +350,9 @@
    			stepForward(true, false);
 
    			/**
-   			 * Hook up autosaving
+   			 * Hook up auto saving every 20 seconds
    			 */
-   			setInterval(function() {
+   			var timerId = setInterval(function() {
 
    				if (autosave.checked && dirty)
    				{
@@ -355,7 +360,20 @@
    				}
 
    			}, 20000);
+
+   			console.log('Created timer: ' + timerId);
+
 		}, false);
+
+		function clearTimers()
+		{
+			console.log('Clearing all interval timers');
+
+			for (var i = 0; i < 10000; ++i)
+			{
+				window.clearInterval(i);
+			}
+		}
 
 		function updatePlayPauseUI()
 		{
