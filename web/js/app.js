@@ -43,6 +43,11 @@ var vocabularyTemplate = null;
 var appDiv = null;
 
 /**
+ * Save cpations timer
+ */
+var saveCaptionsTimer = null;
+
+/**
  * 2 second time out for toasts
  */
 console.log('Default toast time out: ' + toastr.options.timeOut);

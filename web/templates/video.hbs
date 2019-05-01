@@ -198,11 +198,6 @@
 		var dirty = false;
 		var confidence = 0.75;
 
-		/**
-		 * Clear all timers on page load to prevent event bleed
-		 */
-		clearTimers();
-
 		toastr.success('Loading video and captions...');
 
 		renderStatusButton(videoId, videoStatus);
@@ -266,7 +261,7 @@
 			}
 			else
 			{
-				console.log('Got value new confidence: ' + confidence);
+				console.log('[INFO] Got new confidence: ' + confidence);
 			}
 			
 			renderCaption();
@@ -349,10 +344,16 @@
 
    			stepForward(true, false);
 
+   			if (saveCaptionsTimer)
+   			{
+   				console.log('[INFO] Clearing existing save captions timer');
+   				clearInterval(saveCaptionsTimer);
+   			}
+
    			/**
    			 * Hook up auto saving every 20 seconds
    			 */
-   			var timerId = setInterval(function() {
+   			saveCaptionsTimer = setInterval(function() {
 
    				if (autosave.checked && dirty)
    				{
@@ -361,19 +362,9 @@
 
    			}, 20000);
 
-   			console.log('Created timer: ' + timerId);
+   			console.log('[INFO] Created save captions timer: ' + saveCaptionsTimer);
 
 		}, false);
-
-		function clearTimers()
-		{
-			console.log('Clearing all interval timers');
-
-			for (var i = 0; i < 10000; ++i)
-			{
-				window.clearInterval(i);
-			}
-		}
 
 		function updatePlayPauseUI()
 		{
