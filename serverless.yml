@@ -7,10 +7,8 @@ provider:
   region: ap-southeast-2  
   endpointType: REGIONAL
   runtime: nodejs10.x
-  # stage: dev
-  stage: prod
-  # profile: transcribe
-  profile: default
+  stage: dev
+  profile: transcribe
   logRetentionInDays: 7
 
 package:
