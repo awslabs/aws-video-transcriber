@@ -27,6 +27,8 @@ This solution provides a serverless, single page web application and set of supp
 
 ## Deploying the Solution
 
+*Note that the prebuilt solution is based on an older version of Node.js this is being upgraded to Node 10. You may continue to deploy the solution using Serverless until this is finished.*
+
 Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elastic Transcoder. Click a button below to deploy to your region of choice.
 
 When launching the template, you will need to enter a stack name, an API key and choose a locale that Transcribe will use to process your video's audio data. 
