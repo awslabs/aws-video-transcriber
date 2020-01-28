@@ -29,8 +29,9 @@
  */
 
 var AWS = require("aws-sdk");
-var https = require("https");
-var url = require("url");
+//MJS 2020-01-24 comment out unused imports
+//var https = require("https");
+//var url = require("url");
 var s3 = new AWS.S3();
 var apiGateway = new AWS.APIGateway();
 var axios = require('axios');
