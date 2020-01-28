@@ -11,7 +11,7 @@
   "license": "Apache License",
   "dependencies": {
     "@anttiviljami/serverless-stack-output": "^0.3.1",
-    "axios": "0.18.0",
+    "axios": "0.19.2",
     "debug": "4.1.1",
     "uuid": "^3.4.0"
   },
