@@ -236,7 +236,7 @@
         "FunctionName": {
           "Ref": "ExtractAudioLambdaFunction"
         },
-        "CodeSha256": "oUB/BRh0AiaLBTNEFGgKcZRYol1YKz7yFhqUkqJnekU=",
+        "CodeSha256": "/u5ai+O8oxb+p4Hu8MzWJEVdyScn7r/nbSxHo6HEE8o=",
         "Description": "Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos"
       }
     },
@@ -1334,7 +1334,7 @@
         "FunctionName": {
           "Ref": "CustomResourceLambdaFunction"
         },
-        "CodeSha256": "BexddbPPoL/b0woxTU4LRNsghtJtQDjIUzfFpWbCGxM=",
+        "CodeSha256": "AblPE664oGpVSND5HtKky7sQ686lRwDQJgIS0SIiO/0=",
         "Description": "Performs custom cloudformation initialisation"
       }
     },
