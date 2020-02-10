@@ -1334,7 +1334,7 @@
         "FunctionName": {
           "Ref": "CustomResourceLambdaFunction"
         },
-        "CodeSha256": "9k9ZX52kmtUtkmyI7SAUlcpzNIhJCK7Cfn7uxwRNFRo=",
+        "CodeSha256": "BexddbPPoL/b0woxTU4LRNsghtJtQDjIUzfFpWbCGxM=",
         "Description": "Performs custom cloudformation initialisation"
       }
     },
