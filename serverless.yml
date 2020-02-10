@@ -6,9 +6,9 @@ provider:
   name: aws
   region: ap-southeast-2  
   endpointType: REGIONAL
-  runtime: nodejs10.x
-  stage: dev
-  profile: transcribe
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  profile: ${opt:profile, 'transcribe'}
   logRetentionInDays: 7
 
 package:
@@ -254,8 +254,6 @@ functions:
       VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       AUDIO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       TRANSCRIBE_BUCKET: !Ref S3BucketTranscribe
-    # layers:
-    #   - !Ref LambdaLayer     
     package:
       exclude:
         - '**'
@@ -281,9 +279,7 @@ functions:
       VIDEO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-video-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       AUDIO_BUCKET: !Join ['', [ '${self:custom.stage}-${self:service}-audio-', !Ref AWS::Region, '-', !Ref AWS::AccountId ] ]
       TRANSCRIBE_BUCKET: !Ref S3BucketTranscribe
-      EXTRACT_AUDIO_FUNCTION: '${self:custom.stage}-${self:service}-extractaudio'
-    # layers:
-    #   - !Ref LambdaLayer     
+      EXTRACT_AUDIO_FUNCTION: '${self:custom.stage}-${self:service}-extractaudio' 
     package:
       exclude:
         - '**'
@@ -513,26 +509,6 @@ functions:
 
 resources:
   Resources:
-
-    # LambdaLayer:
-    #   Type: 'AWS::Lambda::LayerVersion'
-    #   Properties:
-    #     CompatibleRuntimes: 
-    #       - nodejs8.10
-    #     Content: 
-    #       S3Bucket: aws-captions-deployment-ap-southeast-2
-    #       S3Key: layers/aws-captions-node-sdk-layer.zip
-    #     Description: 'Recent Node.js 8.10 AWS Node SDK'
-    #     LayerName: '${self:custom.stage}-aws-captions-node-sdk-layer'
-    #     LicenseInfo: Apache-2.0
-
-    # LambdaLayerPermission:
-    #   Type: 'AWS::Lambda::LayerVersionPermission'
-    #   Properties:
-    #     Action: lambda:GetLayerVersion
-    #     LayerVersionArn: !Ref LambdaLayer
-    #     Principal: !Ref AWS::AccountId
-
     MyCustomResource: 
       Type: 'Custom::CustomResource'
       Version: '1.0'

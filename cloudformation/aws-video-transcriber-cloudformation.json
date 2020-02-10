@@ -160,7 +160,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 15,
         "Description": "Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos",
         "Environment": {
@@ -258,7 +258,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 15,
         "Description": "Uses Transcribe to extract text from audio",
         "Environment": {
@@ -300,12 +300,7 @@
               "Ref": "TranscribeLanguage"
             }
           }
-        },
-        "Layers": [
-          {
-            "Ref": "LambdaLayer"
-          }
-        ]
+        }
       },
       "DependsOn": [
         "TranscribeAudioLogGroup",
@@ -341,7 +336,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 60,
         "Description": "Creates captions for videos from transcription results",
         "Environment": {
@@ -410,7 +405,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Loads videos from DynamoDB",
         "Environment": {
@@ -458,7 +453,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Loads a single video from DynamoDB",
         "Environment": {
@@ -524,7 +519,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Updates the status of a video in DynamoDB",
         "Environment": {
@@ -572,7 +567,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Updates the name of a video in DynamoDB",
         "Environment": {
@@ -620,7 +615,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Updates the description of a video in DynamoDB",
         "Environment": {
@@ -668,7 +663,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Purges a single video from the system",
         "Environment": {
@@ -716,12 +711,7 @@
               "Ref": "S3BucketTranscribe"
             }
           }
-        },
-        "Layers": [
-          {
-            "Ref": "LambdaLayer"
-          }
-        ]
+        }
       },
       "DependsOn": [
         "DeleteVideoLogGroup",
@@ -757,7 +747,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Reprocesses a video",
         "Environment": {
@@ -803,12 +793,7 @@
             },
             "EXTRACT_AUDIO_FUNCTION": "prod-aws-captions-extractaudio"
           }
-        },
-        "Layers": [
-          {
-            "Ref": "LambdaLayer"
-          }
-        ]
+        }
       },
       "DependsOn": [
         "ReprocessVideoLogGroup",
@@ -844,7 +829,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Fetches a signed URL for uploading video into S3",
         "Environment": {
@@ -904,7 +889,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Saves captions to DynamoDB",
         "Environment": {
@@ -952,7 +937,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Fetches captions in WEBVTT format",
         "Environment": {
@@ -1000,7 +985,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Loads vocabulary from DynamoDB",
         "Environment": {
@@ -1059,7 +1044,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Checks if vocabulary is ready to save",
         "Environment": {
@@ -1115,7 +1100,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Saves vocabulary to DynamoDB",
         "Environment": {
@@ -1177,7 +1162,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Loads tweaks from DynamoDB",
         "Environment": {
@@ -1225,7 +1210,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 29,
         "Description": "Saves tweaks to DynamoDB",
         "Environment": {
@@ -1273,7 +1258,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 900,
         "Description": "Bootstraps videos to process into S3",
         "Environment": {
@@ -1333,7 +1318,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs12.x",
         "Timeout": 600,
         "Description": "Performs custom cloudformation initialisation"
       },
@@ -3629,35 +3614,6 @@
               "/*/*"
             ]
           ]
-        }
-      }
-    },
-    "LambdaLayer": {
-      "Type": "AWS::Lambda::LayerVersion",
-      "Properties": {
-        "CompatibleRuntimes": [
-          "nodejs8.10"
-        ],
-        "Content": {
-          "S3Bucket": {
-            "Fn::Join": [ "", [ "aws-captions-deployment-", { "Ref": "AWS::Region" } ] ]
-          },
-          "S3Key": "layers/aws-captions-node-sdk-layer.zip"
-        },
-        "Description": "Recent Node.js 8.10 AWS Node SDK",
-        "LayerName": "prod-aws-captions-node-sdk-layer",
-        "LicenseInfo": "Apache-2.0"
-      }
-    },
-    "LambdaLayerPermission": {
-      "Type": "AWS::Lambda::LayerVersionPermission",
-      "Properties": {
-        "Action": "lambda:GetLayerVersion",
-        "LayerVersionArn": {
-          "Ref": "LambdaLayer"
-        },
-        "Principal": {
-          "Ref": "AWS::AccountId"
         }
       }
     },
