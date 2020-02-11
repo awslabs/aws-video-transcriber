@@ -4234,6 +4234,10 @@
               "MaxAge": 3000
             }
           ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": false,
+          "IgnorePublicAcls": false
         }
       }
     },
