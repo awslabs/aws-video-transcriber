@@ -16,7 +16,7 @@
 var AWS = require('aws-sdk');
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
-var s3 = new AWS.S3();
+var s3 = new AWS.S3({ signatureVersion: 'v4' });
 
 /**
  * Loads a single video from the Dynamo table pointed to by the

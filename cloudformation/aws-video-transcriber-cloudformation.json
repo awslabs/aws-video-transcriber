@@ -497,7 +497,7 @@
         "FunctionName": {
           "Ref": "GetVideoLambdaFunction"
         },
-        "CodeSha256": "qBL0akQHhH24pcWHgfFgY3KmF8FW+4G9vnwiH4DjSRI=",
+        "CodeSha256": "GZF/bBGrCPprqKokTzxJSLyFHCYOrOXapSFuyYXH51A=",
         "Description": "Loads a single video from DynamoDB"
       }
     },
@@ -867,7 +867,7 @@
         "FunctionName": {
           "Ref": "GetUploadLambdaFunction"
         },
-        "CodeSha256": "NttRxxconH+aWQH6fKOVVKsc1CjWgX8Fbo8HGjl/eB0=",
+        "CodeSha256": "UT/h/Eb8sVGJeQUXZGI9OvOZiZGNDKuxxUjxQWBi4Yw=",
         "Description": "Fetches a signed URL for uploading video into S3"
       }
     },
