@@ -127,6 +127,8 @@ function computeCaptions(tweaks, transcribeResponse)
         }
     }
 
+    console.log('[INFO] logged all transcribe response items: ' + transcribeResponse.results.items);
+
     for (var i in transcribeResponse.results.items) {
 
         var item = transcribeResponse.results.items[i];
