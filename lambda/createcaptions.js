@@ -127,8 +127,6 @@ function computeCaptions(tweaks, transcribeResponse)
         }
     }
 
-    console.log('[INFO] logged all transcribe response items: ' + transcribeResponse.results.items);
-
     for (var i in transcribeResponse.results.items) {
 
         var item = transcribeResponse.results.items[i];
@@ -167,7 +165,7 @@ function computeCaptions(tweaks, transcribeResponse)
              */
             if ((caption.caption.length > 0) && ((endTime + maxSilence) < startTime))
             {
-                caption.end = startTime;
+                caption.end = endTime;
                 captions.push(caption);
 
                 caption = {
