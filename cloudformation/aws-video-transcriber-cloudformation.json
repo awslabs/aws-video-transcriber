@@ -236,7 +236,7 @@
         "FunctionName": {
           "Ref": "ExtractAudioLambdaFunction"
         },
-        "CodeSha256": "/u5ai+O8oxb+p4Hu8MzWJEVdyScn7r/nbSxHo6HEE8o=",
+        "CodeSha256": "c08rdNu6qJ5vEaDyIBw6eJTrgzdaOI4UaYqe1WRRpAA=",
         "Description": "Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos"
       }
     },
@@ -314,7 +314,7 @@
         "FunctionName": {
           "Ref": "TranscribeAudioLambdaFunction"
         },
-        "CodeSha256": "3yrEPLyw2Bz8R96WcvmYrSpNdefjP8c9Q00LNarjWn8=",
+        "CodeSha256": "HkDQmyPFKsD2QZVuvyfTFnnrzqt+pK+dxa9yTuMbXxc=",
         "Description": "Uses Transcribe to extract text from audio"
       }
     },
@@ -383,7 +383,7 @@
         "FunctionName": {
           "Ref": "CreateCaptionsLambdaFunction"
         },
-        "CodeSha256": "4BthB25T0YyKBiHputY1BpABmPPXA7Y7zP1+rznCQ3A=",
+        "CodeSha256": "JtXHtcVm3HDEF9ae4ie9lTkmaELxMtYsRAvE2xT0KGY=",
         "Description": "Creates captions for videos from transcription results"
       }
     },
@@ -431,7 +431,7 @@
         "FunctionName": {
           "Ref": "GetVideosLambdaFunction"
         },
-        "CodeSha256": "32i3iv59wQwgK6UmwZQIlxPewR1SFeH8JZdlNosfMeM=",
+        "CodeSha256": "xdS/yJv9UWdvVjTjIlPl/qvCa7/0TOdoNalKOngdmCQ=",
         "Description": "Loads videos from DynamoDB"
       }
     },
@@ -497,7 +497,7 @@
         "FunctionName": {
           "Ref": "GetVideoLambdaFunction"
         },
-        "CodeSha256": "GZF/bBGrCPprqKokTzxJSLyFHCYOrOXapSFuyYXH51A=",
+        "CodeSha256": "GZfugJuFDL5tIqjEdLVEWk4k5maujE6l9v/jWqWOygI=",
         "Description": "Loads a single video from DynamoDB"
       }
     },
@@ -545,7 +545,7 @@
         "FunctionName": {
           "Ref": "UpdateVideoStatusLambdaFunction"
         },
-        "CodeSha256": "GAbUxLEE7eDRbyRd93ZLhRqaIR+W86nxNVzzUrDlz3c=",
+        "CodeSha256": "N9OdLNIiDhv2IhcegRxbrhn9v3GKJ4SyQXZPwtC/6W0=",
         "Description": "Updates the status of a video in DynamoDB"
       }
     },
@@ -593,7 +593,7 @@
         "FunctionName": {
           "Ref": "UpdateVideoNameLambdaFunction"
         },
-        "CodeSha256": "GPlZhOWv0AMu70bF2ucFXJyr/AvF4zSsGAqlh0NOPO8=",
+        "CodeSha256": "Tq0BoYuYRVMRcHiKciEmuo85auk3zJ2qem4KoECp3lk=",
         "Description": "Updates the name of a video in DynamoDB"
       }
     },
@@ -641,7 +641,7 @@
         "FunctionName": {
           "Ref": "UpdateVideoDescriptionLambdaFunction"
         },
-        "CodeSha256": "bvFr12x5sWWKJhJqtkOEemdPLnQchwv9xCWAm3PLMjI=",
+        "CodeSha256": "jnZe+o8mOXv2hSXL2wLR2lQvTql/RVFPyIdVefvQP9o=",
         "Description": "Updates the description of a video in DynamoDB"
       }
     },
@@ -725,7 +725,7 @@
         "FunctionName": {
           "Ref": "DeleteVideoLambdaFunction"
         },
-        "CodeSha256": "KIZ+6k7o2/I0DMlt95eRAyePi0H6k+AI3ybhoyjJCiQ=",
+        "CodeSha256": "sWne6OEToI5GL5IKF9mkKTWDEDLFl8i5vnGYclBrT+8=",
         "Description": "Purges a single video from the system"
       }
     },
@@ -807,7 +807,7 @@
         "FunctionName": {
           "Ref": "ReprocessVideoLambdaFunction"
         },
-        "CodeSha256": "GdBN5toKsOl0Ngy23WBJ4VHWKkrHBXmPfMCMH22UZKk=",
+        "CodeSha256": "4BLLXzLQ7NSx5eFY4ghnzBwVr2cLUXxsAopTuv+n0X4=",
         "Description": "Reprocesses a video"
       }
     },
@@ -867,7 +867,7 @@
         "FunctionName": {
           "Ref": "GetUploadLambdaFunction"
         },
-        "CodeSha256": "UT/h/Eb8sVGJeQUXZGI9OvOZiZGNDKuxxUjxQWBi4Yw=",
+        "CodeSha256": "GMrlGORKqPsv3HOp79+bU9AmG4MmU7ZXMYcWqZCyfZE=",
         "Description": "Fetches a signed URL for uploading video into S3"
       }
     },
@@ -915,7 +915,7 @@
         "FunctionName": {
           "Ref": "PutCaptionLambdaFunction"
         },
-        "CodeSha256": "nSPfxC8TD5dmQlXz9jBUk0PGAHXyaKogWoBGiXPhGhc=",
+        "CodeSha256": "ye8IEvJxkX1PnQa6cYQIQYQ4vk47llKjyXlxm6nv3Qk=",
         "Description": "Saves captions to DynamoDB"
       }
     },
@@ -963,7 +963,7 @@
         "FunctionName": {
           "Ref": "GetCaptionLambdaFunction"
         },
-        "CodeSha256": "kv9lTU94A9e5xmcQiUgzefEr345TUUXO6IEuNWNiMD0=",
+        "CodeSha256": "js4lmMbqh6pztVQR+7G/F6V3oapCRD9qImKDQiFr7+w=",
         "Description": "Fetches captions in WEBVTT format"
       }
     },
@@ -1022,7 +1022,7 @@
         "FunctionName": {
           "Ref": "GetVocabularyLambdaFunction"
         },
-        "CodeSha256": "OhSkrimyJCPGrOE5PoRjY53QxwcuaI6OhA0jYviFIU8=",
+        "CodeSha256": "pDxv4s5PrRB4V05wRXrZ8h0a+bDJ3Is+R9x89J9NOnU=",
         "Description": "Loads vocabulary from DynamoDB"
       }
     },
@@ -1078,7 +1078,7 @@
         "FunctionName": {
           "Ref": "HeadVocabularyLambdaFunction"
         },
-        "CodeSha256": "kJ+tqS5GW5aN9wSy7gRFdwbldmdIzc0CFEyQ59DjWFk=",
+        "CodeSha256": "JkcJT+evTdwlcUR2d9wGyHaRL5ohVVQO61jQEUqP1G4=",
         "Description": "Checks if vocabulary is ready to save"
       }
     },
@@ -1140,7 +1140,7 @@
         "FunctionName": {
           "Ref": "PutVocabularyLambdaFunction"
         },
-        "CodeSha256": "XnLZkHqnWXXMl009rgdfMgRtEhXfd34+sbMKxrRD+vQ=",
+        "CodeSha256": "YC/X+GcxWVEM+ZERyMUhihH47TSKfM3V8kgnJc5Mkus=",
         "Description": "Saves vocabulary to DynamoDB"
       }
     },
@@ -1188,7 +1188,7 @@
         "FunctionName": {
           "Ref": "GetTweaksLambdaFunction"
         },
-        "CodeSha256": "i5OVHa/4ds8xhvFLqA7XxUVTOK98+lOsbXFna7nvKjU=",
+        "CodeSha256": "JxQrT+z5ZE7kkI8yFkcq9VAsG0K+/SdbaPFuqHNAIEw=",
         "Description": "Loads tweaks from DynamoDB"
       }
     },
@@ -1236,7 +1236,7 @@
         "FunctionName": {
           "Ref": "PutTweaksLambdaFunction"
         },
-        "CodeSha256": "5HZCXjvnI+02VMogYv/1leMTcTWzYHPSVNlc8fQRajs=",
+        "CodeSha256": "4Gk0mZZCdXwdV/HzTel4q7NjqepbOnYcN1V+OuBdhc4=",
         "Description": "Saves tweaks to DynamoDB"
       }
     },
@@ -1296,7 +1296,7 @@
         "FunctionName": {
           "Ref": "BootStrapLambdaFunction"
         },
-        "CodeSha256": "idvYmtv8dHaXcBi55TsBkv62WbIF8H9YAdRhZlHh87k=",
+        "CodeSha256": "Yl/u6K9bZduuWrysWZ0Ac0QkdGLEgb30P/vtsDIesbI=",
         "Description": "Bootstraps videos to process into S3"
       }
     },
@@ -1334,7 +1334,7 @@
         "FunctionName": {
           "Ref": "CustomResourceLambdaFunction"
         },
-        "CodeSha256": "AblPE664oGpVSND5HtKky7sQ686lRwDQJgIS0SIiO/0=",
+        "CodeSha256": "0XNn5dYWU6LK/QdgMdAklCYo+dxtCsjCIUIilzo/4Zs=",
         "Description": "Performs custom cloudformation initialisation"
       }
     },
