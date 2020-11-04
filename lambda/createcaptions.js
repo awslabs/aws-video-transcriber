@@ -18,6 +18,7 @@ var AWS = require("aws-sdk");
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
 var s3 = new AWS.S3();
+var zlib = require('zlib');
 
 /**
  * Creates the closed captions files from an Amazon Transcribe result
@@ -74,12 +75,17 @@ async function saveCaptions(videoId, captions)
 {
     try
     {
+        var jsonBuffer = Buffer.from(JSON.stringify(captions));
+        var compressedBuffer = zlib.gzipSync(jsonBuffer);
+        var compressedString = compressedBuffer.toString('base64');
+
         var putParams = {
             TableName: process.env.DYNAMO_CAPTION_TABLE,
             Item: 
             {
-                "videoId" : {"S": videoId},
-                "captions": { "S": JSON.stringify(captions)},
+                "videoId" : {"S": videoId },
+                "captions": { "S": compressedString },
+                "compressed": { "S": "true" },
                 "processedDate":  {"S": new Date().toISOString() }
             }
         };

@@ -16,6 +16,7 @@
 var AWS = require('aws-sdk');
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB({apiVersion: '2012-10-08'});
+var zlib = require('zlib');
 
 /**
  * Saves captions to Dynamo
@@ -36,12 +37,17 @@ exports.handler = async (event, context, callback) => {
 
         var body = JSON.parse(event.body);
 
+        var jsonBuffer = Buffer.from(JSON.stringify(body.captions));
+        var compressedBuffer = zlib.gzipSync(jsonBuffer);
+        var compressedString = compressedBuffer.toString('base64');
+
         var params = {
             TableName: process.env.DYNAMO_CAPTION_TABLE,
             Item: 
             {
                 'videoId' : {'S': videoId},
-                'captions' : {'S': JSON.stringify(body.captions) },
+                'captions' : {'S': compressedString },
+                'compressed': { 'S': 'true' },
                 'processedDate':  {'S': new Date().toISOString() }
             }
         };

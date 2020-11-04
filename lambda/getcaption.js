@@ -17,6 +17,7 @@ var AWS = require('aws-sdk');
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
 var s3 = new AWS.S3();
+var zlib = require('zlib');
 
 /**
  * Fetches captions in WEBVTT or SRT formats
@@ -59,7 +60,16 @@ exports.handler = async (event, context, callback) => {
 
         if (getResponse.Item)
         {
-            var captions = JSON.parse(getResponse.Item.captions.S);
+            var captionData = getResponse.Item.captions.S;
+
+            if (getResponse.Item.compressed && getResponse.Item.compressed.S === 'true')
+            {
+              var gzipBuffer = Buffer.from(captionData, 'base64');
+              var decompressed = zlib.gunzipSync(gzipBuffer);
+              captionData = decompressed.toString();
+            }
+            
+            var captions = JSON.parse(captionData);
 
             var result = await exportCaptions(format, captions);
 
