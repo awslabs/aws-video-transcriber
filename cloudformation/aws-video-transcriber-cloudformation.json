@@ -497,7 +497,7 @@
         "FunctionName": {
           "Ref": "GetVideoLambdaFunction"
         },
-        "CodeSha256": "GZfugJuFDL5tIqjEdLVEWk4k5maujE6l9v/jWqWOygI=",
+        "CodeSha256": "5pYCnpAmE04FKXAeAbViOCJU5juJjvp8cMbP+WEQB/4=",
         "Description": "Loads a single video from DynamoDB"
       }
     },
