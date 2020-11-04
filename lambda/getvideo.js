@@ -17,6 +17,7 @@ var AWS = require('aws-sdk');
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
 var s3 = new AWS.S3({ signatureVersion: 'v4' });
+var zlib = require('zlib');
 
 /**
  * Loads a single video from the Dynamo table pointed to by the
@@ -113,7 +114,17 @@ async function getCaptions(videoId)
         if (getResponse.Item)
         {
             console.log('[INFO] successfully found captions for video: %s', videoId);
-            return getResponse.Item.captions.S;
+
+            var captionData = getResponse.Item.captions.S;
+
+            if (getResponse.Item.compressed && getResponse.Item.compressed.S === 'true')
+            {
+              var gzipBuffer = Buffer.from(captionData, 'base64');
+              var decompressed = zlib.gunzipSync(gzipBuffer);
+              captionData = decompressed.toString();
+            }
+            
+            return captionData;
         }
         else
         {
