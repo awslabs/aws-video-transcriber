@@ -383,7 +383,7 @@
         "FunctionName": {
           "Ref": "CreateCaptionsLambdaFunction"
         },
-        "CodeSha256": "JtXHtcVm3HDEF9ae4ie9lTkmaELxMtYsRAvE2xT0KGY=",
+        "CodeSha256": "kDPApcwyyM/BDNs23H0JnpKBeBNWg0W23fNbvFkUhpc=",
         "Description": "Creates captions for videos from transcription results"
       }
     },
@@ -915,7 +915,7 @@
         "FunctionName": {
           "Ref": "PutCaptionLambdaFunction"
         },
-        "CodeSha256": "ye8IEvJxkX1PnQa6cYQIQYQ4vk47llKjyXlxm6nv3Qk=",
+        "CodeSha256": "yWC+eK1PX/bEggqRX/UrKNlMCK/rbYHWROINuWWVLRI=",
         "Description": "Saves captions to DynamoDB"
       }
     },
@@ -963,7 +963,7 @@
         "FunctionName": {
           "Ref": "GetCaptionLambdaFunction"
         },
-        "CodeSha256": "js4lmMbqh6pztVQR+7G/F6V3oapCRD9qImKDQiFr7+w=",
+        "CodeSha256": "y3mXvFcnuQuPJbK/FunZFaLAK0n38e9OtGOcZoT0fYE=",
         "Description": "Fetches captions in WEBVTT format"
       }
     },
