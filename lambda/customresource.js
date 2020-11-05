@@ -29,16 +29,13 @@
  */
 
 var AWS = require("aws-sdk");
-//MJS 2020-01-24 comment out unused imports
-//var https = require("https");
-//var url = require("url");
 var s3 = new AWS.S3();
 var apiGateway = new AWS.APIGateway();
 var axios = require('axios');
  
 exports.handler = async function(event, context) 
 { 
-    console.log("Handling request: %j", event);
+    // console.log("Handling request: %j", event);
 
     /**
      * Use the service token (in this case the Lambda ARN) as the resource id
@@ -71,7 +68,7 @@ exports.handler = async function(event, context)
             throw new Error("Unhandled request type: " + event.RequestType);
         }
 
-        console.log('[INFO] custom resource complete sending success');
+        // console.log('[INFO] custom resource complete sending success');
         await sendResponse(event, context, "SUCCESS", null, resourceId);
         
     }
@@ -96,13 +93,13 @@ async function handleDelete(event)
 
         var manifest = await loadManifest(inputManifest.Bucket, inputManifest.Key);
 
-        console.log("[INFO] deleting custom resources using manifest: %j", manifest);
+        // console.log("[INFO] deleting custom resources using manifest: %j", manifest);
 
         await deleteS3File(webDeployTarget.Bucket, "site_config.json");
 
         var manifest = await loadManifest(inputManifest.Bucket, inputManifest.Key);
 
-        console.log("[INFO] removing: %d custom resources", manifest.files.length);
+        // console.log("[INFO] removing: %d custom resources", manifest.files.length);
 
         var count = 0;
 
@@ -115,7 +112,7 @@ async function handleDelete(event)
             count++;
         }
 
-        console.log("[INFO] successfully removed: %d S3 resources", count);
+        // console.log("[INFO] successfully removed: %d S3 resources", count);
 
         await deleteApiKey(event);      
     }
@@ -148,7 +145,7 @@ async function createWebConfig(event)
             api_upload: "/upload"
         };
 
-        console.log("[INFO] successfully created web config: %j", webConfig);
+        // console.log("[INFO] successfully created web config: %j", webConfig);
 
         var webDeployTarget = event.ResourceProperties.WebDeployTarget;
 
@@ -193,12 +190,12 @@ async function waitForStage(event, sleepTimeMillis, maxSleeps)
             };
 
             var result = await apiGateway.getStage(request).promise();
-            console.log('[INFO] found API stage: %j', result);
+            // console.log('[INFO] found API stage: %j', result);
             return;
         }
         catch (error)
         {
-            console.log('[INFO] API Gateway stage is not ready, sleeping');
+            // console.log('[INFO] API Gateway stage is not ready, sleeping');
             await sleep(sleepTimeMillis);
         }
     }
@@ -229,7 +226,7 @@ async function deleteApiKey(event)
 
         var getApiKeysResponse = await apiGateway.getApiKeys(getApiKeysRequest).promise();
 
-        console.log('[INFO] got getApiKeys() response: %j', getApiKeysResponse);
+        // console.log('[INFO] got getApiKeys() response: %j', getApiKeysResponse);
 
         if (getApiKeysResponse.items && getApiKeysResponse.items.length == 1)
         {
@@ -241,7 +238,7 @@ async function deleteApiKey(event)
 
             var getUsagePlansResponse = await apiGateway.getUsagePlans(getUsagePlansRequest).promise();
 
-            console.log('[INFO] got getUsagePlans() response: %j', getUsagePlansResponse);
+            // console.log('[INFO] got getUsagePlans() response: %j', getUsagePlansResponse);
 
             if (getUsagePlansResponse.items)
             {
@@ -252,8 +249,8 @@ async function deleteApiKey(event)
             }
         }
 
-        console.log('[INFO] found key to delete: %s', keyId);
-        console.log('[INFO] found usage plans to delete: %j', usagePlanIds);
+        // console.log('[INFO] found key to delete: %s', keyId);
+        // console.log('[INFO] found usage plans to delete: %j', usagePlanIds);
 
         for (var i = 0; i < usagePlanIds.length; i++)
         {
@@ -264,7 +261,7 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteUsagePlanKey(deleteUsagePlanKeyRequest).promise();
 
-            console.log('[INFO] successfully deleted usage plan key'); 
+            // console.log('[INFO] successfully deleted usage plan key'); 
 
             var updateUsagePlanRequest = {
                 usagePlanId: usagePlanIds[i],
@@ -279,7 +276,7 @@ async function deleteApiKey(event)
 
             await apiGateway.updateUsagePlan(updateUsagePlanRequest).promise(); 
 
-            console.log('[INFO] removed stage from usage plan');
+            // console.log('[INFO] removed stage from usage plan');
 
             var deleteUsagePlanRequest = {
                 usagePlanId: usagePlanIds[i]
@@ -287,7 +284,7 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteUsagePlan(deleteUsagePlanRequest).promise();
 
-            console.log('[INFO] successfully deleted usage plan: ' + usagePlanIds[i]);  
+            // console.log('[INFO] successfully deleted usage plan: ' + usagePlanIds[i]);  
         }        
 
         if (keyId)
@@ -299,12 +296,12 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteApiKey(deleteApiKeyRequest).promise();
 
-            console.log('[INFO] successfully deleted API key: ' + keyId);
+            // console.log('[INFO] successfully deleted API key: ' + keyId);
         }
     }
     catch (error)
     {
-        console.log('[WARNING] failed to delete API key material', error);
+        console.log('[ERROR] failed to delete API key material', error);
         throw error;
     }
 }
@@ -337,7 +334,7 @@ async function createAPIKey(event)
 
         var createApiKeyResponse = await apiGateway.createApiKey(createKeyParams).promise();
 
-        console.log('[INFO] got createApiKey() response: %j', createApiKeyResponse);
+        // console.log('[INFO] got createApiKey() response: %j', createApiKeyResponse);
 
         var createUsagePlanParams = {
             name: planName,
@@ -351,7 +348,7 @@ async function createAPIKey(event)
 
         var createUsagePlanResponse = await apiGateway.createUsagePlan(createUsagePlanParams).promise();
 
-        console.log('[INFO] got createUsagePlan() response: %j', createUsagePlanResponse);
+        // console.log('[INFO] got createUsagePlan() response: %j', createUsagePlanResponse);
 
         var createUsagePlanKeyParams = {
             keyId: createApiKeyResponse.id,
@@ -361,14 +358,14 @@ async function createAPIKey(event)
 
         var createUsagePlanKeyResponse = await apiGateway.createUsagePlanKey(createUsagePlanKeyParams).promise();
 
-        console.log('[INFO] got createUsagePlanKey() response: %j', createUsagePlanKeyResponse);
+        // console.log('[INFO] got createUsagePlanKey() response: %j', createUsagePlanKeyResponse);
 
-        console.log('[INFO] successfully created API key');
+        // console.log('[INFO] successfully created API key');
 
     }
     catch (error)
     {
-        console.log('[WARNING] failed to create API key material', error);
+        console.log('[ERROR] failed to create API key material', error);
         throw error;
     }
 }
@@ -388,7 +385,7 @@ async function handleCreateUpdate(event)
 
         var manifest = await loadManifest(inputManifest.Bucket, inputManifest.Key);
 
-        console.log("[INFO] creating or updating: %d custom resources", manifest.files.length);
+        // console.log("[INFO] creating or updating: %d custom resources", manifest.files.length);
 
         var count = 0;
 
@@ -402,7 +399,7 @@ async function handleCreateUpdate(event)
             count++;
         }
 
-        console.log("[INFO] successfully processed: %d resources", count);
+        // console.log("[INFO] successfully processed: %d resources", count);
     }
     catch (error)
     {
@@ -424,13 +421,13 @@ async function loadManifest(manifestBucket, manifestKey)
             Key: manifestKey
         };
         
-        console.log('[INFO] loading manifest using: %j', getParams);
+        // console.log('[INFO] loading manifest using: %j', getParams);
 
         var getObjectResponse = await s3.getObject(getParams).promise();
         
         var body = getObjectResponse.Body.toString();
 
-        console.log('[INFO] got body: %s', body);
+        // console.log('[INFO] got body: %s', body);
 
         return JSON.parse(body).manifest;
     }
@@ -455,7 +452,7 @@ async function copyS3File(sourceBucket, sourceKey, destinationBucket, destinatio
 
         await s3.copyObject(copyRequest).promise();
 
-        console.log('[INFO] successfully deployed resource: s3://%s/%s', destinationBucket, destinationKey);        
+        // console.log('[INFO] successfully deployed resource: s3://%s/%s', destinationBucket, destinationKey);        
     }
     catch (error)
     {
@@ -476,7 +473,7 @@ async function deleteS3File(bucket, key)
 
         await s3.deleteObject(deleteRequest).promise();
 
-        console.log('[INFO] successfully deleted object: s3://%s/%s', bucket, key);        
+        // console.log('[INFO] successfully deleted object: s3://%s/%s', bucket, key);        
     }
     catch (error)
     {
