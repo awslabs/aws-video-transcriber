@@ -364,7 +364,6 @@ async function createAPIKey(event)
     catch (error)
     {
         console.log('[ERROR] failed to create API key material', error);
-        throw error;
     }
 }
 
