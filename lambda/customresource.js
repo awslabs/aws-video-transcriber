@@ -119,7 +119,6 @@ async function handleDelete(event)
     catch (error)
     {
         console.log("[ERROR] failed to delete custom resources", error);
-        throw error;
     }  
 }
 
@@ -302,7 +301,6 @@ async function deleteApiKey(event)
     catch (error)
     {
         console.log('[ERROR] failed to delete API key material', error);
-        throw error;
     }
 }
 
@@ -478,7 +476,6 @@ async function deleteS3File(bucket, key)
     catch (error)
     {
         console.log('[ERROR] failed to delete: s3://%s/%s', bucket, key, error);
-        throw error;
     }
 }
 
