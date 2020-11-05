@@ -120,6 +120,11 @@ async function exportCaptions(format, captions)
         {
             var caption = captions[i];
 
+            if (caption.caption.trim() === '')
+            {
+              continue;
+            }
+
             webvtt += formatTimeWEBVTT(caption.start) + ' --> ' + formatTimeWEBVTT(caption.end) + '\n';
             webvtt += caption.caption + '\n\n';
         }
@@ -135,6 +140,12 @@ async function exportCaptions(format, captions)
         for (var i in captions)
         {
             var caption = captions[i];
+
+            if (caption.caption.trim() === '')
+            {
+              continue;
+            }
+            
             srt += index + '\n';
             srt += formatTimeSRT(caption.start) + ' --> ' + formatTimeSRT(caption.end) + '\n';
             srt += caption.caption + '\n\n';
