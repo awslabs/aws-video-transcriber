@@ -35,7 +35,7 @@ var axios = require('axios');
  
 exports.handler = async function(event, context) 
 { 
-    // console.log("Handling request: %j", event);
+    console.log("Handling request: %j", event);
 
     /**
      * Use the service token (in this case the Lambda ARN) as the resource id
@@ -421,13 +421,13 @@ async function loadManifest(manifestBucket, manifestKey)
             Key: manifestKey
         };
         
-        // console.log('[INFO] loading manifest using: %j', getParams);
+        console.log('[INFO] loading manifest using: %j', getParams);
 
         var getObjectResponse = await s3.getObject(getParams).promise();
         
         var body = getObjectResponse.Body.toString();
 
-        // console.log('[INFO] got body: %s', body);
+        console.log('[INFO] got body: %s', body);
 
         return JSON.parse(body).manifest;
     }
