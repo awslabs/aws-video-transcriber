@@ -532,8 +532,6 @@ resources:
           Key:
             Name: ${self:custom.stage}-${self:service}-apikey
             Value: !Ref APIKey
-      environment:
-        LOG_GROUP: ${self:custom.stage}
 
     LambdaPolicy:
       Type: 'AWS::IAM::ManagedPolicy'
