@@ -8,8 +8,6 @@ provider:
   endpointType: REGIONAL
   runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
-  transcribeLocale: ${opt:transcribeLocale, 'en-AU'}
-  apiKey: ${opt:apiKey, 'JustAnApiKeyJustAnApiKey'}
   profile: ${opt:profile, 'transcribe'}
   logRetentionInDays: 7
 
@@ -32,14 +30,14 @@ custom:
         - 'fr-CA'
         - 'fr-FR'
         - 'it-IT'
-      Default: ${self:provider.transcribeLocale}
+      Default: 'en-AU'
       Description: 'The language that Transcribe uses' 
 
     APIKey:
       Type: String
       AllowedPattern: '[a-zA-Z0-9]{20,70}'
       ConstraintDescription: 'must only contain letters (uppercase and lowercase) and numbers, min length 20, max length 70'
-      Default: '${self:provider.apiKey}'
+      Default: 'JustAnApiKeyJustAnApiKey'
       Description: 'An API key to use for accessing the website'      
 
 functions:
@@ -534,6 +532,8 @@ resources:
           Key:
             Name: ${self:custom.stage}-${self:service}-apikey
             Value: !Ref APIKey
+      environment:
+        LOG_GROUP: ${self:custom.stage}
 
     LambdaPolicy:
       Type: 'AWS::IAM::ManagedPolicy'
