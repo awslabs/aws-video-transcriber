@@ -89,7 +89,7 @@
 					</div>		
 					<form class="form">
 						<div class="form-group">
-							<label for="currentTime">Caption timing</label>
+							<label for="currentTime">Caption timing - <span id="captionIndex"></span></label>
 							<input type="text" class="form-control input-sm" id="startTime" placeholder="Start time" readonly/>
 							<input type="text" class="form-control input-sm" id="endTime" placeholder="End time" readonly/>
 						</div>							
@@ -247,8 +247,9 @@
 
 		function updateCaptionEditor() {
 			captionEdit.value = captionData[captionIndex].caption;
-			startTimeEdit.value = captionData[captionIndex].start;
-			endTimeEdit.value = captionData[captionIndex].end;
+			startTimeEdit.value = formatTime(captionData[captionIndex].start);
+			endTimeEdit.value = formatTime(captionData[captionIndex].end);
+			$('#captionIndex').html(captionIndex + 1);
 		}
 
 		confidenceHighlight.oninput = function() {
@@ -273,6 +274,7 @@
 			renderCaption();
 		}
 
+		/**
 		startTimeEdit.oninput = function() {
 			captionData[captionIndex].start = this.value;
 			captionSelected(true);
@@ -282,6 +284,7 @@
 			captionData[captionIndex].end = this.value;
 			captionSelected(seek);
 		}	
+		*/
 
 		video.addEventListener("ended", function() {
 			video.pause();
@@ -312,6 +315,23 @@
 				}
 			}
 		});
+
+	function formatTime(timeSeconds)
+	{
+	    const ONE_HOUR = 60 * 60;
+	    const ONE_MINUTE = 60;
+	    var hours = Math.floor(timeSeconds / ONE_HOUR);
+	    var remainder = timeSeconds - (hours * ONE_HOUR);
+	    var minutes = Math.floor(remainder / 60);
+	    remainder = remainder - (minutes * ONE_MINUTE);
+	    var seconds = Math.floor(remainder);
+	    remainder = remainder - seconds;
+	    var millis = remainder;
+
+	    return (hours + '').padStart(2, '0') + ':' +
+	            (minutes + '').padStart(2, '0') + ':' +
+	            (seconds + '').padStart(2, '0');
+	}		
 
 		function showControls()
 		{
