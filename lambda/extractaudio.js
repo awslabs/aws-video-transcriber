@@ -376,7 +376,8 @@ async function getAudioElasticTranscoderPipeline(params, pageToken)
                 if (pipeline.Name === params.audioPipelineName)
                 {
                     if (pipeline.InputBucket === params.inputBucket &&
-                        pipeline.OutputBucket === params.outputAudioBucket)
+                        pipeline.OutputBucket === params.outputAudioBucket &&
+                        pipeline.Role === params.transcoderRole)
                     {
                         console.log("[INFO] found matching audio pipeline: " + pipeline.Id);
                         return pipeline.Id;    

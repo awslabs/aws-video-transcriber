@@ -236,7 +236,7 @@
         "FunctionName": {
           "Ref": "ExtractAudioLambdaFunction"
         },
-        "CodeSha256": "c08rdNu6qJ5vEaDyIBw6eJTrgzdaOI4UaYqe1WRRpAA=",
+        "CodeSha256": "gKwtga1Q4/NkcXNHHpCBKonA6161aylUoJTJeB85dss=",
         "Description": "Uses Elastic Transcoder to extract MP3 audio and produce web friendly MP4 from input videos"
       }
     },
@@ -915,7 +915,7 @@
         "FunctionName": {
           "Ref": "PutCaptionLambdaFunction"
         },
-        "CodeSha256": "yWC+eK1PX/bEggqRX/UrKNlMCK/rbYHWROINuWWVLRI=",
+        "CodeSha256": "RgDVRwDvNIOkV8kezpNacUhzAQe3etaH+uT9OfAJP2Y=",
         "Description": "Saves captions to DynamoDB"
       }
     },
@@ -1334,7 +1334,7 @@
         "FunctionName": {
           "Ref": "CustomResourceLambdaFunction"
         },
-        "CodeSha256": "0XNn5dYWU6LK/QdgMdAklCYo+dxtCsjCIUIilzo/4Zs=",
+        "CodeSha256": "iVBDsaR9VbStw/4739lJyDMa5Vx7c62i3NTAjFw3qJc=",
         "Description": "Performs custom cloudformation initialisation"
       }
     },
@@ -3649,6 +3649,9 @@
           "Bucket": {
             "Fn::Join": [ "", [ "aws-captions-deployment-", { "Ref": "AWS::Region" } ] ]
           }
+        },
+        "LogGroup": {
+          "Name": "/aws/lambda/prod-aws-captions-customresource"
         },
         "WebDeployTarget": {
           "Bucket": {
