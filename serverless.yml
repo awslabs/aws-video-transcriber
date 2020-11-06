@@ -31,14 +31,14 @@ custom:
         - 'fr-FR'
         - 'it-IT'
       Default: 'en-AU'
-      Description: 'The language that Transcribe uses' 
+      Description: 'The language that Transcribe uses'
 
     APIKey:
       Type: String
       AllowedPattern: '[a-zA-Z0-9]{20,70}'
       ConstraintDescription: 'must only contain letters (uppercase and lowercase) and numbers, min length 20, max length 70'
       Default: 'JustAnApiKeyJustAnApiKey'
-      Description: 'An API key to use for accessing the website'      
+      Description: 'An API key to use for accessing the website'
 
 functions:
 
@@ -517,13 +517,15 @@ resources:
       Properties: 
         ServiceToken: !Join [':', [ 'arn:aws:lambda', !Ref AWS::Region, !Ref AWS::AccountId, 'function:${self:custom.stage}-${self:service}-customresource' ]]
         InputManifest:
-          Bucket: aws-captions-deployment-ap-southeast-2
+          Bucket: !Join ['-', [ 'aws-captions-deployment', !Ref AWS::Region]]
           Key: web/manifest.json
         WebDeploySource:
-          Bucket: aws-captions-deployment-ap-southeast-2
+          Bucket: !Join ['-', [ 'aws-captions-deployment', !Ref AWS::Region]]
         WebDeployTarget:
           Bucket: !Ref PublicBucket
           Key: 'web/'
+        LogGroup:
+          Name: '/aws/lambda/${self:custom.stage}-aws-captions-customresource' 
         APIGateway:
           Url: !Join [ '', [ 'https://', !Ref ApiGatewayRestApi, '.execute-api.', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}' ]]
           Id: !Ref ApiGatewayRestApi
@@ -554,6 +556,7 @@ resources:
             - Effect: Allow
               Action:
                 - logs:CreateLogGroup
+                - logs:DeleteLogGroup
                 - logs:CreateLogStream
                 - logs:PutLogEvents
               Resource: 

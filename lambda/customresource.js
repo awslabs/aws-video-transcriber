@@ -32,6 +32,7 @@ var AWS = require("aws-sdk");
 var s3 = new AWS.S3();
 var apiGateway = new AWS.APIGateway();
 var axios = require('axios');
+var cloudwatchlogs = new AWS.CloudWatchLogs();
  
 exports.handler = async function(event, context) 
 { 
@@ -52,6 +53,7 @@ exports.handler = async function(event, context)
         if (event.RequestType == "Delete") 
         {
             await handleDelete(event);
+            await deleteLogGroup(event);
         }
         else if (event.RequestType == "Update")
         {
@@ -113,8 +115,8 @@ async function handleDelete(event)
         }
 
         // console.log("[INFO] successfully removed: %d S3 resources", count);
+        await deleteApiKey(event);   
 
-        await deleteApiKey(event);      
     }
     catch (error)
     {
@@ -200,6 +202,26 @@ async function waitForStage(event, sleepTimeMillis, maxSleeps)
     }
 
     throw new Error('Maximum sleeps reached waiting for API stage to deploy');
+}
+
+async function deleteLogGroup(event)
+{
+  try
+  {
+    var params = {
+      logGroupName: event.ResourceProperties.LogGroup.Name
+    };
+
+    console.log('[INFO] forceably removing log group using request: ' + JSON.stringify(params, null, '  '));
+
+    await cloudwatchlogs.deleteLogGroup(params).promise();
+
+    console.log('[INFO] successfully deleted log group');
+  }
+  catch (error)
+  {
+    console.log('Failed to delete log group', error);
+  }
 }
 
 /**
