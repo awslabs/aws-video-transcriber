@@ -3761,7 +3761,7 @@
                       {
                         "Ref": "AWS::AccountId"
                       },
-                      "log-group:/aws/lambda/*:*:*"
+                      "log-group:/aws/lambda/*"
                     ]
                   ]
                 }

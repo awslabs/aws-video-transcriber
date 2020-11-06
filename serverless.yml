@@ -560,7 +560,7 @@ resources:
                 - logs:CreateLogStream
                 - logs:PutLogEvents
               Resource: 
-                - !Join [ ':', [ 'arn:aws:logs', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'log-group:/aws/lambda/*:*:*' ] ]
+                - !Join [ ':', [ 'arn:aws:logs', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'log-group:/aws/lambda/*' ] ]
             - Effect: Allow
               Action:
                 - dynamodb:Scan
