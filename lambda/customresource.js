@@ -191,12 +191,12 @@ async function waitForStage(event, sleepTimeMillis, maxSleeps)
             };
 
             var result = await apiGateway.getStage(request).promise();
-            // console.log('[INFO] found API stage: %j', result);
+            console.log('[INFO] found API stage: %j', result);
             return;
         }
         catch (error)
         {
-            // console.log('[INFO] API Gateway stage is not ready, sleeping');
+            console.log('[INFO] API Gateway stage is not ready, sleeping');
             await sleep(sleepTimeMillis);
         }
     }
@@ -247,7 +247,7 @@ async function deleteApiKey(event)
 
         var getApiKeysResponse = await apiGateway.getApiKeys(getApiKeysRequest).promise();
 
-        // console.log('[INFO] got getApiKeys() response: %j', getApiKeysResponse);
+        console.log('[INFO] got getApiKeys() response: %j', getApiKeysResponse);
 
         if (getApiKeysResponse.items && getApiKeysResponse.items.length == 1)
         {
@@ -259,7 +259,7 @@ async function deleteApiKey(event)
 
             var getUsagePlansResponse = await apiGateway.getUsagePlans(getUsagePlansRequest).promise();
 
-            // console.log('[INFO] got getUsagePlans() response: %j', getUsagePlansResponse);
+            console.log('[INFO] got getUsagePlans() response: %j', getUsagePlansResponse);
 
             if (getUsagePlansResponse.items)
             {
@@ -270,8 +270,8 @@ async function deleteApiKey(event)
             }
         }
 
-        // console.log('[INFO] found key to delete: %s', keyId);
-        // console.log('[INFO] found usage plans to delete: %j', usagePlanIds);
+        console.log('[INFO] found key to delete: %s', keyId);
+        console.log('[INFO] found usage plans to delete: %j', usagePlanIds);
 
         for (var i = 0; i < usagePlanIds.length; i++)
         {
@@ -282,7 +282,7 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteUsagePlanKey(deleteUsagePlanKeyRequest).promise();
 
-            // console.log('[INFO] successfully deleted usage plan key'); 
+            console.log('[INFO] successfully deleted usage plan key'); 
 
             var updateUsagePlanRequest = {
                 usagePlanId: usagePlanIds[i],
@@ -297,7 +297,7 @@ async function deleteApiKey(event)
 
             await apiGateway.updateUsagePlan(updateUsagePlanRequest).promise(); 
 
-            // console.log('[INFO] removed stage from usage plan');
+            console.log('[INFO] removed stage from usage plan');
 
             var deleteUsagePlanRequest = {
                 usagePlanId: usagePlanIds[i]
@@ -305,7 +305,7 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteUsagePlan(deleteUsagePlanRequest).promise();
 
-            // console.log('[INFO] successfully deleted usage plan: ' + usagePlanIds[i]);  
+            console.log('[INFO] successfully deleted usage plan: ' + usagePlanIds[i]);  
         }        
 
         if (keyId)
@@ -317,7 +317,7 @@ async function deleteApiKey(event)
 
             await apiGateway.deleteApiKey(deleteApiKeyRequest).promise();
 
-            // console.log('[INFO] successfully deleted API key: ' + keyId);
+            console.log('[INFO] successfully deleted API key: ' + keyId);
         }
     }
     catch (error)
@@ -336,6 +336,8 @@ async function createAPIKey(event)
     {
         await waitForStage(event, 10000, 50);
 
+        console.log('[INFO] Stage is ready, creating API key');
+
         var api = event.ResourceProperties.APIGateway;
 
         var apiId = api.Id;
@@ -347,14 +349,15 @@ async function createAPIKey(event)
         var createKeyParams = {
             description: 'AWS Captions API Key',
             enabled: true,
-            generateDistinctId: true,
             name: keyName,
             value: keyValue
         };
 
+        console.log('[INFO] about to create api key: ' + JSON.stringify(createKeyParams, null, '  '));
+
         var createApiKeyResponse = await apiGateway.createApiKey(createKeyParams).promise();
 
-        // console.log('[INFO] got createApiKey() response: %j', createApiKeyResponse);
+        console.log('[INFO] got createApiKey() response: %j', createApiKeyResponse);
 
         var createUsagePlanParams = {
             name: planName,
@@ -366,9 +369,11 @@ async function createAPIKey(event)
             description: 'AWS Captions API Usage Plan'
         };
 
+        console.log('[INFO] about to create usage plan: ' + JSON.stringify(createUsagePlanParams, null, '  '));
+
         var createUsagePlanResponse = await apiGateway.createUsagePlan(createUsagePlanParams).promise();
 
-        // console.log('[INFO] got createUsagePlan() response: %j', createUsagePlanResponse);
+        console.log('[INFO] got createUsagePlan() response: %j', createUsagePlanResponse);
 
         var createUsagePlanKeyParams = {
             keyId: createApiKeyResponse.id,
@@ -376,11 +381,13 @@ async function createAPIKey(event)
             usagePlanId: createUsagePlanResponse.id
         };
 
+        console.log('[INFO] about to create usage plan key: ' + JSON.stringify(createUsagePlanKeyParams, null, '  '));
+
         var createUsagePlanKeyResponse = await apiGateway.createUsagePlanKey(createUsagePlanKeyParams).promise();
 
-        // console.log('[INFO] got createUsagePlanKey() response: %j', createUsagePlanKeyResponse);
+        console.log('[INFO] got createUsagePlanKey() response: %j', createUsagePlanKeyResponse);
 
-        // console.log('[INFO] successfully created API key');
+        console.log('[INFO] successfully created API key');
 
     }
     catch (error)
