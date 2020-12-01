@@ -25,7 +25,9 @@ custom:
         - 'en-US'
         - 'en-GB'
         - 'es-US'
-        - 'de-DE'
+        - 'en-IN'
+        - 'de-DE',
+        - 'hi-IN'
         - 'pt-BR'
         - 'fr-CA'
         - 'fr-FR'
