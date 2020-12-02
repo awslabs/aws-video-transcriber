@@ -4376,7 +4376,9 @@
         "pt-BR",
         "fr-CA",
         "fr-FR",
-        "it-IT"
+        "it-IT",
+        "ta-IN",
+        "te-IN"
       ],
       "Default": "en-AU",
       "Description": "The language that Transcribe uses"
