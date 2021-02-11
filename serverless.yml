@@ -794,7 +794,7 @@ resources:
     
     Website:
       Description: Link to the public website
-      Value: !Join [ '', [ 'https://s3.', !Ref AWS::Region, '.amazonaws.com/', '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '/index.html' ]]
+      Value: !Join [ '', [ 'https://', '${self:custom.stage}-${self:service}-public-', !Ref AWS::Region, '-', !Ref AWS::AccountId, '.s3.', !Ref AWS::Region, '.amazonaws.com/index.html' ]]
       Export:
         Name: ${self:custom.stage}-${self:service}-website
     APIKey:
