@@ -14,7 +14,6 @@
 */
 
 var path = require("path");
-
 var AWS = require("aws-sdk");
 AWS.config.update({region: process.env.REGION});
 var transcribe;
@@ -67,6 +66,8 @@ async function computeParameters(event)
 	var inputBucket = event.Records[0].s3.bucket.name;
 	var mediaFileUrl = "https://s3-" + process.env.REGION + ".amazonaws.com/" + inputBucket + "/" + inputKey;
 
+	var videoInfo = await getVideo(videoId);
+
 	var params = 
 	{
 		inputKey: inputKey,
@@ -76,7 +77,7 @@ async function computeParameters(event)
 		outputBucket: process.env.TRANSCRIBE_BUCKET,
 		mediaFileUrl: mediaFileUrl,
 		region: process.env.REGION,
-		transcribeLanguage: process.env.TRANSCRIBE_LANGUAGE,
+		transcribeLanguage: videoInfo.language,
 		vocabularyName: process.env.VOCABULARY_NAME,
 		vocabularyExists: false,
 		dynamoVideoTable: process.env.DYNAMO_VIDEO_TABLE,
@@ -140,7 +141,13 @@ async function transcribeAudio(params)
 			{
     			MediaFileUri: params.mediaFileUrl
   			},
+			Subtitles: 
+			{
+				Formats: ["srt"]
+			},			  
   			MediaFormat: "mp4",
+			OutputKey: 'sourcecaptions/',
+			LanguageCode: "zh-CN",
   			TranscriptionJobName: params.videoId,
   			OutputBucketName: params.outputBucket
 		};
@@ -258,4 +265,74 @@ async function getVocabularies(nextToken)
         console.log('[ERROR] failed to list vocabularies' + error);
         throw error;
     }
+}
+
+/**
+ * Fetch the video info from DynamoDB
+ */
+ async function getVideo(videoId)
+ {
+     try
+     {
+ 
+         var getParams = {
+             TableName: process.env.DYNAMO_VIDEO_TABLE,
+             Key: 
+             {
+                 "videoId" : {"S": videoId},
+             },
+         };
+ 
+         console.log("[INFO] loading video using request: %j", getParams);  
+         
+         var getResponse = await dynamoDB.getItem(getParams).promise();
+         
+         console.log("[INFO] got response from Dyanmo: %j", getResponse);
+ 
+         if (getResponse.Item)
+         {
+             var videoInfo = mapper(getResponse.Item);
+             return videoInfo;
+         }
+         else
+         {
+             throw new Error('Video not found');
+         }        
+     }
+     catch (error)
+     {
+         console.log("Failed to get video from DynamoDB", error);
+         return {};
+     }   
+ }
+
+ /**
+ * Mapper which flattens item keys for 'S' types
+ */
+function mapper(data) {
+    
+    let S = "S";
+
+    if (isObject(data)) 
+    {
+        let keys = Object.keys(data);
+        while (keys.length) 
+        {
+            let key = keys.shift();
+            let types = data[key];
+
+            if (isObject(types) && types.hasOwnProperty(S)) {
+                data[key] = types[S];
+            } 
+        }
+    }
+
+    return data;
+}
+
+/**
+ * isObject helper function
+ */
+ function isObject(value) {
+    return typeof value === "object" && value !== null;
 }

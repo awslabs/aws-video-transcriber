@@ -34,6 +34,7 @@
  var homeTemplate = null;
  var videosTemplate = null;
  var videoTemplate = null;
+//  var videoTranslatedTemplate = null;
  var tweaksTemplate = null;
  var vocabularyTemplate = null;
  
@@ -41,11 +42,11 @@
   * Main application div
   */
  var appDiv = null;
- 
- /**
+
+  /**
   * Save cpations timer
   */
- var saveCaptionsTimer = null;
+   var saveCaptionsTimer = null;
  
  /**
   * 2 second time out for toasts
@@ -128,8 +129,12 @@
   */
  function getSignedUrl(file)
  {	
-	 var api = siteConfig.api_base + siteConfig.api_upload + '/' + file.name;
+	 var api = siteConfig.api_base + siteConfig.api_upload;
 	 console.log('[INFO] fetching signed url from: ' + api);
+
+	 var body = {
+		"fileName": file.name
+	 }
  
 	 let axiosConfig = {
 		 headers: {
@@ -137,14 +142,13 @@
 			 'X-Api-Key': localStorage.apiKey
 		 }
 	 };
- 
-	 return axios.get(api, axiosConfig);
+	return axios.post(api, body, axiosConfig);	 
  }
  
  /**
   * Saves the captions
   */
- function saveCaptions(videoId, captions)
+ function saveCaptions(videoId, captionIndex, caption, language)
  {
 	 var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId;
 	 console.log('[INFO] saving captions: ' + api);
@@ -154,44 +158,46 @@
 			 'X-Api-Key': localStorage.apiKey
 		   }
 	 };
-	 axios.put(api, { captions }, axiosConfig)
-	 .then(function (response) 
-	 {
-		 console.log('[INFO] successfully saved captions');
-		 toastr.success('Saved captions');
-	 })
-	 .catch(function (error) 
-	 {
-		 console.log('[ERROR] error while saving captions" ' + error);
-		 toastr.error('Failed to save captions');
-	 });
- 
-	 return true;
+	axios.put(api, 
+	{ 
+		"captionIndex" : captionIndex,
+		"caption" : caption,
+		"language" : language,
+		"type" : "SAVE-CAPTION" 
+	}, axiosConfig)
+	  .then(function (response) 
+	  {
+		  console.log('[INFO] successfully saved captions');
+		  toastr.success('Saved captions');
+	  })
+	  .catch(function (error) 
+	  {
+		  console.log('[ERROR] error while saving captions" ' + error);
+		  toastr.error('Failed to save captions');
+	  });
  }
 
  /**
   * Saves the captions
   */
-  function updateCaptions(videoId, captionIndex, wordIndex, words, type )
+  function updateCaptions(videoId, captionIndex, text, wordLength, language, type, translated)
   {
-
 	  var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId;
-	  console.log('[INFO] saving captions: ' + api);
+	  console.log('[INFO] updating captions: ' + api);
 	  let axiosConfig = {
 		  headers: {
 			  'Content-Type': 'application/json;charset=UTF-8',
 			  'X-Api-Key': localStorage.apiKey
 			}
 	  };
-	  var body = {
-		  
-	  }
 	  axios.put(api, 
 		{ 
 			"captionIndex" : captionIndex,
-	  		"wordIndex" : wordIndex,
-	  		"words" : words,
-	  		"type" : type 
+	  		"text" : text,
+			"wordLength": wordLength,
+	  		"language" : language,
+	  		"type" : type,
+			"translated": translated
 		}, axiosConfig)
 	  .then(function (response) 
 	  {
@@ -206,6 +212,38 @@
   
 	  return true;
   } 
+
+ /**
+  * Saves the captions
+  */
+  function putLanguage(fileName, language )
+  {
+	  var api = siteConfig.api_base + siteConfig.api_language;
+	  console.log('[INFO] put language: ' + api);
+	  let axiosConfig = {
+		  headers: {
+			  'Content-Type': 'application/json;charset=UTF-8',
+			  'X-Api-Key': localStorage.apiKey
+			}
+	  };
+	  var body = {
+		"videoName" : fileName,
+		"language" : language 		  
+	  }
+	  axios.put(api, body, axiosConfig)
+	  .then(function (response) 
+	  {
+		  console.log('[INFO] successfully put language');
+		  toastr.success('Put Language');
+	  })
+	  .catch(function (error) 
+	  {
+		  console.log('[ERROR] error while putting language" ' + error);
+		  toastr.error('Failed to put language');
+	  });
+  
+	  return true;
+  }
  
  /**
   * Deletes a video
@@ -261,7 +299,6 @@
  
 	 console.log('[INFO] commencing reprocessing video: ' + videoId);
  
- 
 	 var api = siteConfig.api_base + siteConfig.api_video + '/' + videoId;
 	 console.log('[INFO] reprocessing video: ' + api);
 	 let axiosConfig = {
@@ -287,7 +324,7 @@
  /**
   * Burn in captions with uploaded video
   */
- function burnCaptions(videoId)
+ function burnCaptions(videoId, language, translated)
  {
 	 var api = siteConfig.api_base + siteConfig.api_burn + '/' + videoId;
 	 console.log('[INFO] Trigger burn in action: ' + api);
@@ -297,7 +334,12 @@
 			 'X-Api-Key': localStorage.apiKey
 		   }
 	 };
-	 axios.put(api, {}, axiosConfig)
+	 var body = {
+		"language": language,
+		"translated": translated
+	 };
+
+	 axios.put(api, body, axiosConfig)
 	 .then(function (response) 
 	 {
 		 toastr.success('Burn in captions success');
@@ -308,13 +350,46 @@
 		 toastr.error('Failed to burn in captions');
 	 });
  }
+
+  /**
+  * Burn in captions with uploaded video
+  */
+function translateCaptions(videoId, targetLanguage)
+{
+	var api = siteConfig.api_base + siteConfig.api_translate
+	console.log('[INFO] Trigger translate in action: ' + api);
+	let axiosConfig = {
+		headers: {
+			'Content-Type': 'application/json;charset=UTF-8',
+			'X-Api-Key': localStorage.apiKey
+			}
+	};
+	var body = {
+		"videoId" : videoId,
+		"targetLanguage": targetLanguage 		  
+	}	   
+	axios.put(api, body, axiosConfig)
+	.then(function (response) 
+	{
+		toastr.success('Translate in captions success');
+	})
+	.catch(function (error) 
+	{
+		console.log('[ERROR] error while translating captions" ' + error);
+		toastr.error('Failed to translate in captions');
+	});
+}  
  
  /**
   * Downloads captions in WEBVTT format
   */
- function downloadCaptionsVTT(videoId, videoName)
+ function downloadCaptionsVTT(videoId, videoName, language, translated)
  {
-	 var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=webvtt';
+	 if (translated == 'true')
+	 {
+		videoId = videoId + '_' + language;
+	 }
+	 var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=webvtt&language=' + language;
 	 console.log('[INFO] downloading WEBVTT captions: ' + api);
 	 let axiosConfig = {
 		 headers: {
@@ -340,9 +415,13 @@
  /**
   * Downloads captions in SRT format
   */
- function downloadCaptionsSRT(videoId, videoName)
+ function downloadCaptionsSRT(videoId, videoName, language, translated)
  {
-	 var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=srt';
+	 if (translated == 'true')
+	 {
+		videoId = videoId + '_' + language;
+	 }
+	 var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=srt&language=' + language;
 	 console.log('[INFO] downloading SRT captions: ' + api);
 	 let axiosConfig = {
 		 headers: {
@@ -368,8 +447,12 @@
  /**
   * Downloads burned video in SRT format
   */
- function downloadBurnedVideo(videoId, videoName)
+ function downloadBurnedVideo(videoId, videoName, language)
  {
+	if (language != '')
+	{
+	   videoId = videoId + '_' + language;
+	}
 	 var api = siteConfig.api_base + siteConfig.api_burned_video + '/' + videoId;
 	 console.log('[INFO] downloading video with captions: ' + api);
 	 let axiosConfig = {
@@ -522,13 +605,12 @@
 	 if (window.localStorage.apiKey)
 	 {
 		 nav += '<li class="nav-item"><a id="videosLink" class="nav-link" href="#videos">Videos</a></li>';
-		 if (siteConfig.language != 'zh-CN')
-		 {
-			nav += '<li class="nav-item"><a id="vocabularyLink" class="nav-link" href="#vocabulary">Vocabulary</a></li>';
-		 }
+		//  if (siteConfig.language != 'zh-CN')
+		//  {
+		// 	nav += '<li class="nav-item"><a id="vocabularyLink" class="nav-link" href="#vocabulary">Vocabulary</a></li>';
+		//  }
 		 nav += '<li class="nav-item"><a id="tweaksLink" class="nav-link" href="#tweaks">Tweaks</a></li>';
 	 }
- 
 	 document.getElementById('navBar').innerHTML = nav;
  }
  
@@ -587,7 +669,8 @@
 		 $.get('site_config.json'),
 		 $.get('templates/home.hbs'),
 		 $.get('templates/videos.hbs'),
-		 $.get('templates/video.hbs'), 
+		//  $.get('templates/video-translated.hbs'), 
+		 $.get('templates/video-new.hbs'), 
 		 $.get('templates/tweaks.hbs'), 
 		 $.get('templates/vocabulary.hbs')
 	 ).done(function(site, home, videos, video, tweaks, vocabulary)
@@ -597,6 +680,7 @@
  
 		 homeTemplate = Handlebars.compile(home[0]);
 		 videosTemplate = Handlebars.compile(videos[0]);
+		//  videoTranslatedTemplate = Handlebars.compile(videotranslated[0]);
 		 videoTemplate = Handlebars.compile(video[0]);
 		 tweaksTemplate = Handlebars.compile(tweaks[0]);
 		 vocabularyTemplate = Handlebars.compile(vocabulary[0]);
@@ -621,6 +705,7 @@
 				 "processingVideos": [],
 				 "readyVideos": [],
 				 "completedVideos": [],
+				 "enableTranslate": false,
 				 "refreshLink": "#videos?t=" + new Date().getTime()
 			 });
 			 appDiv.html(html);
@@ -629,6 +714,8 @@
 			 axios.get(api, { 'headers': { 'X-Api-Key': localStorage.apiKey }}).then(function (response) {
  
 				 var videos = response.data.videos;
+				 var enableTranslate = response.data.enableTranslate;
+				 var defaultLanguage = response.data.defaultLanguage;
  
 				 for (var i = 0; i < videos.length; i++)
 				 {
@@ -654,13 +741,15 @@
 				 var completedVideos = videos.filter(function (video) {
 					 return video.status === "COMPLETE";
 				 });
- 
+
 				 html = videosTemplate({ 
 					 "loading": false, 
 					 "erroredVideos": erroredVideos,
 					 "processingVideos": processingVideos,
 					 "readyVideos": readyVideos,
 					 "completedVideos": completedVideos,
+					 "enableTranslate": enableTranslate,
+					 "defaultLanguage": defaultLanguage,
 					 "refreshLink": "#videos?t=" + new Date().getTime()
 				 });
 				 appDiv.html(html);
@@ -676,7 +765,7 @@
 		  * Set up video template
 		  */
 		 router.add('video/(:any)', (videoId) => {
-			 highlightNav('#videosLink');
+			 highlightNav('#videosLink');			 
 			 html = videoTemplate({ 
 				 "loading": true, 
 				 "video": null, 

@@ -24,6 +24,12 @@ exports.handler = async (event, context, callback) => {
     try
     {
         var videoId = event.pathParameters.videoId;
+        var translated = false;
+        if (event.pathParameters.videoId.includes("_"))
+        {
+            videoId = event.pathParameters.videoId.substring(0, event.pathParameters.videoId.indexOf("_"));
+            translated = true;
+        }        
 
         var getParams = {
             TableName: process.env.DYNAMO_VIDEO_TABLE,
@@ -42,13 +48,14 @@ exports.handler = async (event, context, callback) => {
             var video = mapper(getResponse.Item);
 
             console.log("[INFO] video: %j", video); 
-            if (!video.s3BurnedVideoPath){
-                console.log("[INFO] burned video is not created");
-                throw new Error('burned video found');
-            }            
 
             const videoBucket = process.env.VIDEO_BUCKET;
-            const burnedVideoKey = video.s3BurnedVideoPath.substring(6 + videoBucket.length);
+            var burnedVideoKey = '';
+            if (translated) {
+                burnedVideoKey = video.s3BurnedTranslatedVideoPath.substring(6 + videoBucket.length);
+            } else {
+                burnedVideoKey = video.s3BurnedVideoPath.substring(6 + videoBucket.length);
+            }
             const signedUrlExpireSeconds = 60 * 60;
 
             console.log("[INFO] generate burnedVideoKey: %s", burnedVideoKey); 

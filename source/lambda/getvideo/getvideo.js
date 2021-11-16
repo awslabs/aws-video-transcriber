@@ -36,6 +36,12 @@ exports.handler = async (event, context, callback) => {
     try
     {
         var videoId = event.pathParameters.videoId;
+        var translated = false;
+        if (event.pathParameters.videoId.includes("_"))
+        {
+            videoId = event.pathParameters.videoId.substring(0, event.pathParameters.videoId.indexOf("_"));
+            translated = true;
+        }
 
         var getParams = {
             TableName: process.env.DYNAMO_VIDEO_TABLE,
@@ -67,15 +73,20 @@ exports.handler = async (event, context, callback) => {
             const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
             const captionsUrl = s3.getSignedUrl('getObject', {
                 Bucket : transcribeBucket,
-                Key : 'captions/' + videoId,
+                Key : 'captions/' + event.pathParameters.videoId + '.json',
                 Expires: signedUrlExpireSeconds
             });  
             
             video.s3CaptionsSignUrl = captionsUrl;
+            video.translated = translated;
+            var enableTranslate = false;
+            if (process.env.REGION != 'cn-north-1' && process.env.REGION != 'cn-northwest-1')
+            {
+               enableTranslate = true
+            }  
+            video.enableTranslate = enableTranslate;
 
             console.log('[INFO] made signed url: ' + url);
-
-            video.language = process.env.TRANSCRIBE_LANGUAGE;
 
             const response = {
                 statusCode: 200,

@@ -1,0 +1,8 @@
+# Ignore Config used with code.amazon.com
+Config
+
+source/web/js/axios-0.18.0.min.js
+source/web/js/jquery-3.6.0.min.js
+source/lambda/extractaudio/extractaudio.js
+source/lambda/extractaudio/package.json
+source/lambda/customresource/package.json

@@ -1,0 +1,3427 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "(SO8026) - The AWS CloudFormation template for deployment of the AWS Serverless Video Transcriber resources. Version %%VERSION%%"
+
+Mappings:
+    SourceCode:
+        General:
+            S3Bucket: "%%BUCKET_NAME%%"
+            KeyPrefix: "%%SOLUTION_NAME%%/%%VERSION%%"
+            S3TemplateBucket: "%%TEMPLATE_BUCKET_NAME%%"
+            SolutionName: "%%SOLUTION_NAME%%"
+    Solution:
+        Data:
+            SendAnonymousUsageData: "Yes"
+
+Resources:
+  PutLanguageLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-putlanguage
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"
+  TranslateCaptionsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-translatecaptions
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"
+  ExtractAudioLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-extractaudio
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"    
+  TranscribeAudioLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-transcribeaudio
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  CreateCaptionsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-createcaptions
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetVideosLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getvideos
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetVideoLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getvideo
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  UpdateVideoLanguageLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-updatevideolanguage
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  UpdateVideoStatusLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-updatevideostatus
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  UpdateVideoNameLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-updatevideoname
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  UpdateVideoDescriptionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-updatevideodescription
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  DeleteVideoLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-deletevideo
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  ReprocessVideoLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-reprocessvideo
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetUploadLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getupload
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  PutCaptionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-putcaption
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  BurnCaptionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-burncaption
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetCaptionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getcaption
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetVocabularyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getvocabulary
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  HeadVocabularyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-headvocabulary
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  PutVocabularyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-putvocabulary
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  GetTweaksLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-gettweaks
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"      
+  PutTweaksLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-puttweaks
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"           
+  CustomResourceLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-customresource
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"
+  GetBurnedVideoLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-getburnedvideo
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"
+  UpdateBurnedVideoPathLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/prod-aws-captions-updateburnedvideopath
+      RetentionInDays: 7
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W84
+            reason: "The log does not contain critical infomations in logs"
+  ExtractAudioLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/ExtractAudio.zip"]]
+      FunctionName: prod-aws-captions-extractaudio
+      Handler: extractaudio.handler
+      MemorySize: 2048
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 600
+      Description: Uses Media Convert to extract MP3 audio from input videos
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          OUTPUT_AUDIO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-audio-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          OUTPUT_AUDIO_KEY_PREFIX: audio
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          MEDIACONVERT_QUEUE: !Join
+            - ':'
+            - - arn:aws:mediaconvert
+              - !Ref 'AWS::Region'
+              - !Ref 'AWS::AccountId'
+              - 'queues/Default'
+          MEDIACONVERT_ROLE: !GetAtt 'MediaConvertRole.Arn'
+    DependsOn:
+      - ExtractAudioLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  ExtractAudioLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'ExtractAudioLambdaFunction'
+      Description: Uses Amazon Elemental MediaConvert to extract MP3 audio
+  TranscribeAudioLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/TranscribeAudio.zip"]]
+      FunctionName: prod-aws-captions-transcribeaudio
+      Handler: lambda/transcribeaudio.handler
+      MemorySize: 512
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 15
+      Description: Uses Transcribe to extract text from audio
+      Environment:
+        Variables:
+          TRANSCRIBE_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          OUTPUT_KEY_PREFIX: transcribe
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          VOCABULARY_NAME: !Join
+            - ''
+            - - prod-aws-captions-
+              - !Ref 'TranscribeLanguage'
+          TRANSCRIBE_LANGUAGE: !Ref 'TranscribeLanguage'
+    DependsOn:
+      - TranscribeAudioLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  TranscribeAudioLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'TranscribeAudioLambdaFunction'
+      Description: Uses Transcribe to extract text from audio
+  CreateCaptionsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/CreateCaptions.zip"]]
+      FunctionName: prod-aws-captions-createcaptions
+      Handler: lambda/createcaptions.handler
+      MemorySize: 512
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 60
+      Description: Creates captions for videos from transcription results
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+    DependsOn:
+      - CreateCaptionsLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  CreateCaptionsLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'CreateCaptionsLambdaFunction'
+      Description: Creates captions for videos from transcription results
+  GetVideosLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetVideos.zip"]]
+      FunctionName: prod-aws-captions-getvideos
+      Handler: lambda/getvideos.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Loads videos from DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_LANGUAGE: !Ref 'TranscribeLanguage'
+    DependsOn:
+      - GetVideosLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetVideosLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetVideosLambdaFunction'
+      Description: Loads videos from DynamoDB
+  GetVideoLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetVideo.zip"]]
+      FunctionName: prod-aws-captions-getvideo
+      Handler: lambda/getvideo.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Loads a single video from DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+    DependsOn:
+      - GetVideoLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetVideoLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetVideoLambdaFunction'
+      Description: Loads a single video from DynamoDB
+  UpdateVideoLanguageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/UpdateVideoLanguage.zip"]]
+      FunctionName: prod-aws-captions-updatevideolanguage
+      Handler: lambda/updatevideolanguage.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Updates the language of a video in DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - UpdateVideoLanguageLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  UpdateVideoLanguageLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'UpdateVideoLanguageLambdaFunction'
+      Description: Updates the language of a video in DynamoDB
+  UpdateVideoStatusLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/UpdateVideoStatus.zip"]]
+      FunctionName: prod-aws-captions-updatevideostatus
+      Handler: lambda/updatevideostatus.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Updates the status of a video in DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - UpdateVideoStatusLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  UpdateVideoStatusLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'UpdateVideoStatusLambdaFunction'
+      Description: Updates the status of a video in DynamoDB
+  UpdateVideoNameLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/UpdateVideoName.zip"]]
+      FunctionName: prod-aws-captions-updatevideoname
+      Handler: lambda/updatevideoname.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Updates the name of a video in DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - UpdateVideoNameLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  UpdateVideoNameLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'UpdateVideoNameLambdaFunction'
+      Description: Updates the name of a video in DynamoDB
+  UpdateVideoDescriptionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/UpdateVideoDescription.zip"]]
+      FunctionName: prod-aws-captions-updatevideodescription
+      Handler: lambda/updatevideodescription.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Updates the description of a video in DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - UpdateVideoDescriptionLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  UpdateVideoDescriptionLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'UpdateVideoDescriptionLambdaFunction'
+      Description: Updates the description of a video in DynamoDB
+  DeleteVideoLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/DeleteVideo.zip"]]
+      FunctionName: prod-aws-captions-deletevideo
+      Handler: lambda/deletevideo.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Purges a single video from the system
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          AUDIO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-audio-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          TRANSCRIBE_BUCKET: !Ref 'S3BucketTranscribe'
+    DependsOn:
+      - DeleteVideoLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  DeleteVideoLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'DeleteVideoLambdaFunction'
+      Description: Purges a single video from the system
+  ReprocessVideoLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/ReprocessVideo.zip"]]
+      FunctionName: prod-aws-captions-reprocessvideo
+      Handler: lambda/reprocessvideo.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Reprocesses a video
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          AUDIO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-audio-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          TRANSCRIBE_BUCKET: !Ref 'S3BucketTranscribe'
+          EXTRACT_AUDIO_FUNCTION: prod-aws-captions-extractaudio
+    DependsOn:
+      - ReprocessVideoLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  ReprocessVideoLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'ReprocessVideoLambdaFunction'
+      Description: Reprocesses a video
+  GetUploadLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetUpload.zip"]]
+      FunctionName: prod-aws-captions-getupload
+      Handler: lambda/getupload.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Fetches a signed URL for uploading video into S3
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+    DependsOn:
+      - GetUploadLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetUploadLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetUploadLambdaFunction'
+      Description: Fetches a signed URL for uploading video into S3
+  PutCaptionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/PutCaption.zip"]]
+      FunctionName: prod-aws-captions-putcaption
+      Handler: lambda/putcaption.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Saves captions to DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+    DependsOn:
+      - PutCaptionLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  PutCaptionLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'PutCaptionLambdaFunction'
+      Description: Saves captions to DynamoDB
+  BurnCaptionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/BurnCaption.zip"]]
+      FunctionName: prod-aws-captions-burncaption
+      Handler: lambda/burncaption.handler
+      MemorySize: 2048
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 900
+      Description: Burn captions to uploaded video
+      Environment:
+        Variables:
+          FONTCONFIG_PATH: /opt/fonts
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable' 
+          OUTPUT_VIDEO_KEY_PREFIX: burned         
+          REGION: !Ref 'AWS::Region'
+          INPUT_VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          INPUT_CAPTION_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'              
+          OUTPUT_VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'
+          MEDIACONVERT_QUEUE: !Join
+            - ':'
+            - - arn:aws:mediaconvert
+              - !Ref 'AWS::Region'
+              - !Ref 'AWS::AccountId'
+              - 'queues/Default'
+          TRANSCRIBE_BUCKET: !Ref 'S3BucketTranscribe'              
+          MEDIACONVERT_ROLE: !GetAtt 'MediaConvertRole.Arn'          
+    DependsOn:
+      - BurnCaptionLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  BurnCaptionLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'BurnCaptionLambdaFunction'
+      Description: Burn captions to uploaded video
+  GetCaptionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetCaption.zip"]]
+      FunctionName: prod-aws-captions-getcaption
+      Handler: lambda/getcaption.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Fetches captions in WEBVTT format
+      Environment:
+        Variables:
+          DYNAMO_CAPTION_TABLE: !Ref 'CaptionDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_BUCKET: !Ref 'S3BucketTranscribe'
+    DependsOn:
+      - GetCaptionLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetCaptionLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetCaptionLambdaFunction'
+      Description: Fetches captions in WEBVTT format
+  GetVocabularyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetVocabulary.zip"]]
+      FunctionName: prod-aws-captions-getvocabulary
+      Handler: lambda/getvocabulary.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Loads vocabulary from DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          VOCABULARY_NAME: !Join
+            - ''
+            - - prod-aws-captions-
+              - !Ref 'TranscribeLanguage'
+          TRANSCRIBE_LANGUAGE: !Ref 'TranscribeLanguage'              
+    DependsOn:
+      - GetVocabularyLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetVocabularyLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetVocabularyLambdaFunction'
+      Description: Loads vocabulary from DynamoDB
+  HeadVocabularyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/HeadVocabulary.zip"]]
+      FunctionName: prod-aws-captions-headvocabulary
+      Handler: lambda/headvocabulary.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Checks if vocabulary is ready to save
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          VOCABULARY_NAME: !Join
+            - ''
+            - - prod-aws-captions-
+              - !Ref 'TranscribeLanguage'
+    DependsOn:
+      - HeadVocabularyLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  HeadVocabularyLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'HeadVocabularyLambdaFunction'
+      Description: Checks if vocabulary is ready to save
+  PutVocabularyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/PutVocabulary.zip"]]
+      FunctionName: prod-aws-captions-putvocabulary
+      Handler: lambda/putvocabulary.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Saves vocabulary to DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          VOCABULARY_NAME: !Join
+            - ''
+            - - prod-aws-captions-
+              - !Ref 'TranscribeLanguage'
+          TRANSCRIBE_LANGUAGE: !Ref 'TranscribeLanguage'
+    DependsOn:
+      - PutVocabularyLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  PutVocabularyLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'PutVocabularyLambdaFunction'
+      Description: Saves vocabulary to DynamoDB
+  GetTweaksLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetTweaks.zip"]]
+      FunctionName: prod-aws-captions-gettweaks
+      Handler: lambda/gettweaks.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Loads tweaks from DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - GetTweaksLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetTweaksLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetTweaksLambdaFunction'
+      Description: Loads tweaks from DynamoDB
+  PutTweaksLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/PutTweaks.zip"]]
+      FunctionName: prod-aws-captions-puttweaks
+      Handler: lambda/puttweaks.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Saves tweaks to DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_CONFIG_TABLE: !Ref 'ConfigDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+    DependsOn:
+      - PutTweaksLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  PutTweaksLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'PutTweaksLambdaFunction'
+      Description: Saves tweaks to DynamoDB
+  PutLanguageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/PutLanguage.zip"]]
+      FunctionName: prod-aws-captions-putlanguage
+      Handler: lambda/putlanguage.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: Saves tweaks to DynamoDB
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          INPUT_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'          
+    DependsOn:
+      - PutLanguageLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It" 
+          - id: W58
+            reason: "Skip It" 
+  PutLanguageLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'PutLanguageLambdaFunction'
+      Description: Saves language to DynamoDB 
+  TranslateCaptionsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/TranslateCaptions.zip"]]
+      FunctionName: prod-aws-captions-translatecaptions
+      Handler: lambda/translatecaptions.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 890
+      Description: Translate captions 
+      Environment:
+        Variables:
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          REGION: !Ref 'AWS::Region'
+          TRANSCRIBE_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-transcribe-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'          
+    DependsOn:
+      - TranslateCaptionsLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It" 
+          - id: W58
+            reason: "Skip It" 
+  TranslateCaptionsLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'TranslateCaptionsLambdaFunction'
+      Description: Translate captions      
+  GetBurnedVideoLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/GetBurnedVideo.zip"]]
+      FunctionName: prod-aws-captions-getburnedvideo
+      Handler: lambda/getburnedvideo.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 600
+      Description: Get burned video signUrl
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+          VIDEO_BUCKET: !Join
+            - ''
+            - - prod-aws-captions-video-
+              - !Ref 'AWS::Region'
+              - '-'
+              - !Ref 'AWS::AccountId'          
+    DependsOn:
+      - GetBurnedVideoLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  GetBurnedVideoLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'GetBurnedVideoLambdaFunction'
+      Description: Get burned video signUrl 
+  UpdateBurnedVideoPathLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/UpdateBurnedVideoPath.zip"]]
+      FunctionName: prod-aws-captions-updateburnedvideopath
+      Handler: lambda/updateburnedvideopath.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 29
+      Description: update burned video s3 path to DDB
+      Environment:
+        Variables:
+          REGION: !Ref 'AWS::Region'
+          DYNAMO_VIDEO_TABLE: !Ref 'VideoDynamoDBTable'
+    DependsOn:
+      - UpdateBurnedVideoPathLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  UpdateBurnedVideoPathLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'UpdateBurnedVideoPathLambdaFunction'
+      Description: update burned video s3 path to DDB
+  CustomResourceLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/CustomResource.zip"]]
+      FunctionName: prod-aws-captions-customresource
+      Handler: lambda/customresource.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: nodejs12.x
+      Timeout: 900
+      Description: Performs custom cloudformation initialisation
+      Environment:
+        Variables:
+          TRANSCRIBE_LANGUAGE: !Ref 'TranscribeLanguage'      
+    DependsOn:
+      - CustomResourceLogGroup
+      - LambdaRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W89
+            reason: "Skip It"
+          - id: W92
+            reason: "Skip It"      
+  CustomResourceLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref 'CustomResourceLambdaFunction'
+      Description: Performs custom cloudformation initialisation      
+  TranscribeLanguageIdentificationEventBridgeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: TranscribeLanguageIdentification
+      EventPattern:
+        source:
+          - aws.transcribe
+        detail-type:
+          - Language Identification State Change
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt 'UpdateVideoLanguageLambdaFunction.Arn'
+          Id: prod-aws-captions-updatevideolanguage
+  S3BucketVideo:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join
+        - ''
+        - - prod-aws-captions-video-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt 'ExtractAudioLambdaFunction.Arn'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: videos/
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt 'UpdateBurnedVideoPathLambdaFunction.Arn'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: burned/                    
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - PUT
+              - POST
+              - GET
+            MaxAge: 3000
+    DependsOn:
+      - ExtractAudioLambdaPermissionVideoS3
+      - BurnCaptionsLambdaPermissionVideoS3
+      - UpdateBurnedVideoPathLambdaPermissionVideoS3      
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: "Skip It" 
+          - id: W35
+            reason: "Skip It" 
+          - id: W41
+            reason: "Skip It"       
+  S3BucketAudio:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join
+        - ''
+        - - prod-aws-captions-audio-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt 'TranscribeAudioLambdaFunction.Arn'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: audio/
+                  - Name: suffix
+                    Value: .mp4
+    DependsOn:
+      - TranscribeAudioLambdaPermissionAudioS3
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: "Skip It" 
+          - id: W35
+            reason: "Skip It" 
+          - id: W41
+            reason: "Skip It"      
+  S3BucketTranscribe:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join
+        - ''
+        - - prod-aws-captions-transcribe-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt 'CreateCaptionsLambdaFunction.Arn'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .srt
+                  - Name: prefix
+                    Value: sourcecaptions/                    
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - PUT
+              - POST
+              - GET
+            MaxAge: 3000                    
+    DependsOn:
+      - CreateCaptionsLambdaPermissionTranscribeS3
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: "Skip It" 
+          - id: W35
+            reason: "Skip It" 
+          - id: W41
+            reason: "Skip It"      
+  ExtractAudioLambdaPermissionVideoS3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'ExtractAudioLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - arn:aws:s3:::prod-aws-captions-video-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      SourceAccount: !Ref 'AWS::AccountId'
+  UpdateBurnedVideoPathLambdaPermissionVideoS3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'UpdateBurnedVideoPathLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - arn:aws:s3:::prod-aws-captions-video-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      SourceAccount: !Ref 'AWS::AccountId'      
+  TranscribeAudioLambdaPermissionAudioS3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'TranscribeAudioLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - arn:aws:s3:::prod-aws-captions-audio-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      SourceAccount: !Ref 'AWS::AccountId'
+  CreateCaptionsLambdaPermissionTranscribeS3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'CreateCaptionsLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - arn:aws:s3:::prod-aws-captions-transcribe-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      SourceAccount: !Ref 'AWS::AccountId'
+  BurnCaptionsLambdaPermissionVideoS3:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'BurnCaptionLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - arn:aws:s3:::prod-aws-captions-video-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      SourceAccount: !Ref 'AWS::AccountId'
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: prod-aws-captions
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGatewayResourceVideos:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: videos
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideo:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: video
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideoVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceVideo'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideostatus:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: videostatus
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideostatusVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceVideostatus'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideoname:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: videoname
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideonameVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceVideoname'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideodescription:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: videodescription
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceVideodescriptionVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceVideodescription'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceUpload:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: upload
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceCaption:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: caption
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceCaptionVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceCaption'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceBurnedVideo:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: burnedvideo
+      RestApiId: !Ref 'ApiGatewayRestApi'  
+  ApiGatewayResourceBurnedVideoVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceBurnedVideo'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'          
+  ApiGatewayResourceVocabulary:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: vocabulary
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceTweaks:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: tweaks
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceLanguage:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: language
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceTranslate:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: translate
+      RestApiId: !Ref 'ApiGatewayRestApi'      
+  ApiGatewayResourceBurn:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt 'ApiGatewayRestApi.RootResourceId'
+      PathPart: burn
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayResourceBurnVideoidVar:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref 'ApiGatewayResourceBurn'
+      PathPart: '{videoId}'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideosOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVideos'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideoVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PATCH,DELETE,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideostatusVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVideostatusVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideonameVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVideonameVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideodescriptionVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVideodescriptionVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodUploadOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceUpload'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodCaptionVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET,PUT'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceCaptionVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodBurnedVideoVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET,PUT'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceBurnedVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'      
+  ApiGatewayMethodVocabularyOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT,HEAD,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceVocabulary'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodTweaksOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceTweaks'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodLanguageOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceLanguage'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodTranslateOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceTranslate'
+      RestApiId: !Ref 'ApiGatewayRestApi'      
+  ApiGatewayMethodBurnVideoidVarOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref 'ApiGatewayResourceBurnVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+  ApiGatewayMethodVideosGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideos'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetVideosLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideoVideoidVarGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetVideoLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideostatusVideoidVarPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideostatusVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'UpdateVideoStatusLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideonameVideoidVarPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideonameVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'UpdateVideoNameLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideodescriptionVideoidVarPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideodescriptionVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'UpdateVideoDescriptionLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideoVideoidVarDelete:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: DELETE
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'DeleteVideoLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVideoVideoidVarPatch:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PATCH
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'ReprocessVideoLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodUploadPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceUpload'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetUploadLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"       
+  ApiGatewayMethodCaptionVideoidVarPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceCaptionVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'PutCaptionLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodCaptionVideoidVarGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceCaptionVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetCaptionLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it" 
+  ApiGatewayMethodBurnedVideoVideoidVarGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceBurnedVideoVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetBurnedVideoLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"                 
+  ApiGatewayMethodVocabularyGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVocabulary'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetVocabularyLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVocabularyHead:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: HEAD
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVocabulary'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'HeadVocabularyLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodVocabularyPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceVocabulary'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'PutVocabularyLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodTweaksGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceTweaks'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'GetTweaksLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayMethodTweaksPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceTweaks'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'PutTweaksLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"
+  ApiGatewayMethodLanguagePut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceLanguage'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'PutLanguageLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"
+  ApiGatewayMethodTranslatePut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceTranslate'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: "AWS"
+        RequestParameters:
+          "integration.request.header.X-Amz-Invocation-Type": "'Event'"
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'TranslateCaptionsLambdaFunction.Arn'
+            - /invocations
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,PUT,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: ''            
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"                   
+  ApiGatewayMethodBurnVideoidVarPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      RequestParameters: {}
+      ResourceId: !Ref 'ApiGatewayResourceBurnVideoidVar'
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      ApiKeyRequired: true
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - :lambda:path/2015-03-31/functions/
+            - !GetAtt 'BurnCaptionLambdaFunction.Arn'
+            - /invocations
+      MethodResponses: []
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W59
+            reason: "skip it"      
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref 'ApiGatewayRestApi'
+      StageName: prod
+    DependsOn:
+      - ApiGatewayMethodVideosOptions
+      - ApiGatewayMethodVideoVideoidVarOptions
+      - ApiGatewayMethodVideostatusVideoidVarOptions
+      - ApiGatewayMethodVideonameVideoidVarOptions
+      - ApiGatewayMethodVideodescriptionVideoidVarOptions
+      - ApiGatewayMethodUploadOptions
+      - ApiGatewayMethodCaptionVideoidVarOptions
+      - ApiGatewayMethodBurnedVideoVideoidVarOptions
+      - ApiGatewayMethodVocabularyOptions
+      - ApiGatewayMethodTweaksOptions
+      - ApiGatewayMethodBurnVideoidVarOptions
+      - ApiGatewayMethodLanguageOptions
+      - ApiGatewayMethodTranslateOptions      
+      - ApiGatewayMethodVideosGet
+      - ApiGatewayMethodVideoVideoidVarGet
+      - ApiGatewayMethodVideostatusVideoidVarPost
+      - ApiGatewayMethodVideonameVideoidVarPost
+      - ApiGatewayMethodVideodescriptionVideoidVarPost
+      - ApiGatewayMethodVideoVideoidVarDelete
+      - ApiGatewayMethodVideoVideoidVarPatch
+      - ApiGatewayMethodUploadPost
+      - ApiGatewayMethodCaptionVideoidVarPut
+      - ApiGatewayMethodCaptionVideoidVarGet
+      - ApiGatewayMethodBurnedVideoVideoidVarGet
+      - ApiGatewayMethodVocabularyGet
+      - ApiGatewayMethodVocabularyHead
+      - ApiGatewayMethodVocabularyPut
+      - ApiGatewayMethodTweaksGet
+      - ApiGatewayMethodTweaksPut
+      - ApiGatewayMethodLanguagePut
+      - ApiGatewayMethodTranslatePut      
+      - ApiGatewayMethodBurnVideoidVarPut
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W45
+            reason: "skip it"
+          - id: W68
+            reason: "skip it"                  
+  GetVideosLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetVideosLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetVideoLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetVideoLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetBurnedVideoLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetBurnedVideoLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*          
+  UpdateVideoStatusLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'UpdateVideoStatusLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  UpdateVideoNameLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'UpdateVideoNameLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  UpdateVideoDescriptionLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'UpdateVideoDescriptionLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  DeleteVideoLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'DeleteVideoLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  ReprocessVideoLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'ReprocessVideoLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetUploadLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetUploadLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  PutCaptionLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'PutCaptionLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetCaptionLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetCaptionLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetVocabularyLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetVocabularyLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  HeadVocabularyLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'HeadVocabularyLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  PutVocabularyLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'PutVocabularyLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  GetTweaksLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'GetTweaksLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  PutTweaksLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'PutTweaksLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  PutLanguageLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'PutLanguageLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/* 
+  TranslateCaptionsLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'TranslateCaptionsLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*          
+  BurnCaptionLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt 'BurnCaptionLambdaFunction.Arn'
+      Action: lambda:InvokeFunction
+      Principal: !Join
+        - ''
+        - - apigateway.amazonaws.com
+      SourceArn: !Join
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - !Ref 'ApiGatewayRestApi'
+          - /*/*
+  MyCustomResource:
+    Type: Custom::CustomResource
+    Version: '1.0'
+    DependsOn:
+      - CustomResourceLambdaFunction
+    Properties:
+      ServiceToken: !Join
+        - ':'
+        - - arn:aws:lambda
+          - !Ref 'AWS::Region'
+          - !Ref 'AWS::AccountId'
+          - function:prod-aws-captions-customresource
+      InputManifest:
+        Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "web/manifest.json"]]
+      WebDeploySource:
+        Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
+        ContentPrefix:  !FindInMap ["SourceCode", "General", "KeyPrefix"]
+      LogGroup:
+        Name: /aws/lambda/prod-aws-captions-customresource
+      WebDeployTarget:
+        Bucket: !Ref 'PublicBucket'
+        Key: web/
+      VideoBucket:
+        Bucket: !Ref 'S3BucketVideo'
+      AudioBucket:
+        Bucket: !Ref 'S3BucketAudio'
+      TranscribBucket:
+        Bucket: !Ref 'S3BucketTranscribe'        
+      APIGateway:
+        Url: !Join
+          - ''
+          - - https://
+            - !Ref 'ApiGatewayRestApi'
+            - .execute-api.
+            - !Ref 'AWS::Region'
+            - .amazonaws.com/
+            - prod
+        Id: !Ref 'ApiGatewayRestApi'
+        Stage: prod
+        PlanName: prod-aws-captions-usageplan
+        Key:
+          Name: prod-aws-captions-apikey
+          Value: !Ref 'APIKey'
+  ConsoleCFDistribution:
+      Type: "AWS::CloudFront::Distribution"
+      Metadata:
+          cfn_nag:
+              rules_to_suppress:
+                  - id: W70
+                    reason: "To be added later"
+      Properties:
+        DistributionConfig:
+          Comment: "Distribution for Amazon Video Transcriber console"
+          DefaultCacheBehavior:
+              AllowedMethods:
+                  - HEAD
+                  - DELETE
+                  - POST
+                  - GET
+                  - OPTIONS
+                  - PUT
+                  - PATCH
+              CachedMethods:
+                  - HEAD
+                  - GET
+              Compress: true
+              DefaultTTL: 0
+              MaxTTL: 0
+              MinTTL: 0
+              ForwardedValues:
+                  Cookies:
+                      Forward: all
+                  QueryString: true
+              TargetOriginId: "S3-serverless-video-transcriber-web"
+              ViewerProtocolPolicy : redirect-to-https
+          DefaultRootObject: index.html
+          HttpVersion: http2
+          IPV6Enabled: false
+          Logging:
+              Bucket: !Join [".", [Ref: "PublicBucket", "s3", Ref: "AWS::Region", "amazonaws.com"]]
+              IncludeCookies: true
+              Prefix: "video-transcriber-logs/"
+          Origins:
+              -
+                  DomainName: !Join ["", ["prod-aws-captions-public-", Ref: "AWS::Region", "-", Ref: "AWS::AccountId", ".s3.", Ref: "AWS::Region", ".amazonaws.com"]]
+                  Id: "S3-serverless-video-transcriber-web"
+                  S3OriginConfig:
+                      OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref ConsoleCFOriginAccessIdentity]]
+          ViewerCertificate:
+              CloudFrontDefaultCertificate: true
+          Enabled: true 
+  ConsoleCFOriginAccessIdentity:
+      Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+      Metadata:
+        Comment: !Sub "${AWS::StackName} - Access private S3 bucket content only through CloudFront"      
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: !Sub "${AWS::StackName} - Access private S3 bucket content only through CloudFront"          
+  LambdaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - !Ref 'AWS::Region'
+          - prod-aws-captions-lambda-policy
+      Description: Managed policy for lambdas
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - apigateway:*
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:lambda:'
+                  - !Ref 'AWS::Region'
+                  - ':'
+                  - !Ref 'AWS::AccountId'
+                  - :function:prod-aws-captions-extractaudio
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - !Join
+                - ':'
+                - - arn:aws:logs
+                  - !Ref 'AWS::Region'
+                  - !Ref 'AWS::AccountId'
+                  - log-group:/aws/lambda/*
+          - Effect: Allow
+            Action:
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Resource:
+              - !GetAtt 'VideoDynamoDBTable.Arn'
+              - !Join
+                - ''
+                - - !GetAtt 'VideoDynamoDBTable.Arn'
+                  - /index/*
+              - !GetAtt 'CaptionDynamoDBTable.Arn'
+              - !GetAtt 'ConfigDynamoDBTable.Arn'
+          - Effect: Allow
+            Action:
+              - mediaconvert:DescribeEndpoints
+              - mediaconvert:CreateJob            
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - translate:TranslateText           
+            Resource:
+              - '*'              
+          - Effect: Allow
+            Action:
+              - transcribe:CreateVocabulary
+              - transcribe:UpdateVocabulary
+              - transcribe:StartTranscriptionJob
+              - transcribe:ListVocabularies
+              - transcribe:DeleteTranscriptionJob
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - s3:*
+            Resource:
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-video-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-video-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-audio-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-audio-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-transcribe-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-transcribe-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-public-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-public-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::aws-gcr-solutions-
+                  - !Ref 'AWS::Region'
+              - !Join
+                - ''
+                - - arn:aws:s3:::aws-gcr-solutions-
+                  - !Ref 'AWS::Region'
+                  - /*                  
+          - Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource:
+              - !GetAtt 'MediaConvertRole.Arn'                 
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: "skip it" 
+          - id: W13
+            reason: "skip it" 
+          - id: W28
+            reason: "skip it"                                         
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - !Ref 'AWS::Region'
+          - -prod-aws-captions-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref 'LambdaPolicy'
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "skip it"
+  MediaConvertPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - !Ref 'AWS::Region'
+          - prod-aws-captions-media-policy
+      Description: Managed policy for invoking Media Convert
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:Put*
+              - s3:ListBucket
+              - s3:*MultipartUpload*
+              - s3:Get*
+            Resource:
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-video-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-video-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-audio-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-audio-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-transcribe-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+              - !Join
+                - ''
+                - - arn:aws:s3:::prod-aws-captions-transcribe-
+                  - !Ref 'AWS::Region'
+                  - '-'
+                  - !Ref 'AWS::AccountId'
+                  - /*                                 
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: '*' 
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "skip it" 
+          - id: W28
+            reason: "skip it"                                   
+  MediaConvertRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - !Ref 'AWS::Region'
+          - -prod-aws-captions-media-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - mediaconvert.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref 'MediaConvertPolicy' 
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "skip it"                    
+  PublicBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join
+        - ''
+        - - prod-aws-captions-public-
+          - !Ref 'AWS::Region'
+          - '-'
+          - !Ref 'AWS::AccountId'
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+            reason: "Skip It" 
+          - id: W35
+            reason: "Skip It" 
+          - id: W41
+            reason: "Skip It"
+  PublicBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PublicBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub arn:aws:s3:::${PublicBucket}/*
+            Principal: 
+              CanonicalUser: !GetAtt ConsoleCFOriginAccessIdentity.S3CanonicalUserId
+  VideoDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: prod-aws-captions-videos
+      AttributeDefinitions:
+        - AttributeName: videoId
+          AttributeType: S
+        - AttributeName: s3VideoPath
+          AttributeType: S
+      KeySchema:
+        - AttributeName: videoId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: s3VideoPathIndex
+          KeySchema:
+            - AttributeName: s3VideoPath
+              KeyType: HASH
+            - AttributeName: videoId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W78
+            reason: "skip it" 
+          - id: W74
+            reason: "skip it" 
+          - id: W28
+            reason: "skip it"                                   
+  ConfigDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: prod-aws-captions-config
+      AttributeDefinitions:
+        - AttributeName: configId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: configId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W78
+            reason: "skip it"  
+          - id: W74
+            reason: "skip it"
+          - id: W28
+            reason: "skip it"                             
+  CaptionDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: prod-aws-captions-captions
+      AttributeDefinitions:
+        - AttributeName: videoId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: videoId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W78
+            reason: "skip it"
+          - id: W74
+            reason: "skip it" 
+          - id: W28
+            reason: "skip it"                              
+Outputs:
+  APIKey:
+    Description: API Key to use when accessing the site
+    Value: !Ref 'APIKey'
+    Export:
+      Name: prod-aws-captions-apikey
+  ConsoleUrl:
+      Description: "URL for the Serverless Video Transcriber console"
+      Value: !Join ["", ["https://", !GetAtt ConsoleCFDistribution.DomainName]]        
+Parameters:
+  TranscribeLanguage:
+    Type: String
+    AllowedValues:
+      - en-AU
+      - en-US
+      - en-GB
+      - es-US
+      - en-IN
+      - de-DE
+      - hi-IN
+      - pt-BR
+      - fr-CA
+      - fr-FR
+      - it-IT
+      - ta-IN
+      - te-IN
+      - zh-CN
+    Default: zh-CN
+    Description: The language that Transcribe uses
+  APIKey:
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]{20,70}'
+    ConstraintDescription: 'must only contain letters (uppercase and lowercase) and
+      numbers min length: 20 max length: 70'
+    Description: An API key to use for accessing the website        
+
+
+

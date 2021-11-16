@@ -164,6 +164,7 @@ async function checkForPriorProcessing(params)
         {
             params.videoId = queryResponse.Items[0].videoId.S;
             params.videoName = queryResponse.Items[0].name.S;
+            params.language = queryResponse.Items[0].language.S;
 
             if (queryResponse.Items[0].description)
             {
@@ -290,33 +291,72 @@ async function extractAudio(params)
 async function getMediaConvertEndpoint()
 {
     console.log('INFO start getMediaConvertEndpoint');
-    var mediaConvertParams = {
-      MaxResults: 0
+
+    var getParams = {
+        TableName: process.env.DYNAMO_CONFIG_TABLE,
+        Key: 
+        {
+            'configId' : { 'S': 'mediaConvertEndpoint' },
+        }
     };
-    // Create a promise on a MediaConvert object
-    var endpointPromise;
-    if (process.env.REGION === "cn-northwest-1" || process.env.REGION === "cn-north-1")
-    {
-        endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29', endpoint: 'https://subscribe.mediaconvert.cn-northwest-1.amazonaws.com.cn', region: 'cn-northwest-1'}).describeEndpoints(mediaConvertParams).promise();
-    } 
-    else 
-    {
-        endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29'}).describeEndpoints(mediaConvertParams).promise();
-    }    
-    var mediaConvertEndpoint;
-    console.log('INFO generate endpointPromise');
-    await endpointPromise.then(
-      function(data) {
-        console.log('INFO endpointPromise success');
-        console.log("Your MediaConvert endpoint is ", data.Endpoints);
-        mediaConvertEndpoint = data.Endpoints[0].Url;
-      },
-      function(err) {
-        console.log("Error", err);
-      }
-    ); 
-    console.log('INFO getMediaConvertEndpoint end %s', mediaConvertEndpoint);
-    return mediaConvertEndpoint;
+
+    console.log("[INFO] calling getItem with parameters: %j", getParams);
+    var getItemResponse = await dynamoDB.getItem(getParams).promise();
+    console.log("[INFO] getItem response from Dynamo: %j", getItemResponse); 
+    if (getItemResponse.Item) {
+        console.log("[INFO] get mediaConvert endpoint from DDB: ", getItemResponse.Item.endpointValue.S);
+        return getItemResponse.Item.endpointValue.S;
+    } else {
+        var mediaConvertParams = {
+            MaxResults: 0
+        };
+        // Create a promise on a MediaConvert object
+        var endpointPromise;
+        if (process.env.REGION === "cn-northwest-1" || process.env.REGION === "cn-north-1")
+        {
+            endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29', endpoint: 'https://subscribe.mediaconvert.cn-northwest-1.amazonaws.com.cn', region: 'cn-northwest-1'}).describeEndpoints(mediaConvertParams).promise();
+        } 
+        else 
+        {
+            endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29'}).describeEndpoints(mediaConvertParams).promise();
+        }    
+        var mediaConvertEndpoint;
+        console.log('INFO generate endpointPromise');
+        await endpointPromise.then(
+        function(data) {
+            console.log('INFO endpointPromise success');
+            console.log("Your MediaConvert endpoint is ", data.Endpoints);
+            mediaConvertEndpoint = data.Endpoints[0].Url;
+        },
+        function(err) {
+            console.log("Error", err);
+        }
+        ); 
+        console.log('INFO getMediaConvertEndpoint end %s', mediaConvertEndpoint);
+
+        var updateParams = {
+            TableName: process.env.DYNAMO_CONFIG_TABLE,
+            Key: 
+            {
+                "configId" : { "S": "mediaConvertEndpoint" }
+            },
+            UpdateExpression: "SET #endpointValue = :endpointValue",
+            ExpressionAttributeNames: {
+                "#endpointValue": "endpointValue"
+            },
+            ExpressionAttributeValues: {
+                ":endpointValue": {
+                    S: mediaConvertEndpoint
+                }
+            },
+            ReturnValues: "NONE"            
+        };
+
+        await dynamoDB.updateItem(updateParams).promise();
+
+        console.log("[INFO] successfully updated DynamoDB status");              
+        return mediaConvertEndpoint;
+    }     
 }
 
 /**
@@ -335,6 +375,7 @@ async function updateDynamoDB(params)
             "s3VideoPath" : {"S": params.inputS3Path },
             "s3AudioPath" : {"S": params.outputAudioS3Path },
             "status": {"S": params.status},
+            "language": {"S": params.language},
             "statusText": {"S": params.statusText},
             "processedDate":  {"S": new Date().toISOString() }
         }

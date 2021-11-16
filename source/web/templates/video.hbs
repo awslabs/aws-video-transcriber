@@ -22,7 +22,7 @@
 			<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
 				<div class="video-container">
 					<video name="video" id="video"
-						poster="img/video_splash.png" 
+						{{!-- poster="img/video_splash.png"  --}}
 						style="max-width:100%; height:auto">
 						<source src="{{{video.s3VideoSignedUrl}}}" type="video/mp4">
 						Your browser does not support playing this type of video.
@@ -75,10 +75,6 @@
 							control-button" onclick="mergeCaptions()" title="Merge captions" id="mergeButton">
 							<i class="fa fa-plus-square fa-sm"></i> Merge
 						</button>
-						<!--<button type="button" class="btn btn-secondary 
-							control-button" onclick="saveCaptionsLocal()" title="Save captions" id="saveButton">
-							<i class="fa fa-save fa-sm"></i> Save
-						</button>-->
 						<span class="dropdown show">
 							<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fa fa-cloud-download-alt fa-sm"></i> Download
@@ -92,7 +88,20 @@
 						<button type="button" class="btn btn-secondary 
 							control-button" onclick="burnCaptionsLocal()" title="Save captions" id="burnCaptionsButton">
 							<i class="fa fa-closed-captioning fa-sm"></i> Burn In
-						</button>						
+						</button>
+						{{#if video.enableTranslate}}
+						<span class="dropdown show">
+							<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="fa fa-cloud-download-alt fa-sm"></i> Translate to
+							</a>
+
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+								<a class="dropdown-item" onclick="translateChineseSimplified()">Chinese (Simplified)</a>
+								<a class="dropdown-item" onclick="translateChineseTraditional()">Chinese (Traditional)</a>
+								<a class="dropdown-item" onclick="translateChineseEnglish()">English</a>
+							</div>
+						</span>
+						{{/if}}											
 						<span id="statusButton"></span>
 					</div>		
 					<form class="form">
@@ -237,7 +246,9 @@
 		var videoDescription = '{{video.description}}';
 		var videoStatus = '{{video.status}}';
         var videoLanguage = '{{video.language}}';
+		var translated = '{{video.translated}}';
         console.log("videoLanguage is " + videoLanguage);
+		console.log("translated is " + translated);
 
 		var video = document.getElementById("video"); 
 		var videoProgress = document.getElementById("videoProgress");
@@ -325,7 +336,7 @@
             captionData[captionIndex].caption = caption;
             $('#currentCaption').html(caption);
             renderCaption();
-			updateCaptions(videoId, captionIndex, wordIndex, words, "MODIFY");
+			updateCaptions(videoId, captionIndex, wordIndex, words, "MODIFY-WORD");
         }
 
         function splitCaption(captionIndex, wordIndex) {
@@ -393,12 +404,8 @@
 
             captionData[captionIndex+1] = captionPart;
 
-//            console.log("captionData:")
-//            console.dir(captionData);
-
 			updateCaptionEditor();
 			renderCaption();
-//			saveCaptions(videoId, captionData);
 			updateCaptions(videoId, captionIndex, wordIndex, "", "SPLITE");
         }
 
@@ -440,7 +447,6 @@
 
 			updateCaptionEditor();
 			renderCaption();
-			//saveCaptions(videoId, captionData);
 			updateCaptions(videoId, checkedCaptions, 0, "", "MERGE");
         }
 
@@ -602,11 +608,6 @@
    			 */
    			saveCaptionsTimer = setInterval(function() {
 
-   				/*if (autosave.checked && dirty)
-   				{
-   					saveCaptionsLocal();
-   				}*/
-
    			}, 20000);
 
    			console.log('[INFO] Created save captions timer: ' + saveCaptionsTimer);
@@ -762,26 +763,36 @@
 			speedOverlay.innerHTML = playSpeed.toFixed(1) + 'x';
 		}
 
-		function saveCaptionsLocal()
-		{
-			saveCaptions(videoId, captionData);
-			markDirty(false);
-		}
-
         function burnCaptionsLocal()
         {
-            burnCaptions(videoId);
+            burnCaptions(videoId, '');
         }
 
 		function downloadCaptionsSRTLocal()
 		{
-			downloadCaptionsSRT(videoId, videoName);
+			downloadCaptionsSRT(videoId, videoName, '');
 		}
 
 		function downloadCaptionsVTTLocal()
 		{
-			downloadCaptionsVTT(videoId, videoName);
+			downloadCaptionsVTT(videoId, videoName, '');
 		}
+
+		function translateChineseSimplified()
+		{
+			translateCaptions(videoId, 'zh');
+		}
+		
+		function translateChineseTraditional()
+		{
+			translateCaptions(videoId, 'zh-TW');
+		}		
+		
+		function translateChineseEnglish()
+		{
+			translateCaptions(videoId, 'en');
+		}		
+
 
 		function markDirty(dirtyFlag)
 		{
@@ -822,14 +833,15 @@
 
 		function renderBurnCaptionsButton(status)
 		{
-			if (status === 'COMPLETE')
-			{
-				$('#burnCaptionsButton').removeAttr('disabled');
-			}
-			else
-			{
-				$('#burnCaptionsButton').attr('disabled','disabled');
-			}
+//			if (status === 'COMPLETE')
+//			{
+//				$('#burnCaptionsButton').removeAttr('disabled');
+//			}
+//			else
+//			{
+//				$('#burnCaptionsButton').attr('disabled','disabled');
+//			}
+			$('#burnCaptionsButton').removeAttr('disabled');
 		}		
 
 		function markComplete(videoId)

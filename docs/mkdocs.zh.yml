@@ -1,0 +1,10 @@
+INHERIT: ./mkdocs.base.yml
+site_name: 视频字幕 部署文档
+site_description: 视频字幕解决方案
+docs_dir: zh
+site_dir: ./site/zh
+theme:
+  language: zh
+nav:
+  - 部署文档: deploy-zh.md
+  - 常见问题: faq-zh.md

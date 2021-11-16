@@ -33,7 +33,9 @@ exports.handler = async (event, context, callback) => {
 
 	try
 	{
-		var uploadFile = event.pathParameters.uploadFile;
+        var body = JSON.parse(event.body);
+		var uploadFile = body.fileName;
+        console.log('[INFO] uploadFile %s', uploadFile);
 		const videoBucket = process.env.VIDEO_BUCKET;
         const videoKey = 'videos/' + uploadFile;
         // 6 hours

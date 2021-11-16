@@ -30,11 +30,17 @@ exports.handler = async (event, context, callback) => {
     {
         var format = "webvtt";
         var contentType = 'text/vtt';
+        var language = '';
 
         if (event.queryStringParameters && event.queryStringParameters.format)
         {
             format = event.queryStringParameters.format;
         }
+
+        if (event.queryStringParameters && event.queryStringParameters.language)
+        {
+            language = event.queryStringParameters.language;
+        }        
 
         if (format === 'srt')
         {
@@ -48,7 +54,7 @@ exports.handler = async (event, context, callback) => {
         const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
         var captionS3Params = {
             Bucket : transcribeBucket,
-            Key : 'captions/' + videoId          
+            Key : 'captions/' + videoId + '.json'         
         }
         var captionsObject = await s3.getObject(captionS3Params).promise(); 
         
@@ -56,7 +62,7 @@ exports.handler = async (event, context, callback) => {
         
         var captions = JSON.parse(captionsStr);
 
-        var result = await exportCaptions(format, captions);
+        var result = await exportCaptions(format, captions, language);
 
         var responseHeaders = {
             'Access-Control-Allow-Origin': '*',
@@ -90,7 +96,7 @@ exports.handler = async (event, context, callback) => {
     }
 };
 
-async function exportCaptions(format, captions)
+async function exportCaptions(format, captions, language)
 {
     if (format === 'webvtt')
     {
@@ -100,13 +106,14 @@ async function exportCaptions(format, captions)
         {
             var caption = captions[i];
 
-            if (caption.caption.trim() === '')
+            if (caption.text.trim() === '')
             {
               continue;
             }
 
-            webvtt += formatTimeWEBVTT(caption.start) + ' --> ' + formatTimeWEBVTT(caption.end) + '\n';
-            webvtt += caption.caption + '\n\n';
+            webvtt += caption.startTime.replace(',', '.') + ' --> ' + caption.endTime.replace(',', '.') + '\n';
+            var captionText = splitSentence(caption.text, language);
+            webvtt += captionText + '\n';
         }
 
         return webvtt;
@@ -121,14 +128,15 @@ async function exportCaptions(format, captions)
         {
             var caption = captions[i];
 
-            if (caption.caption.trim() === '')
+            if (caption.text.trim() === '')
             {
               continue;
             }
             
             srt += index + '\n';
-            srt += formatTimeSRT(caption.start) + ' --> ' + formatTimeSRT(caption.end) + '\n';
-            srt += caption.caption + '\n\n';
+            srt += caption.startTime + ' --> ' + caption.endTime + '\n';
+            var captionText = splitSentence(caption.text, language);
+            srt += captionText + '\n';
             index++;
         }
 
@@ -138,6 +146,39 @@ async function exportCaptions(format, captions)
     {
         throw new Error("Invalid format requested: " + format);
     }
+}
+
+function splitSentence(text, language)
+{
+    var lenght = text.length;
+    var finalText = '';
+    if (language.indexOf('zh') > -1) {
+        var maxSentenceLength = 25;
+        var paraCount = parseInt(lenght/maxSentenceLength);
+        for(var i = 0; i < paraCount; i++) {
+            finalText += text.substring(i * maxSentenceLength, (i + 1) * maxSentenceLength) + '\n';
+        }
+        if (paraCount * maxSentenceLength < lenght) {
+            finalText += text.substring(paraCount * maxSentenceLength, lenght) + '\n';
+        }
+    } else {
+        var maxSentenceLength = 50;
+        var sentenceCount = parseInt(lenght/maxSentenceLength);
+        var currentPosition = 0;
+        var nextPosition = 0;
+        for(var i = 0; i < sentenceCount; i++) {
+            currentPosition = nextPosition;
+            nextPosition = text.indexOf(' ', (i + 1) * maxSentenceLength) + 1
+            if (nextPosition == 0) {
+                nextPosition = text.lenght;
+            }
+            finalText += text.substring(currentPosition, nextPosition) + '\n';
+        }
+        if (nextPosition < lenght) {
+            finalText += text.substring(nextPosition, lenght) + '\n';
+        }       
+    }
+    return finalText;
 }
 
 /**

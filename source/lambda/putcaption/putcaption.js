@@ -35,33 +35,44 @@ exports.handler = async (event, context, callback) => {
         var videoId = event.pathParameters.videoId;
 
         var body = JSON.parse(event.body);
-
         var captionIndex = body.captionIndex;
-        var wordIndex = body.wordIndex;
-        var words = body.words;
+        var wordLength = body.wordLength;
+        var captionText = body.text;
+        var language = body.language;
         var type = body.type;
+        var translated = body.translated;
         const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
+        var captionsKey;
+        if (translated == "true")
+        {
+            console.log('these are translated captions')
+            captionsKey = 'captions/' + videoId + '_' + language + '.json';
+        } else {
+            captionsKey = 'captions/' + videoId + '.json';
+        }
         var captionS3Params = {
             Bucket : transcribeBucket,
-            Key : 'captions/' + videoId          
+            Key : captionsKey      
         }
+        console.log("get captions object paras: %j", captionS3Params);
         var captionsObject = await s3.getObject(captionS3Params).promise(); 
         
         var captionsStr = captionsObject.Body.toString();
         
         var captionData = JSON.parse(captionsStr);
 
-        if (type == "MODIFY") {
-            var captionData = await modifyCaptions(captionData, captionIndex, wordIndex, words);
-        } else if (type == "SPLITE") {
-            var captionData = await spliteCaptions(captionData, captionIndex, wordIndex);
+        if (type == "SPLITE") {
+             captionData = await spliteCaptions(captionData, captionIndex, captionText, wordLength);          
         } else if (type == "MERGE") {
-            var captionData = await mergeCaptions(captionData, captionIndex, wordIndex);
+            captionData = await mergeCaptions(captionData, captionIndex, captionText, language);
+
+        } else if (type == "SAVE-CAPTION") {
+            captionData[captionIndex].text = captionText;
         } else {
             throw new Error('Action Type is not correct');
         }
         
-        await saveCaptions(videoId, captionData);
+        await saveCaptions(captionsKey, captionData);
 
 		const response = {
             statusCode: 200,
@@ -81,127 +92,83 @@ exports.handler = async (event, context, callback) => {
     }
 };
 
-async function modifyCaptions(captionData, captionIndex, wordIndex, words)
+async function spliteCaptions(captionData, captionIndex, captionText, wordLength)
 {
-    var videoLanguage = process.env.TRANSCRIBE_LANGUAGE;
-    captionData[captionIndex].words[wordIndex].w = words;
-    captionData[captionIndex].words[wordIndex].c = 1;
-    var caption = "";
-    for (var i = 0; i < captionData[captionIndex].words.length; i++)
-    {
-        caption += captionData[captionIndex].words[i].w;
+    console.log("captionIndex is " + captionIndex + " and wordLength is " + wordLength);
+    var id = captionData[captionIndex].id;
 
-        if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-            caption += " ";
+    var captionText1 = captionText.substring(0, wordLength);
+    var captionText2 = captionText.substring(wordLength, captionText.length);
+
+    var splitTime = getSplitTime(captionText, captionData[captionIndex].startTime, captionData[captionIndex].endTime, wordLength);
+
+    var endTime = captionData[captionIndex].endTime;
+
+    captionData[captionIndex].text = captionText1;
+    captionData[captionIndex].endTime = splitTime;
+                        
+    if (captionIndex < captionData.length - 1) {
+        captionData.push(cloneCaptionDataElement(captionData[captionData.length - 1]));
+        captionData[captionData.length - 1].id = Number(captionData[captionData.length - 1].id) + 1 + ''; 
+        for (var i = captionData.length - 2; i > captionIndex + 1; i--) {
+            captionData[i] = cloneCaptionDataElement(captionData[i-1]);
+            captionData[i].id = Number(captionData[i-1].id) + 1 + '';
         }
-    }
-    captionData[captionIndex].caption = caption;
-    
-    return captionData;
-}
-
-async function spliteCaptions(captionData, captionIndex, wordIndex)
-{
-    console.log("captionIndex is " + captionIndex + " and wordIndex is " + wordIndex);
-    var videoLanguage = process.env.TRANSCRIBE_LANGUAGE;
-    var captionPart = {
-        start: 0,
-        caption: "",
-        wordConfidence: [],
-        words: []
-    };
-    var captionValue1 = "";
-    var captionValue2 = "";
-
-    for (var i=captionData.length; i > captionIndex; i--) {
-        captionData[i] = captionData[i-1];
-    }
-
-    console.log("words length is " + captionData[captionIndex].words.length);
-    console.log("wordIndex + 1 = " + (wordIndex+1));
-
-    for (var i=wordIndex+1; i < captionData[captionIndex].words.length; i++) {
-        console.log("current i is " + i);
-        if (i == wordIndex+1) {
-            console.log("first words:");
-            console.dir(captionData[captionIndex].words[i]);
-            if ("st" in captionData[captionIndex].words[i]) {
-                captionPart.start = Number(captionData[captionIndex].words[i].st);
-            } else {
-                captionPart.start = Number(captionData[captionIndex].words[i+1].st);
-            }
-        }
-        if (i == (captionData[captionIndex].words.length - 1)) {
-            captionPart.end = Number(captionData[captionIndex].words[i].et);
-        }
-        captionPart.words[i-wordIndex-1] = captionData[captionIndex].words[i];
-        captionValue2 += captionData[captionIndex].words[i].w;
-
-        if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-            captionValue2 += " ";
-        }
-
-    }
-    captionData[captionIndex].words.splice(wordIndex+1);
-    captionPart.caption = captionValue2;
-    console.log("captionPart:");
-    console.dir(captionPart);
-
-    console.log("captionLeft with index " + captionIndex + ":");
-    console.dir(captionData[captionIndex]);
-
-    for (var i=0; i < captionData[captionIndex].words.length; i++) {
-        captionValue1 += captionData[captionIndex].words[i].w;
-
-        if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-            captionValue1 += " ";
-        }
-    }
-
-    captionData[captionIndex].caption = captionValue1;
-    if ("et" in captionData[captionIndex].words[wordIndex]) {
-        captionData[captionIndex].end = Number(captionData[captionIndex].words[wordIndex].et);
+        captionData[captionIndex + 1].id = Number(id) + 1 + ''; 
+        captionData[captionIndex + 1].text = captionText2;
+        captionData[captionIndex + 1].startTime = splitTime;
+        captionData[captionIndex + 1].endTime = endTime;				
     } else {
-        captionData[captionIndex].end = Number(captionData[captionIndex].words[wordIndex-1].et);
+        var captionElement = {};
+        captionElement.id = Number(id) + 1 + '';
+        captionElement.text = captionText2;
+        captionElement.startTime = splitTime;
+        captionElement.endTime = endTime;
+        captionData.push(captionElement);
     }
-
-    captionData[captionIndex+1] = captionPart;    
+   
     return captionData;
 }
 
-async function mergeCaptions(captionData, checkedCaptions)
+function cloneCaptionDataElement(captionDataElement) {
+    var newCaptionDataElement = {};
+    newCaptionDataElement.id = captionDataElement.id; 
+    newCaptionDataElement.startTime = captionDataElement.startTime; 
+    newCaptionDataElement.endTime = captionDataElement.endTime; 
+    newCaptionDataElement.text = captionDataElement.text; 
+    return newCaptionDataElement;
+}
+
+async function mergeCaptions(captionData, captionIndex, caption, language)
 {
-    var videoLanguage = process.env.TRANSCRIBE_LANGUAGE;
-    var part1Index = parseInt(checkedCaptions[0]);
-    var part2Index = parseInt(checkedCaptions[1]);
+    var part1Index = captionIndex;
+    var part2Index = captionIndex + 1;
 
-    if (checkedCaptions.length > 2 || (part2Index - part1Index) > 1) {
-        console.log("Please check two captions to merge");
-        throw new Error('Please check two captions to merge');
+    if (captionIndex >= captionData.length - 1) {
+        console.log("captionIndex is the last caption, cannot merge");
+        throw new Error('captionIndex is the last caption, cannot merge');
     }
-    console.log(checkedCaptions);
-
-    for (var i=0; i < captionData[part2Index].words.length; i++) {
-        captionData[part1Index].words.push(captionData[part2Index].words[i]);
-        if (videoLanguage != 'zh-CN') {
-            captionData[part1Index].caption += " ";
-        }
-        captionData[part1Index].caption += captionData[part2Index].words[i].w;
-    }
-    captionData[part1Index].end = captionData[part2Index].end;
+    captionData[part1Index].text = caption;
+    // if (language != 'zh-CN') {
+    //     captionData[part1Index].text += " ";
+    // }
+    // captionData[part1Index].text += captionData[part2Index].text;
+    captionData[part1Index].endTime = captionData[part2Index].endTime;
 
     for (var i=part2Index; i < captionData.length - 1; i++) {
-        captionData[i] = captionData[i+1];
-    }   
+        captionData[i] = cloneCaptionDataElement(captionData[i+1]);
+        captionData[i].id = Number(captionData[i].id) - 1 + '';
+    }
+    captionData.pop();
     return captionData;
 }
 
-async function saveCaptions(videoId, captionData)
+async function saveCaptions(captionsKey, captionData)
 {
     const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
     var captionS3Parmas = {
         Bucket : transcribeBucket,
-        Key : 'captions/' + videoId,
+        Key : captionsKey,
         ContentType: 'text/plain',
         Body : JSON.stringify(captionData)
     }
@@ -212,4 +179,117 @@ async function saveCaptions(videoId, captionData)
          else     console.log(data);
     }).promise();     
 
+}
+
+/**
+ * Fetch the video info from DynamoDB
+ */
+ async function getVideo(videoId)
+ {
+     try
+     {
+ 
+         var getParams = {
+             TableName: process.env.DYNAMO_VIDEO_TABLE,
+             Key: 
+             {
+                 "videoId" : {"S": videoId},
+             },
+         };
+ 
+         console.log("[INFO] loading video using request: %j", getParams);  
+         
+         var getResponse = await dynamoDB.getItem(getParams).promise();
+         
+         console.log("[INFO] got response from Dyanmo: %j", getResponse);
+ 
+         if (getResponse.Item)
+         {
+             var videoInfo = mapper(getResponse.Item);
+             return videoInfo;
+         }
+         else
+         {
+             throw new Error('Video not found');
+         }        
+     }
+     catch (error)
+     {
+         console.log("Failed to get video from DynamoDB", error);
+         return {};
+     }   
+ }
+
+  /**
+ * Mapper which flattens item keys for 'S' types
+ */
+function mapper(data) {
+    
+    let S = "S";
+
+    if (isObject(data)) 
+    {
+        let keys = Object.keys(data);
+        while (keys.length) 
+        {
+            let key = keys.shift();
+            let types = data[key];
+
+            if (isObject(types) && types.hasOwnProperty(S)) {
+                data[key] = types[S];
+            } 
+        }
+    }
+
+    return data;
+}
+
+/**
+ * isObject helper function
+ */
+ function isObject(value) {
+    return typeof value === "object" && value !== null;
+}
+
+function getSplitTime(captionText, startTime, endTime, wordLength) {
+    // console.log(time.substring(0, 12));
+    // console.log(time.substring(12, time.length));
+    var startTimeMiSecond = miSecondNumber(startTime);
+    var endTimeMiSecond = miSecondNumber(endTime);
+    
+    var miSecond = endTimeMiSecond - startTimeMiSecond;
+    
+    var miStartSecond = parseInt(wordLength/captionText.length * miSecond);
+    
+    var splitTime = formatTime(miStartSecond + startTimeMiSecond);
+
+    return splitTime;  
+}
+
+function miSecondNumber(time)
+{
+    var a = time.split(':'); 
+
+    // minutes are worth 60 seconds. Hours are worth 60 minutes.
+    var miSeconds = ((+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2].split(',')[0]) + (+a[2].split(',')[1])/1000) * 1000; 
+    return miSeconds;
+}
+
+function formatTime(miSecondsTime)
+{
+    const ONE_HOUR = 60 * 60 * 1000;
+    const ONE_MINUTE = 60 * 1000;
+    const ONE_SECOND = 1000;
+    var hours = Math.floor(miSecondsTime / ONE_HOUR);
+    var remainder = miSecondsTime - (hours * ONE_HOUR);
+    var minutes = Math.floor(remainder / ONE_MINUTE);
+    remainder = remainder - (minutes * ONE_MINUTE);
+    var seconds = Math.floor(remainder/ONE_SECOND);
+    remainder = remainder - (seconds * ONE_SECOND);
+    var millis = remainder;
+
+    return (hours + '').padStart(2, '0') + ':' +
+            (minutes + '').padStart(2, '0') + ':' +
+            (seconds + '').padStart(2, '0') + ',' +
+            (Math.floor(millis) + '').padStart(3, '0');
 }

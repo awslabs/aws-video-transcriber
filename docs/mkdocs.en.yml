@@ -1,0 +1,9 @@
+INHERIT: ./mkdocs.base.yml
+site_name: Video Transcriber Deployment Guide
+docs_dir: en
+site_dir: ./site/en
+theme:
+  language: en
+nav:
+  - Deployment: deploy-en.md
+  - FAQ: faq-en.md

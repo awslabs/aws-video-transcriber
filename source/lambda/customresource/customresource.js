@@ -91,27 +91,17 @@ async function handleDelete(event)
     {
         await deleteApiKey(event);
 
-        var inputManifest = event.ResourceProperties.InputManifest;
         var webDeployTarget = event.ResourceProperties.WebDeployTarget;
+        await deleteBucketObjects(webDeployTarget.Bucket);
+        
+        var videoBucket = event.ResourceProperties.VideoBucket;
+        await deleteBucketObjects(videoBucket.Bucket);
 
-        var manifest = await loadManifest(inputManifest.Bucket, inputManifest.Key);
-
-        // console.log("[INFO] deleting custom resources using manifest: %j", manifest);
-
-        await deleteS3File(webDeployTarget.Bucket, "site_config.json");
-
-        var manifest = await loadManifest(inputManifest.Bucket, inputManifest.Key);
-
-        var count = 0;
-
-        for (var i = 0; i < manifest.files.length; i++)
-        {
-            var file = manifest.files[i];
-
-            await deleteS3File(webDeployTarget.Bucket, file);
-
-            count++;
-        }
+        var audioBucket = event.ResourceProperties.AudioBucket;
+        await deleteBucketObjects(audioBucket.Bucket);
+        
+        var transcribBucket = event.ResourceProperties.TranscribBucket;
+        await deleteBucketObjects(transcribBucket.Bucket);
 
     }
     catch (error)
@@ -141,6 +131,8 @@ async function createWebConfig(event)
             api_videodescription: "/videodescription",
             api_burned_video: "/burnedvideo",
             api_captions: "/caption", 
+            api_language: "/language",
+            api_translate: "/translate", 
             api_upload: "/upload",
             api_burn: "/burn"
         };
@@ -150,10 +142,11 @@ async function createWebConfig(event)
         var putObjectRequest = {
             Body: JSON.stringify(webConfig),
             Bucket: webDeployTarget.Bucket, 
-            ACL: 'public-read',
+            // ACL: 'public-read',
             Key: 'site_config.json',
             ContentType: 'application/json'
         };
+        console.log("createWebConfig start, request %j", putObjectRequest);
 
         await s3.putObject(putObjectRequest).promise();
     }
@@ -199,6 +192,45 @@ async function waitForStage(event, sleepTimeMillis, maxSleeps)
     }
 
     throw new Error('Maximum sleeps reached waiting for API stage to deploy');
+}
+
+async function deleteBucketObjects(bucket) {
+    var params = {
+      Bucket: bucket
+    };
+    var objectList = [];
+    await s3.listObjectsV2(params, function(err, data) {
+      console.log('sldfjlskdjf')
+      if (err) {
+          console.log(err, err.stack); // an error occurred
+      } else {
+         objectList = data.Contents;
+      }
+    }).promise();  
+    
+    for (var i = 0; i < objectList.length; i++) {
+        await deleteS3File(bucket, objectList[i].Key);
+    }
+}
+
+async function deleteS3File(bucket, key)
+{
+    try
+    {
+        var deleteRequest = 
+        {
+            Bucket: bucket, 
+            Key: key
+        };
+
+        await s3.deleteObject(deleteRequest).promise();
+
+        // console.log('[INFO] successfully deleted object: s3://%s/%s', bucket, key);        
+    }
+    catch (error)
+    {
+        console.log('[ERROR] failed to delete: s3://%s/%s', bucket, key, error);
+    }
 }
 
 async function deleteLogGroup(event)
@@ -401,6 +433,7 @@ async function handleCreateUpdate(event)
 {
     try
     {
+        console.log("handleCreateUpdate start");
         await createWebConfig(event);
 
         var inputManifest = event.ResourceProperties.InputManifest;
@@ -420,8 +453,6 @@ async function handleCreateUpdate(event)
 
             count++;
         }
-
-        // console.log("[INFO] successfully processed: %d resources", count);
     }
     catch (error)
     {
@@ -468,7 +499,7 @@ async function copyS3File(sourceBucket, sourceKey, destinationBucket, destinatio
         {
             Bucket: destinationBucket, 
             Key: destinationKey,
-            ACL: 'public-read',
+            // ACL: 'public-read',
             CopySource: encodeURIComponent("/" + sourceBucket + "/" + sourceKey)
         };
 

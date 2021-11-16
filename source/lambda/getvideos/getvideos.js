@@ -23,6 +23,8 @@ var dynamoDB = new AWS.DynamoDB();
  */
 exports.handler = async (event, context, callback) => {
 
+    console.log('[INFO] got event: %j', event);
+
     var responseHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
@@ -37,6 +39,10 @@ exports.handler = async (event, context, callback) => {
                 'videoId',
                 'processedDate',
                 'name',
+                'language',
+                'translatedLanguage',
+                's3BurnedTranslatedVideoPath',
+                's3BurnedVideoPath',
                 'description',
                 'status',
                 'statusText'
@@ -47,12 +53,28 @@ exports.handler = async (event, context, callback) => {
         var scanResponse = await dynamoDB.scan(scanParams).promise();
         var videos = scanResponse.Items.map(mapper);
 
-        console.log("Successfully scanned: %d videos from Dynamo", videos.length);        
+        var enableTranslate = false;
+        if (process.env.REGION != 'cn-north-1' && process.env.REGION != 'cn-northwest-1')
+        {
+            enableTranslate = true
+        }
+
+        for (let video of videos) {
+            video.enableTranslate = enableTranslate;
+        }
+        var responseBody = {  
+            "videos": videos,
+            "enableTranslate": enableTranslate,
+            "defaultLanguage": process.env.TRANSCRIBE_LANGUAGE
+        };
+        console.log("Successfully scanned: %d videos from Dynamo", videos.length); 
+        
+        console.log("Successfully response body: %j videos from Dynamo", responseBody); 
 
         const response = {
             statusCode: 200,
             headers: responseHeaders,
-            body: JSON.stringify({  "videos": videos })
+            body: JSON.stringify(responseBody)
         };
 
         callback(null, response);        

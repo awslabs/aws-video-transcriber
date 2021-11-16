@@ -52,24 +52,48 @@ async function updateDynamoDB(params)
 	{
         var s3BurnedVideoPath = 's3://' + params.inputBucket + '/' + params.inputKey;
         console.log('[INFO] update s3BurnedVideoPath: %s', s3BurnedVideoPath);
-		var updateParams = 
+		var updateParams = {};		
+		if (params.translated)
 		{
-			TableName: params.dynamoVideoTable,
-			Key: 
-            {
-                "videoId" : { "S": params.videoId }
-            },
-            UpdateExpression: "SET #s3BurnedVideoPath = :s3BurnedVideoPath",
-            ExpressionAttributeNames: {
-   				"#s3BurnedVideoPath": "s3BurnedVideoPath"
-  			},
-			ExpressionAttributeValues: {
-    			":s3BurnedVideoPath": {
-     				S: s3BurnedVideoPath
-    			}
-			},
-			ReturnValues: "NONE" 			
-		};
+			var updateParams = 
+			{
+				TableName: params.dynamoVideoTable,
+				Key: 
+				{
+					"videoId" : { "S": params.videoId }
+				},
+				UpdateExpression: "SET #s3BurnedTranslatedVideoPath = :s3BurnedTranslatedVideoPath",
+				ExpressionAttributeNames: {
+					   "#s3BurnedTranslatedVideoPath": "s3BurnedTranslatedVideoPath"
+				  },
+				ExpressionAttributeValues: {
+					":s3BurnedTranslatedVideoPath": {
+						 S: s3BurnedVideoPath
+					}
+				},
+				ReturnValues: "NONE" 			
+			};
+		} else
+		{
+			var updateParams = 
+			{
+				TableName: params.dynamoVideoTable,
+				Key: 
+				{
+					"videoId" : { "S": params.videoId }
+				},
+				UpdateExpression: "SET #s3BurnedVideoPath = :s3BurnedVideoPath",
+				ExpressionAttributeNames: {
+					   "#s3BurnedVideoPath": "s3BurnedVideoPath"
+				  },
+				ExpressionAttributeValues: {
+					":s3BurnedVideoPath": {
+						 S: s3BurnedVideoPath
+					}
+				},
+				ReturnValues: "NONE" 			
+			};			
+		}
 
 		await dynamoDB.updateItem(updateParams).promise();
 
@@ -90,42 +114,36 @@ async function computeParameters(event)
 	console.log("[INFO] computeParameters start");
 	var inputKey =
         decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-        
+
 	var videoFile = path.basename(inputKey);
-	var videoId = videoFile.substring(videoFile.lastIndexOf("_") + 1, videoFile.length - 4);
+	var translated = videoFile.endsWith('translated.mp4', videoFile.length);
+	var positions = getPositions(videoFile, '_');
+
+	var videoId = videoFile.substring(positions[positions.length - 2] + 1, positions[positions.length - 1]);
+	console.log("videoId: ", videoId);
 	var inputBucket = event.Records[0].s3.bucket.name;
-
-	var s3CopyParams = {
-		Bucket: inputBucket, 
-		CopySource: inputBucket + "/" + inputKey, 
-		Key: process.env.OUTPUT_VIDEO_KEY_PREFIX + "/" + videoFile,
-		ContentType: 'binary/octet-stream',
-		MetadataDirective: "REPLACE"
-	};
-	console.log("[INFO] change video object metadata %j", s3CopyParams);
-	await s3.copyObject(s3CopyParams, function(err, data) {
-		 if (err) console.log(err, err.stack);
-		 else     console.log(data);
-	}).promise();
-
-	var s3DeleteParams = {
-		Bucket: inputBucket, 
-		Key: inputKey
-	};
-	console.log("[INFO] delete tmp burned video %j", s3DeleteParams);
-	await s3.deleteObject(s3DeleteParams, function(err, data) {
-		 if (err) console.log(err, err.stack);
-		 else     console.log(data);
-	}).promise();
 
 	var outPutParams = 
 	{
-		inputKey: process.env.OUTPUT_VIDEO_KEY_PREFIX + "/" + videoFile,
+		inputKey: inputKey,
 		videoId: videoId,
+		translated: translated,
 		dynamoVideoTable: process.env.DYNAMO_VIDEO_TABLE,
 		inputBucket: inputBucket
 	};
 	console.log("[INFO] computed initial parameters: %j", outPutParams);
 
 	return outPutParams;
+}
+
+function getPositions(string, subStr)
+{
+	var positions = new Array();
+	var pos = string.indexOf(subStr);
+	while (pos > -1)
+	{
+		positions.push(pos);
+		pos = string.indexOf(subStr, pos + 1);
+	}
+	return positions;
 }

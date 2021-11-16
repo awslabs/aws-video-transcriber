@@ -49,6 +49,22 @@
 		                <i class="fa fa-cloud-upload-alt"></i>
 		                <span>Start</span>
 		            </button>
+					<select id="languageSelection" class="form-select btn btn-success" aria-label="Default select example">
+						<option selected value="{{defaultLanguage}}">{{defaultLanguage}}</option>						
+						<option value="zh-CN">zh-CN</option>
+						<option value="en-AU">en-AU</option>
+						<option value="en-US">en-US</option>
+						<option value="en-GB">en-GB</option>
+						<option value="es-US">es-US</option>
+						<option value="en-IN">en-IN</option>
+						<option value="de-DE">de-DE</option>
+						<option value="fr-CA">fr-CA</option>
+						<option value="fr-FR">fr-FR</option>
+						<option value="it-IT">it-IT</option>
+						<option value="pt-BR">pt-BR</option>
+						<option value="ta-IN">ta-IN</option>
+						<option value="te-IN">te-IN</option>
+					</select>							
 		            <button data-dz-remove class="btn btn-default cancel">
 		                <i class="fa fa-ban"></i>
 		                <span>Cancel</span>
@@ -89,7 +105,7 @@
 						<tr>
 							<th scope="col">&nbsp;</th>
 							<th scope="col">Processed</th>
-							<th scope="col">Name</th>
+							<th scope="col">Name</th>							
 							<th scope="col">Description</th>
 							<th scope="col">Status</th>
 							<th scope="col">&nbsp;</th>
@@ -100,7 +116,7 @@
 					<tr>
 						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
 						<td>{{formattedDate}}</td>
-						<td class="wrappable">{{name}}</td>
+						<td class="wrappable">{{name}}</td>											
 						<td class="wrappable">{{description}}</td>
 						<td class="wrappable">{{statusText}}</td>
 						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
@@ -125,6 +141,10 @@
 							<th scope="col">&nbsp;</th>
 							<th scope="col">Processed</th>
 							<th scope="col">Name</th>
+							<th scope="col">Video Language</th>	
+							{{#if enableTranslate}}							
+							<th scope="col">Translated Language</th>
+							{{/if}}												
 							<th scope="col">Description</th>
 							<th scope="col">Status</th>
 							<th scope="col">&nbsp;</th>
@@ -135,7 +155,11 @@
 					<tr>
 						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
 						<td>{{formattedDate}}</td>		
-						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
+						<td class="wrappable">{{name}}</td>
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{language}}</a></td>					
+						{{#if enableTranslate}}
+						<td class="wrappable"><a href="#video/{{videoId}}_{{translatedLanguage}}" onclick="dynamicRoute(event);">{{translatedLanguage}}</a></td>
+						{{/if}}						
 						<td class="wrappable">{{description}}</td>						
 						<td class="wrappable">{{statusText}}</td>
 						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
@@ -157,30 +181,48 @@
 				<table class="table table-striped" id="completedVideoTable">
 					<thead>
 						<tr>
-							<th scope="col">&nbsp;</th>
 							<th scope="col">Processed</th>
 							<th scope="col">Name</th>
+							<th scope="col">Video Language</th>	
+							{{#if enableTranslate}}
+							<th scope="col">Translated Language</th>
+							{{/if}}												
 							<th scope="col">Description</th>
-							<th scope="col">Status</th>
+							<th scoqpe="col">Status</th>
 							<th scope="col">&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
 					{{#each completedVideos}}
 					<tr>
+						<td>{{formattedDate}}</td>
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
 						<td>
 							<div class="dropdown show">
-								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cloud-download-alt fa-sm"></i></a>
-
+								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{language}}</a>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}')">WEBVTT</a>
-									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}')">SRT</a>
-									<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}')">BurnedVideo</a>
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '')">SRT</a>
+									{{#if s3BurnedVideoPath}}
+										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '')">BurnedVideo</a>
+									{{/if}}
 								</div>
 							</div>
 						</td>
-						<td>{{formattedDate}}</td>
-						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
+						{{#if enableTranslate}}						
+						<td>
+							<div class="dropdown show">
+								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{translatedLanguage}}</a>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">SRT</a>
+									{{#if s3BurnedTranslatedVideoPath}}
+										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">BurnedVideo</a>
+									{{/if}}	
+								</div>
+							</div>
+						</td>
+						{{/if}}						
 						<td class="wrappable">{{description}}</td>
 						<td class="wrappable">{{statusText}}</td>
 						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
@@ -204,7 +246,7 @@
 						<tr>
 							<th scope="col">&nbsp;</th>
 							<th scope="col">Processed</th>
-							<th scope="col">Name</th>
+							<th scope="col">Name</th>							
 							<th scope="col">Description</th>
 							<th scope="col">Status</th>
 							<th scope="col">&nbsp;</th>
@@ -215,7 +257,7 @@
 					<tr>
 						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
 						<td>{{formattedDate}}</td>		
-						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>					
 						<td class="wrappable">{{description}}</td>
 						<td class="wrappable">{{statusText}}</td>
 						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
@@ -234,8 +276,10 @@
 	</div>
 
 	<script>
+		var enableTranslate = '{{enableTranslate}}';
+		console.log('enableTranslate: ' + enableTranslate);
 		$(function() {
-
+//			renderSelection();
 			$("#erroredVideoTable").dataTable({
 				"language": {
       				"emptyTable": "No errored videos were found."
@@ -269,40 +313,88 @@
 					{ "orderable": false }
 				]				
 			});
-
-			$("#readyVideoTable").dataTable({
-				"language": {
-      				"emptyTable": "No videos ready for editing were found."
-    			},			
-				"order": [[ 1, "desc" ]],
-				"iDisplayLength": 10,
-				"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-				"columns": [
-					{ "orderable": false },				
-					null,
-					null,
-					null,
-					null,
-					{ "orderable": false }
-				]				
-			});
-
-			$("#completedVideoTable").dataTable({
-				"language": {
-      				"emptyTable": "No completed videos were found."
-    			},
-				"order": [[ 1, "desc" ]],
-				"iDisplayLength": 10,
-				"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-				"columns": [
-					{ "orderable": false },				
-					null,
-					null,
-					null,
-					null,
-					{ "orderable": false }
-				]
-			});
+			if (enableTranslate == 'true')
+			{
+				$("#readyVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No videos ready for editing were found."
+					},			
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [
+						{ "orderable": false },				
+						null,
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]				
+				});
+			}
+			else
+			{			
+				$("#readyVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No videos ready for editing were found."
+					},			
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [
+						{ "orderable": false },				
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]				
+				});
+			}	
+			if (enableTranslate == 'true')
+			{
+				console.log("this branch")
+				console.log("enableTranslate: " + enableTranslate);
+				$("#completedVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No completed videos were found."
+					},
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [			
+						null,
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]
+				});
+			} 
+			else
+			{				
+				$("#completedVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No completed videos were found."
+					},
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [			
+						null,
+						null,
+						null,
+						null,
+						null,
+						{ "orderable": false }
+					]
+				});
+			}
 
 			// https://codepen.io/fuxy22/pen/pyYByO
 		    var previewNode = document.querySelector("#template");
@@ -350,19 +442,23 @@
 					 * Fired when files are added
 					 */
 					this.on("addedfile", function(file) {
-						file.previewElement.querySelector(".start").onclick = function() { 
+						file.previewElement.querySelector(".start").onclick = function() {
 							var url = getSignedUrl(file).then(function(response) {
-		    				myDropZone.options.url = response.data.signedUrl;
-		    				console.log('[INFO] set url: ' + myDropZone.options.url);
+								myDropZone.options.url = response.data.signedUrl;
+								console.log('[INFO] set url: ' + myDropZone.options.url);
 
-							myDropZone.options.headers = {
-    							'Content-Type': file.type
-				    		};
-    									    			
-			    			myDropZone.enqueueFile(file);
-			    		}).catch(function(error) {
-			    			console.log('[ERROR] failed to fetch signed url', error);
-			    		});
+								myDropZone.options.headers = {
+									'Content-Type': file.type
+								};
+															
+								myDropZone.enqueueFile(file);
+			    			}).catch(function(error) {
+			    				console.log('[ERROR] failed to fetch signed url', error);
+			    			});
+							var languageSelect = document.getElementById("languageSelection");
+							console.log('language is: ' + languageSelect.value);
+							console.log('file name is: ' + file.name);
+							putLanguage(file.name, languageSelect.value);
 						};
 					});
 				}
@@ -391,6 +487,6 @@
 			}
 
 			$('a[href="'+lastTab+'"]').click();
-		});
+		});		
     </script>
 {{/if}}

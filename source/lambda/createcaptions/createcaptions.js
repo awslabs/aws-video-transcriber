@@ -15,10 +15,10 @@
 
 var path = require("path");
 var AWS = require("aws-sdk");
+var { default: srtParser2 } = require("srt-parser-2")
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
 var s3 = new AWS.S3();
-var zlib = require('zlib');
 
 /**
  * Creates the closed captions files from an Amazon Transcribe result
@@ -36,13 +36,20 @@ exports.handler = async (event, context, callback) => {
         };
 
         var transcribeFile = path.basename(getObjectParams.Key);
-        var videoId = transcribeFile.substring(0, transcribeFile.length - 5);
+        var videoId = transcribeFile.substring(0, transcribeFile.length - 4);
 
         console.log("[INFO] found video id: " + videoId);
 
         var getObjectResponse = await s3.getObject(getObjectParams).promise();
 
-        var transcribeResponse = JSON.parse(getObjectResponse.Body.toString());
+        var srtParser = new srtParser2();
+
+        console.log("getObjectResponse body: %s", getObjectResponse.Body.toString());
+        var captionArray = srtParser.fromSrt(getObjectResponse.Body.toString());
+
+        console.log("captionJson: %j", captionArray);
+
+        // var transcribeResponse = JSON.parse(captionJson);
 
         var tweaks = await getTweaks();
 
@@ -52,9 +59,9 @@ exports.handler = async (event, context, callback) => {
 
         console.log("[INFO] get video: %j", videoInfo);
 
-        var captions = computeCaptions(tweaks, transcribeResponse, videoInfo);
+        computeCaptions(tweaks, captionArray);
 
-        await saveCaptions(videoId, captions);
+        await saveCaptions(videoId, captionArray);
 
         await updateDynamoDB(videoId, "READY", "Ready for editing");
         
@@ -73,12 +80,13 @@ exports.handler = async (event, context, callback) => {
  */
 async function saveCaptions(videoId, captions)
 {
+
     try
     {
         const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
         var captionS3Parmas = {
             Bucket : transcribeBucket,
-            Key : 'captions/' + videoId,
+            Key : 'captions/' + videoId + '.json',
             ContentType: 'text/plain',
             Body : JSON.stringify(captions)
         }
@@ -101,22 +109,8 @@ async function saveCaptions(videoId, captions)
 /**
  * Process the transcribe response applying the tweaks
  */
-function computeCaptions(tweaks, transcribeResponse, videoInfo)
+function computeCaptions(tweaks, captionArray)
 {
-    var endTime = 0.0;
-    var maxLength = 50;
-    var wordCount = 0;
-    var maxWords = 20;
-    var maxSilence = 0;
-    
-    console.log('[INFO] computing captions with max silence: ' + maxSilence);
-
-    console.log('[INFO] computeCaptions transcribeResponse %j' + transcribeResponse);
-
-    var captions = [];
-    var caption = null;
-    var prevCaption = null;
-
     var tweaksMap = new Map();
 
     for (var i in tweaks.tweaks)
@@ -130,159 +124,23 @@ function computeCaptions(tweaks, transcribeResponse, videoInfo)
         }
     }
 
-    for (var i in transcribeResponse.results.items) {
+    for (var i in captionArray) {
 
-        var item = transcribeResponse.results.items[i];
-
-        var isPunctuation = (item.type == "punctuation");
-
-        var startTime = Number(item.start_time);
-
-        if (!caption)
-        {
-            /**
-             * Start of a line with punction, just skip it
-             */
-            if (isPunctuation)
-            {
-                continue;
-            }
-
-            /**
-             * Create a new caption line
-             */
-            caption = {
-                start: Number(item.start_time),
-                caption: "",
-                wordConfidence: [],
-                words: []
-            };
-        }
-
-        
-        /**
-         * Merge the previous caption and current caption
-         * when the word count is less than recommended and
-         * the punctuation appeared or silence occurred
-         */
-        if (isPunctuation || ((caption.caption.length > 0) && (endTime < startTime)))
-        {
-            if (typeof prevCaption !== "undefined" && prevCaption !== null)
-            {
-                if (prevCaption.caption.length + caption.caption.length <= 15) {
-                    prevCaption = captions.pop();
-                    caption.start = prevCaption.start;
-                    caption.caption = prevCaption.caption + caption.caption;
-                    caption.wordConfidence = prevCaption.wordConfidence.concat(caption.wordConfidence);
-                    caption.words = prevCaption.words.concat(caption.words);
-                }
-            }
-            caption.end = endTime;
-            captions.push(caption);
-
-            // Reset the word count whatever the silence or punctuation
-            wordCount = 0;
-
-            if (isPunctuation)
-            {
-                prevCaption = null;
-
-                // Force to end the caption when punctuation appeared
-                caption = null;
-                continue;
-            }
-            else
-            {
-                if ((startTime - endTime) >= 0.15)
-                {
-                    prevCaption = null;
-                } else {
-                    prevCaption = caption;
-                }
-
-                caption = {
-                    start: Number(startTime),
-                    caption: "",
-                    wordConfidence: [],
-                    words: []
-                };
-            }
-        }
-
-        endTime = Number(item.end_time);
-
-        var requiresSpace = !isPunctuation && (caption.caption.length > 0) && process.env.TRANSCRIBE_LANGUAGE != 'zh-CN';
-        caption.caption += requiresSpace ? " " : "";
-
+        var item = captionArray[i];
         /**
          * Process tweaks
          * TODO handle multiple alternatives if these ever appear
          */
-        var text = item.alternatives[0].content;
-        var confidence = item.alternatives[0].confidence;
+        var text = item.text;
         var textLower = text.toLowerCase();
 
         if (tweaksMap.has(textLower))
         {
             text = tweaksMap.get(textLower);
         }
-
-        if (!isPunctuation || (isPunctuation && wordCount > 0)) {
-            caption.caption += text;
-
-            // Track raw word and it's time
-            caption.words.push(
-              {
-                w: text,
-                st: item.start_time,
-                et: item.end_time,
-                c: parseFloat(confidence)
-              }
-            );
-        }
-
-        /**
-         * Track raw word confidence
-         */
-        if (!isPunctuation)
-        {
-            caption.wordConfidence.push(
-                {
-                    w: text.toLowerCase(),
-                    c: parseFloat(confidence)
-                }
-            );            
-        }
-
-        /**
-         * Count words
-         */
-        wordCount += isPunctuation ? 0 : 1;
-
-        /**
-         * If we have reached a good amount of text finalise the caption
-         */
-        if (wordCount >= maxWords || caption.caption.length >= maxLength)
-        {
-            caption.end = endTime;
-            prevCaption = caption;
-            captions.push(caption);
-            wordCount = 0;
-            caption = null;
-        }
-    }
-
-    /**
-     * Close the last caption if required
-     */
-    if (caption != null)
-    {
-        caption.end = endTime;
-        captions.push(caption);
-        caption = null;
-        wordCount = 0;
-    }
-    return captions;
+        item.text = text;
+    } 
+    return;
 }
 
 /**

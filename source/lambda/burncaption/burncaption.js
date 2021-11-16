@@ -35,13 +35,16 @@ exports.handler = async (event, context, callback) => {
     {
         var videoId = event.pathParameters.videoId;
         var getVideoResponse = await getVideoInfo(videoId)
+        var body = JSON.parse(event.body);
 
+        var language = body.language;
+        var translated = body.translated;
         if (getVideoResponse.Item)
         {
             var video = mapper(getVideoResponse.Item);
-            await prepareSrtCaptions(videoId);
+            await prepareSrtCaptions(videoId, language, translated);
 
-            await burnCaptions(videoId, video);
+            await burnCaptions(videoId, video, language, translated);
             
             const response = {
                 statusCode: 200,
@@ -88,19 +91,27 @@ async function getVideoInfo(videoId)
     return getVideoResponse;
 }
 
-async function prepareSrtCaptions(videoId)
+async function prepareSrtCaptions(videoId, language, translated)
 {
     const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
+    var captionsKey = '';
+    var inputCaptionsKey = 'burnedcaptions/' + videoId + '.srt';
+    if (translated == 'true') {
+      captionsKey = 'captions/' + videoId + '_' + language + '.json';
+      inputCaptionsKey = 'burnedcaptions/' + videoId + '_' + language + '.srt';
+    } else {
+      captionsKey = 'captions/' + videoId + '.json';
+      inputCaptionsKey = 'burnedcaptions/' + videoId + '.srt';
+    }
     var captionS3Params = {
         Bucket : transcribeBucket,
-        Key : 'captions/' + videoId          
+        Key : captionsKey
     }
     var captionsObject = await s3.getObject(captionS3Params).promise(); 
     captionsStr = captionsObject.Body.toString();
     var captions = JSON.parse(captionsStr);
-    var srtCaptions = await exportCaptions("srt", captions);
+    var srtCaptions = await exportCaptions("srt", captions, language);
 
-    var inputCaptionsKey = 'srt/' + videoId + '.srt';
     await s3.putObject({
         Bucket: transcribeBucket,
         Key: inputCaptionsKey,
@@ -109,14 +120,22 @@ async function prepareSrtCaptions(videoId)
       }).promise();
 }
 
-async function burnCaptions(videoId, video)
+async function burnCaptions(videoId, video, language, translated)
 {
     const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
-    var inputCaptionsKey = 'srt/' + videoId + '.srt';
+    var inputCaptionsKey = '';
+    var outputNameModifier = '';
+    if (translated == 'true') {
+      inputCaptionsKey = 'burnedcaptions/' + videoId + '_' + language + '.srt';
+      outputNameModifier = "_" + videoId + '_translated';
+    } else {
+      inputCaptionsKey = 'burnedcaptions/' + videoId + '.srt';
+      outputNameModifier = "_" + videoId + '_';
+    }
 
     var inputCaptionsS3Path = 's3://' + transcribeBucket + '/' + inputCaptionsKey;
     var inputVideoS3Path = video['s3VideoPath'];
-    var outputVideoS3Path = 's3://' + process.env.OUTPUT_VIDEO_BUCKET + '/tmp/'
+    var outputVideoS3Path = 's3://' + process.env.OUTPUT_VIDEO_BUCKET + '/' + process.env.OUTPUT_VIDEO_KEY_PREFIX + '/';
 
     var mediaConvertEndpoint = await getMediaConvertEndpoint();
     console.log('INFO mediaConvertEndpoint is ', mediaConvertEndpoint);
@@ -164,7 +183,7 @@ async function burnCaptions(videoId, video)
                         }
                       }
                     ],
-                    "NameModifier": "_" + videoId,
+                    "NameModifier": outputNameModifier,
                     "CaptionDescriptions": [
                       {
                         "CaptionSelectorName": "Captions Selector 1",
@@ -249,79 +268,157 @@ async function burnCaptions(videoId, video)
 async function getMediaConvertEndpoint()
 {
     console.log('INFO start getMediaConvertEndpoint');
-    var mediaConvertParams = {
-      MaxResults: 0
-    };    
-    // Create a promise on a MediaConvert object
-    var endpointPromise;
-    if (process.env.REGION === "cn-northwest-1" || process.env.REGION === "cn-north-1")
-    {
-        endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29', endpoint: 'https://subscribe.mediaconvert.cn-northwest-1.amazonaws.com.cn', region: 'cn-northwest-1'}).describeEndpoints(mediaConvertParams).promise();
-    } 
-    else 
-    {
-        endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29'}).describeEndpoints(mediaConvertParams).promise();
-    }
-    var mediaConvertEndpoint;
-    console.log('INFO generate endpointPromise');
-    await endpointPromise.then(
-      function(data) {
-        console.log('INFO endpointPromise success');
-        console.log("Your MediaConvert endpoint is ", data.Endpoints);
-        mediaConvertEndpoint = data.Endpoints[0].Url;
-      },
-      function(err) {
-        console.log("Error", err);
-      }
-    ); 
-    console.log('INFO getMediaConvertEndpoint end %s', mediaConvertEndpoint);
-    return mediaConvertEndpoint;
 
-}
-
-async function exportCaptions(format, captions)
-{
-    var srt = '';
-
-    var index = 1;
-
-    for (var i in captions)
-    {
-        var caption = captions[i];
-
-        if (caption.caption.trim() === '')
+    var getParams = {
+        TableName: process.env.DYNAMO_CONFIG_TABLE,
+        Key: 
         {
-          continue;
+            'configId' : { 'S': 'mediaConvertEndpoint' },
         }
-        
-        srt += index + '\n';
-        srt += formatTimeSRT(caption.start) + ' --> ' + formatTimeSRT(caption.end) + '\n';
-        srt += caption.caption + '\n\n';
-        index++;
-    }
+    };
 
-    return srt;
+    console.log("[INFO] calling getItem with parameters: %j", getParams);
+    var getItemResponse = await dynamoDB.getItem(getParams).promise();
+    console.log("[INFO] getItem response from Dynamo: %j", getItemResponse); 
+    if (getItemResponse.Item) {
+        console.log("[INFO] get mediaConvert endpoint from DDB: ", getItemResponse.Item.endpointValue.S);
+        return getItemResponse.Item.endpointValue.S;
+    } else {
+        var mediaConvertParams = {
+            MaxResults: 0
+        };
+        // Create a promise on a MediaConvert object
+        var endpointPromise;
+        if (process.env.REGION === "cn-northwest-1" || process.env.REGION === "cn-north-1")
+        {
+            endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29', endpoint: 'https://subscribe.mediaconvert.cn-northwest-1.amazonaws.com.cn', region: 'cn-northwest-1'}).describeEndpoints(mediaConvertParams).promise();
+        } 
+        else 
+        {
+            endpointPromise = new AWS.MediaConvert({apiVersion: '2017-08-29'}).describeEndpoints(mediaConvertParams).promise();
+        }    
+        var mediaConvertEndpoint;
+        console.log('INFO generate endpointPromise');
+        await endpointPromise.then(
+        function(data) {
+            console.log('INFO endpointPromise success');
+            console.log("Your MediaConvert endpoint is ", data.Endpoints);
+            mediaConvertEndpoint = data.Endpoints[0].Url;
+        },
+        function(err) {
+            console.log("Error", err);
+        }
+        ); 
+        console.log('INFO getMediaConvertEndpoint end %s', mediaConvertEndpoint);
+
+        var updateParams = {
+            TableName: process.env.DYNAMO_CONFIG_TABLE,
+            Key: 
+            {
+                "configId" : { "S": "mediaConvertEndpoint" }
+            },
+            UpdateExpression: "SET #endpointValue = :endpointValue",
+            ExpressionAttributeNames: {
+                "#endpointValue": "endpointValue"
+            },
+            ExpressionAttributeValues: {
+                ":endpointValue": {
+                    S: mediaConvertEndpoint
+                }
+            },
+            ReturnValues: "NONE"            
+        };
+
+        await dynamoDB.updateItem(updateParams).promise();
+
+        console.log("[INFO] successfully updated DynamoDB status");              
+        return mediaConvertEndpoint;
+    }     
 }
 
-/**
- * Format an SRT timestamp in HH:MM:SS,mmm
- */
-function formatTimeSRT(timeSeconds)
+async function exportCaptions(format, captions, language)
 {
-    const ONE_HOUR = 60 * 60;
-    const ONE_MINUTE = 60;
-    var hours = Math.floor(timeSeconds / ONE_HOUR);
-    var remainder = timeSeconds - (hours * ONE_HOUR);
-    var minutes = Math.floor(remainder / 60);
-    remainder = remainder - (minutes * ONE_MINUTE);
-    var seconds = Math.floor(remainder);
-    remainder = remainder - seconds;
-    var millis = remainder;
+    if (format === 'webvtt')
+    {
+        var webvtt = 'WEBVTT\n\n';
 
-    return (hours + '').padStart(2, '0') + ':' +
-            (minutes + '').padStart(2, '0') + ':' +
-            (seconds + '').padStart(2, '0') + ',' +
-            (Math.floor(millis * 1000) + '').padStart(3, '0');
+        for (var i in captions)
+        {
+            var caption = captions[i];
+
+            if (caption.text.trim() === '')
+            {
+              continue;
+            }
+
+            webvtt += caption.startTime.replace(',', '.') + ' --> ' + caption.endTime.replace(',', '.') + '\n';
+            var captionText = splitSentence(caption.text, language);
+            webvtt += captionText + '\n';
+        }
+
+        return webvtt;
+    }
+    else if (format === 'srt') 
+    {
+        var srt = '';
+
+        var index = 1;
+
+        for (var i in captions)
+        {
+            var caption = captions[i];
+
+            if (caption.text.trim() === '')
+            {
+              continue;
+            }
+            
+            srt += index + '\n';
+            srt += caption.startTime + ' --> ' + caption.endTime + '\n';
+            var captionText = splitSentence(caption.text, language);
+            srt += captionText + '\n';
+            index++;
+        }
+
+        return srt;
+    }
+    else
+    {
+        throw new Error("Invalid format requested: " + format);
+    }
+}
+
+function splitSentence(text, language)
+{
+    var lenght = text.length;
+    var finalText = '';
+    if (language.indexOf('zh') > -1) {
+        var maxSentenceLength = 25;
+        var paraCount = parseInt(lenght/maxSentenceLength);
+        for(var i = 0; i < paraCount; i++) {
+            finalText += text.substring(i * maxSentenceLength, (i + 1) * maxSentenceLength) + '\n';
+        }
+        if (paraCount * maxSentenceLength < lenght) {
+            finalText += text.substring(paraCount * maxSentenceLength, lenght) + '\n';
+        }
+    } else {
+        var maxSentenceLength = 50;
+        var sentenceCount = parseInt(lenght/maxSentenceLength);
+        var currentPosition = 0;
+        var nextPosition = 0;
+        for(var i = 0; i < sentenceCount; i++) {
+            currentPosition = nextPosition;
+            nextPosition = text.indexOf(' ', (i + 1) * maxSentenceLength) + 1
+            if (nextPosition == 0) {
+                nextPosition = text.lenght;
+            }
+            finalText += text.substring(currentPosition, nextPosition) + '\n';
+        }
+        if (nextPosition < lenght) {
+            finalText += text.substring(nextPosition, lenght) + '\n';
+        }       
+    }
+    return finalText;
 }
 
 
