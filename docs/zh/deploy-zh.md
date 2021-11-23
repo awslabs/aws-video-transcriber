@@ -2,6 +2,8 @@
 
 本部署指南详细描述了如何在云上使用 Amazon CloudFormation 模板部署 **视频字幕** 解决方案
 
+
+
 ## 解决方案描述
 该方案基于Amazon Lambda无服务架构，集成Amazon Transcribe , Amazon Translate，Amazon Elemental MediaConvert，Amazon S3，Amazon DynamoDB等服务，帮助客户自动生成视频字幕，翻译字幕，同时客户也能通过方案提供的web console对照视频校对和编辑字幕，以及生成硬字幕视频。
 
