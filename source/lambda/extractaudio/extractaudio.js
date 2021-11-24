@@ -30,27 +30,36 @@ exports.handler = async (event, context, callback) => {
 
     try
     {
-        /**
-         * Minimum parameters to check for prior processings
-         */
         params.dynamoVideoTable = process.env.DYNAMO_VIDEO_TABLE;
-        params.inputBucket = process.env.INPUT_BUCKET;
-        params.inputKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-        params.videoName = path.basename(params.inputKey);
-        params.inputS3Path = "s3://" + params.inputBucket + "/" + params.inputKey;
-        params.videoNamePrefix = params.videoName.substring(0, params.videoName.length - 4)
-
-        if (params.inputKey === "videos/")
-        {
-            callback(null, "Skipping folder");
-            return;
+        //check request from api or s3
+        if (event.Records != null && event.Records[0].eventSource == "aws:s3") {
+            /**
+             * Minimum parameters to check for prior processings
+             */
+            params.inputBucket = process.env.INPUT_BUCKET;
+            params.inputKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
+            params.videoName = path.basename(params.inputKey);
+            params.inputS3Path = "s3://" + params.inputBucket + "/" + params.inputKey;
+            params.videoNamePrefix = params.videoName.substring(0, params.videoName.length - 4)
+            if (params.inputKey === "videos/")
+            {
+                callback(null, "Skipping folder");
+                return;
+            } 
+                      
+        } else {
+            // request is from API Gateway
+            var body = JSON.parse(event.body);            
+            params.videoName = body.videoName;
+            params.inputS3Path = body.inputS3Path;
+            params.videoNamePrefix = params.videoName.substring(0, params.videoName.length - 4);          
         }
 
         /**
          * Check for an existing video and use an existing video
          * id if provided
-         */
-        await checkForPriorProcessing(params);
+        */
+        await checkForPriorProcessing(params);         
 
         /**
          * Compute remaining params perhaps with an existing video id
@@ -72,7 +81,23 @@ exports.handler = async (event, context, callback) => {
          */
         await updateDynamoDB(params); 
 
-        callback(null, "Audio processing complete");
+        var responseHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+            'Content-Type': 'application/json'
+        };        
+
+        var responseBody = {  
+            "message": "successfully"
+        };       
+
+		const response = {
+            statusCode: 200,
+            body: JSON.stringify(responseBody),
+            headers: responseHeaders
+        };        
+
+        callback(null, response);
     }
     catch (error)
     {
@@ -117,24 +142,24 @@ function computeRemainingParams(event, params)
     /**
      * Check format and only accept MP4, MKV and MOV files
      */
-    if (params.inputKey.toLowerCase().endsWith(".mp4"))
+    if (params.videoName.toLowerCase().endsWith(".mp4"))
     {
-        console.log("[INFO] found MP4 input video file that requires transcoding: %s", params.inputKey);
+        console.log("[INFO] found MP4 input video file that requires transcoding: %s", params.videoName);
         params.videoType = "MP4"; 
     }
-    else if (params.inputKey.toLowerCase().endsWith(".mkv"))
+    else if (params.videoName.toLowerCase().endsWith(".mkv"))
     {
-        console.log("[INFO] found MKV input video file that requires transcoding: %s", params.inputKey);
+        console.log("[INFO] found MKV input video file that requires transcoding: %s", params.videoName);
         params.videoType = "MKV";
     }
-    else if (params.inputKey.toLowerCase().endsWith(".mov"))
+    else if (params.videoName.toLowerCase().endsWith(".mov"))
     {
-        console.log("[INFO] found MOV input video file that requires transcoding: %s", params.inputKey);
+        console.log("[INFO] found MOV input video file that requires transcoding: %s", params.videoName);
         params.videoType = "MOV";
     }
     else
     {
-        console.log("[ERROR] found incompatible input video file, skipping: %s", params.inputKey);
+        console.log("[ERROR] found incompatible input video file, skipping: %s", params.videoName);
         params.videoType = "UNKNOWN";
     }
 

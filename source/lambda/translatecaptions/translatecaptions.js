@@ -110,8 +110,7 @@ async function translateText(sourceLanguage, targetLanguage, text)
         Text: text
     };
     const data = await translate.translateText(params).promise();      
-    var translatedText = data.TranslatedText; 
-    console.log("[INFO] get translateText: %s", translatedText); 
+    var translatedText = data.TranslatedText;
     return translatedText;
 }
 

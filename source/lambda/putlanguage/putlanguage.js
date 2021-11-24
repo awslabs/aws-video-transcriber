@@ -34,18 +34,27 @@ exports.handler = async (event, context, callback) => {
     try
     {
         var body = JSON.parse(event.body);
-
+        var videoId = uuidv4();
         var ddbParams = { };
-        ddbParams.videoId = uuidv4();
+        ddbParams.videoId = videoId;
         ddbParams.videoName = body.videoName;
         ddbParams.language = body.language;
 
         ddbParams.inputS3Path = "s3://" + process.env.INPUT_BUCKET + "/videos/" + body.videoName;
+        if (body.inputS3Path != null) {
+            console.log('[INFO] get s3 path from request', body.inputS3Path);
+            ddbParams.inputS3Path = body.inputS3Path;
+        }
         
         await updateDynamoDB(ddbParams);
 
+        var responseBody = {  
+            "videoId": videoId
+        };       
+
 		const response = {
             statusCode: 200,
+            body: JSON.stringify(responseBody),
             headers: responseHeaders
         };
         callback(null, response);
