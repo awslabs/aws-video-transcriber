@@ -18,3 +18,14 @@
 | Amazon Lambda                       | 10万次调用 （平均300ms，128M内存）               |   $0  |
 | Amazon DynamoDB                     | 5万次读/写               |   $0.06   |
 |                                     |                       |   总费用：$222.23   |
+
+下表以宁夏（Ningxia)为例，每月处理100个视频，每个视频一个小时，该方案每月所需的费用。
+| 服务        | 用量                          | 费用     |
+| ----------- | ------------------------------------ |
+| Amazon Elemental Mediaconvert       | 提取音频 100小时        |   ¥124.2    ｜
+| Amazon Elemental Mediaconvert       | 烧入字幕 100小时        |   ¥387    ｜
+| Amazon Transcribe                   | 语音转文字 100小时       |   ¥972   |
+| Amazon API Gateway                  | 5万个请求               |   ¥1.5  |
+| Amazon Lambda                       | 10万次调用 （平均300ms，128M内存）               |   $0  |
+| Amazon DynamoDB                     | 5万次读/写               |   ¥0.6   |
+|                                     |                       |   总费用：¥1485.3   |
