@@ -59,8 +59,9 @@ exports.handler = async (event, context, callback) => {
         {
             var video = mapper(getResponse.Item);
             // const videoBucket = process.env.VIDEO_BUCKET;
-            const videoBucket = video.s3VideoPath.substring(0, 6);
-            const videoKey = video.s3VideoPath.substring(6 + video.s3VideoPath.length);
+            var index = video.s3VideoPath.indexOf('/', 5);          
+            const videoBucket = video.s3VideoPath.substring(5, index);
+            const videoKey = video.s3VideoPath.substring(index + 1, video.s3VideoPath.length);
             const signedUrlExpireSeconds = 60 * 60;
 
             const url = s3.getSignedUrl('getObject', {
