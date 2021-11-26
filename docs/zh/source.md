@@ -1,1 +1,1 @@
-访问我们的GitHub存储库，下载此解决方案的源文件。视频字幕解决方案的模板是使用[云开发工具包（CDK）](http://aws.amazon.com/cdk/)生成的。有关更多信息，请参阅README.md文件。
+访问我们的GitHub存储库，下载此解决方案的源文件。视频字幕解决方案的模板是使用[Amazon Cloudformation](https://aws.amazon.com/cn/cloudformation)生成的。有关更多信息，请参阅README.md文件。
