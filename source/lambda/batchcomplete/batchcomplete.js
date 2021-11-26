@@ -52,12 +52,12 @@ exports.handler = async (event, context, callback) => {
             } else {
               sourceS3Path = video.s3BurnedVideoPath;
             }
-            await moveBurnedVedio(destBucket, destKeyPrefix, videoName, sourceS3Path);
+            // await moveBurnedVedio(destBucket, destKeyPrefix, videoName, sourceS3Path);
             
             var responseBody = {
               "vttPath": destKeyPrefix + "/" + videoName + '.vtt',
-              "srtPath": destKeyPrefix + "/" + videoName + '.srt',
-              "burnedVideoPath": destKeyPrefix + "/" + videoName + ".mp4",
+              "srtPath": destKeyPrefix + "/" + videoName + '.srt'
+            //   "burnedVideoPath": destKeyPrefix + "/" + videoName + ".mp4",
             }
             const response = {
                 statusCode: 200,

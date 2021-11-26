@@ -58,9 +58,9 @@ exports.handler = async (event, context, callback) => {
         if (getResponse.Item)
         {
             var video = mapper(getResponse.Item);
-
-            const videoBucket = process.env.VIDEO_BUCKET;
-            const videoKey = video.s3VideoPath.substring(6 + videoBucket.length);
+            // const videoBucket = process.env.VIDEO_BUCKET;
+            const videoBucket = video.s3VideoPath.substring(0, 6);
+            const videoKey = video.s3VideoPath.substring(6 + video.s3VideoPath.length);
             const signedUrlExpireSeconds = 60 * 60;
 
             const url = s3.getSignedUrl('getObject', {
@@ -68,7 +68,6 @@ exports.handler = async (event, context, callback) => {
                 Key: videoKey,
                 Expires: signedUrlExpireSeconds
             });
-
             video.s3VideoSignedUrl = url;
             const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
             const captionsUrl = s3.getSignedUrl('getObject', {
@@ -76,7 +75,6 @@ exports.handler = async (event, context, callback) => {
                 Key : 'captions/' + event.pathParameters.videoId + '.json',
                 Expires: signedUrlExpireSeconds
             });  
-            
             video.s3CaptionsSignUrl = captionsUrl;
             video.translated = translated;
             var enableTranslate = false;

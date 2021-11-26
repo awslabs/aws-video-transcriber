@@ -120,25 +120,19 @@ function computeCaptions(tweaks, captionArray)
         var splits = tweak.split("=");
         if (splits.length == 2)
         {
-            tweaksMap.set(splits[0].toLowerCase().trim(), splits[1].trim());
+            tweaksMap.set(splits[0].trim(), splits[1].trim());
         }
     }
 
     for (var i in captionArray) {
-
-        var item = captionArray[i];
         /**
          * Process tweaks
          * TODO handle multiple alternatives if these ever appear
          */
-        var text = item.text;
-        var textLower = text.toLowerCase();
-
-        if (tweaksMap.has(textLower))
-        {
-            text = tweaksMap.get(textLower);
+        for (let [key, value] of tweaksMap) {
+            const searchRegExp = new RegExp(key, 'g'); 
+            captionArray[i].text = captionArray[i].text.replace(searchRegExp, value);
         }
-        item.text = text;
     } 
     return;
 }
