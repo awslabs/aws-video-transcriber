@@ -15,7 +15,7 @@
 7. Amazon Lambda Function调用[Amazon Transcribe][transcribe]从音频中提取字幕，并将结果保存到Amazon S3 (Videos and Captions)
 8. Amazon Lambda Function调用[Amazon Translate][translate]将字幕翻译成其它语言，并将结果保存到Amazon S3 (Videos and Captions)
 
-本方案在Amazon S3存储桶中部署了一个Web应用，S3存储桶只能通过CloudFront访问。
+本方案在Amazon S3存储桶中部署了一个Web应用，Amazon S3存储桶只能通过CloudFront访问。
 
 Amazon API Gateway通过API Key进行认证，客户端必须输入正确的API Key才能访问Amazon API Gateway。
 

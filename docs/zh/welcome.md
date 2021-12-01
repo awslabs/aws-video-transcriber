@@ -1,4 +1,4 @@
-本解决方案基于[Amazon Lambda][lambda]无服务架构，集成[Amazon Transcribe][transcribe]等服务，帮助客户完成自动生成视频字幕，以及字幕翻译等操作。同时，提供的网页控制台便于客户对照视频校对和编辑字幕，以及生成硬字幕视频。
+本解决方案基于[Amazon Lambda][lambda]无服务架构，集成[Amazon Transcribe][transcribe]等服务，并提供网页控制台帮助客户完成视频字幕相关操作。例如，自动生成视频字幕，对照视频校对和编辑字幕，以及生成硬字幕视频。
 
 本解决方案主要包括以下功能：
 

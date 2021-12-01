@@ -2,7 +2,7 @@
 - [Amazon API Gateway][api-gateway]
 - [Amazon Lambda][lambda]
 - [Amazon DynamoDB][dynamodb]
-- [Amazon Elemental Mediaconvert][mediaconvert]
+- [Amazon Elemental MediaConvert][mediaconvert]
 - [Amazon Transcribe][transcribe]
 - [Amazon Translate][translate]
 
