@@ -6,10 +6,10 @@
 - [Amazon Transcribe][transcribe]
 - [Amazon Translate][translate]
 
-[s3]: https://aws.amazon.com/cn/s3/
-[api-gateway]: https://aws.amazon.com/cn/api-gateway/
-[lambda]: https://aws.amazon.com/cn/lambda/
-[dynamodb]: https://aws.amazon.com/cn/dynamodb/
-[mediaconvert]: https://aws.amazon.com/cn/mediaconvert/
-[transcribe]: https://aws.amazon.com/cn/transcribe/
-[translate]: https://aws.amazon.com/cn/translate/
+[s3]: https://aws.amazon.com/s3/
+[api-gateway]: https://aws.amazon.com/api-gateway/
+[lambda]: https://aws.amazon.com/lambda/
+[dynamodb]: https://aws.amazon.com/dynamodb/
+[mediaconvert]: https://aws.amazon.com/mediaconvert/
+[transcribe]: https://aws.amazon.com/transcribe/
+[translate]: https://aws.amazon.com/translate/
