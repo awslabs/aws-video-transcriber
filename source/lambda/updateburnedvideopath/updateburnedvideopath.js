@@ -21,7 +21,6 @@ var AWS = require('aws-sdk');
 var path = require("path");
 AWS.config.update({region: process.env.REGION});  
 var dynamoDB = new AWS.DynamoDB();
-var s3 = new AWS.S3();
 
 exports.handler = async (event, context, callback) => {
 

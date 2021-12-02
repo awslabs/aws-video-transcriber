@@ -14,8 +14,7 @@
 */
 
 var AWS = require('aws-sdk');
-AWS.config.update({region: process.env.REGION});  
-var dynamoDB = new AWS.DynamoDB();
+AWS.config.update({region: process.env.REGION});
 var s3 = new AWS.S3();
 var zlib = require('zlib');
 

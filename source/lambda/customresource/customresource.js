@@ -186,7 +186,7 @@ async function waitForStage(event, sleepTimeMillis, maxSleeps)
         }
         catch (error)
         {
-            console.log('[INFO] API Gateway stage is not ready, sleeping');
+            console.log('[INFO] API Gateway stage is not ready, sleeping: ', error);
             await sleep(sleepTimeMillis);
         }
     }
@@ -200,7 +200,6 @@ async function deleteBucketObjects(bucket) {
     };
     var objectList = [];
     await s3.listObjectsV2(params, function(err, data) {
-      console.log('sldfjlskdjf')
       if (err) {
           console.log(err, err.stack); // an error occurred
       } else {
