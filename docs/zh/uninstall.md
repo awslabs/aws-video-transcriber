@@ -16,4 +16,4 @@
 ```bash
 aws cloudformation delete-stack --stack-name <installation-stack-name> --region <aws-region>
 ```
-
+[aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
