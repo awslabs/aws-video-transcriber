@@ -392,7 +392,7 @@ function splitSentence(text, language)
 {
     var lenght = text.length;
     var finalText = '';
-    if (language.indexOf('zh') > -1) {
+    if (language.indexOf('zh') > -1 || language.indexOf('ja') > -1 || language.indexOf('ko') > -1) {
         var maxSentenceLength = 25;
         var paraCount = parseInt(lenght/maxSentenceLength);
         for(var i = 0; i < paraCount; i++) {

@@ -669,8 +669,7 @@ function translateCaptions(videoId, targetLanguage)
 		 $.get('site_config.json'),
 		 $.get('templates/home.hbs'),
 		 $.get('templates/videos.hbs'),
-		//  $.get('templates/video-translated.hbs'), 
-		 $.get('templates/video-new.hbs'), 
+		 $.get('templates/video.hbs'),
 		 $.get('templates/tweaks.hbs'), 
 		 $.get('templates/vocabulary.hbs')
 	 ).done(function(site, home, videos, video, tweaks, vocabulary)

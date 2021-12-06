@@ -35,8 +35,6 @@
 			"templates/home.hbs",
 			"templates/tweaks.hbs",
 			"templates/video.hbs",
-			"templates/video-translated.hbs",
-			"templates/video-new.hbs",
 			"templates/videos.hbs",
 			"templates/vocabulary.hbs"
 		]

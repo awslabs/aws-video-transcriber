@@ -72,9 +72,17 @@
 				<div style="display:none;" id="editorControls">
 					<div class="text-center control-container">
 						<button type="button" class="btn btn-secondary 
-							control-button" onclick="mergeCaptions()" title="Merge captions" id="mergeButton">
-							<i class="fa fa-plus-square fa-sm"></i> Merge
+							control-button" onclick="saveCaptions()" title="Save captions" id="saveButton">
+							<i class="fa fa-save fa-sm"></i> Save
 						</button>
+						<button type="button" class="btn btn-secondary 
+							control-button" onclick="mergeCaptions()" title="Merge captions" id="mergeButton">
+							<i class="fa fa-save fa-sm"></i> Merge
+						</button>
+						<button type="button" class="btn btn-secondary 
+							control-button" onclick="splitCaptions()" title="Split captions" id="splitButton">
+							<i class="fa fa-save fa-sm"></i> Split
+						</button>												
 						<span class="dropdown show">
 							<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<i class="fa fa-cloud-download-alt fa-sm"></i> Download
@@ -83,33 +91,50 @@
 							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 								<a class="dropdown-item" onclick="downloadCaptionsVTTLocal()">WEBVTT</a>
 								<a class="dropdown-item" onclick="downloadCaptionsSRTLocal()">SRT</a>
+								{{#if video.translated}}	
+									{{#if video.s3BurnedTranslatedVideoPath}}							
+										<a class="dropdown-item" onclick="downloadBurnedVideoLocal()">BurnedVideo</a>
+									{{/if}}
+								{{else}}
+									{{#if video.s3BurnedVideoPath}}							
+										<a class="dropdown-item" onclick="downloadBurnedVideoLocal()">BurnedVideo</a>
+									{{/if}}
+								{{/if}}										
 							</div>
 						</span>
+						{{#if video.enableTranslate}}
+							{{#if video.translated}}
+							{{else}}
+								<span class="dropdown show">
+									<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fa fa-cloud-download-alt fa-sm"></i> Translate to
+									</a>
+
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+										<a class="dropdown-item" onclick="translateWithLanguageCode('zh')">Chinese (Simplified)</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('zh-TW')">Chinese (Traditional)</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('en')">English</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('de')">German</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('fr')">French</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('it')">Italian</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('ja')">Japanese</a>
+										<a class="dropdown-item" onclick="translateWithLanguageCode('ko')">Korean</a>
+									</div>
+								</span>
+							{{/if}}		
+						{{/if}}							
 						<button type="button" class="btn btn-secondary 
 							control-button" onclick="burnCaptionsLocal()" title="Save captions" id="burnCaptionsButton">
 							<i class="fa fa-closed-captioning fa-sm"></i> Burn In
-						</button>
-						{{#if video.enableTranslate}}
-						<span class="dropdown show">
-							<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<i class="fa fa-cloud-download-alt fa-sm"></i> Translate to
-							</a>
-
-							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-								<a class="dropdown-item" onclick="translateChineseSimplified()">Chinese (Simplified)</a>
-								<a class="dropdown-item" onclick="translateChineseTraditional()">Chinese (Traditional)</a>
-								<a class="dropdown-item" onclick="translateChineseEnglish()">English</a>
-							</div>
-						</span>
-						{{/if}}											
+						</button>												
 						<span id="statusButton"></span>
-					</div>		
+					</div>
 					<form class="form">
                         <div class="form-group">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 5.00%">#</th>
+                                        {{!-- <th style="width: 5.00%">#</th> --}}
                                         <th style="width: 5.00%">Index</th>
                                         <th style="width: 15.00%">Time</th>
                                         <th style="width: 75.00%">Caption</th>
@@ -117,9 +142,9 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>
+                                        {{!-- <td>
                                             <input type="checkbox" name="caption" id="prevCaptionCheckbox" />
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <span id="prevCaptionIndex"></span>
                                         </td>
@@ -131,9 +156,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
+                                        {{!-- <td>
                                             <input type="checkbox" name="caption" id="currentCaptionCheckbox" />
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <span id="captionIndex"></span>
                                         </td>
@@ -141,17 +166,14 @@
                                             <span id="currentTime"></span>
                                         </td>
                                         <td>
-                                            <span id="currentCaption"></span>
-                                            <table class="table table-borderless mt-4">
-                                                <tbody id="currentCaptionTbody">
-                                                </tbody>
-                                            </table>
+                                            {{!-- <span id="currentCaption"></span> --}}
+											<input type="text" id="currentCaption" name="CaptionText" style="width:800px; height:80px;"/>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
+                                        {{!-- <td>
                                             <input type="checkbox" name="caption" id="nextCaptionCheckbox" />
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <span id="nextCaptionIndex"></span>
                                         </td>
@@ -165,16 +187,7 @@
                                 </tbody>
                             </table>
                         </div>
-						<div class="form-group">
-							<label for="confidenceHighlight">Highlight words with confidence less than</label>
-							<input type="text" class="form-control input-sm" id="confidenceHighlight" placeholder="Confidence highlight" value="0.75"/>
-						</div>						
-						<!--<div class="form-group float-right">
-							<input type="checkbox" name="autosave" id="autosave" checked>
-								Auto save
-							</input>
-						</div>-->
-					</form>
+					</form>											
 				</div>
 			</div>
 		</div>
@@ -212,7 +225,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal" id="videoNameSave">Save</button>				
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-				</div>
+				</div>				
 			</div>
 		</div>
 	</div>	
@@ -232,7 +245,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal" id="videoDescriptionSave">Save</button>				
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-				</div>
+				</div>				
 			</div>
 		</div>
 	</div>		
@@ -245,24 +258,24 @@
 		var videoName = '{{video.name}}';
 		var videoDescription = '{{video.description}}';
 		var videoStatus = '{{video.status}}';
-        var videoLanguage = '{{video.language}}';
 		var translated = '{{video.translated}}';
-        console.log("videoLanguage is " + videoLanguage);
+		var language = '{{video.language}}';
+		if (translated == 'true') {
+			language = '{{video.translatedLanguage}}';
+		}
 		console.log("translated is " + translated);
 
 		var video = document.getElementById("video"); 
 		var videoProgress = document.getElementById("videoProgress");
-        var prevTimeEdit = document.getElementById("prevTime");
         var currentTimeEdit = document.getElementById("currentTime");
-        var nextTimeEdit = document.getElementById("nextTime");
-		// var captionEdit = document.getElementById("caption");
+		var captionEdit = document.getElementById("currentCaption");
 		var captionOverlay = document.getElementById("captionOverlay");
 		var timerOverlay = document.getElementById("timerOverlay");
 		var speedOverlay = document.getElementById("speedOverlay");
-		var autosave = document.getElementById("autosave");
 		var saveButton = document.getElementById("saveButton");
-		var confidenceHighlight = document.getElementById("confidenceHighlight");
-
+		var startTimeEdit = document.getElementById("startTime");
+		var endTimeEdit = document.getElementById("endTime");
+		
 		var duration = 0;
 		var progressMax = 10000;
 		var captionIndex = -1;
@@ -279,7 +292,7 @@
 		videoProgress.oninput = function() {
 			var time = videoProgress.value / progressMax * duration;
 
-			while (time >= captionData[captionIndex].end)
+			while (time >= secondNumber(captionData[captionIndex].endTime))
 			{
 				if (captionIndex == captionData.length - 1)
 				{
@@ -288,7 +301,7 @@
 				stepForward(false, false);
 			}
 
-			while (time < captionData[captionIndex].start)
+			while (time < secondNumber(captionData[captionIndex].startTime))
 			{
 				if (captionIndex == 0)
 				{
@@ -303,191 +316,121 @@
 		function renderCaption() {
 
             final = "";
-            for (var i = 0; i < captionData[captionIndex].words.length; i++) {
-
-                if (captionData[captionIndex].words[i].c < confidence && captionData[captionIndex].words[i].c > 0)
-                {
-                    final += "<mark>" + captionData[captionIndex].words[i].w + "</mark>";
-                } else {
-                    final += captionData[captionIndex].words[i].w;
-                }
-
-                if (videoLanguage != 'zh-CN') {
-                    final += " ";
-                }
-            }
+			if (captionData[captionIndex].text != "") {
+				final = captionData[captionIndex].text
+			}
 
 			captionOverlay.innerHTML = final;
 		}
 
-        function modifyWords(captionIndex, wordIndex) {
-            var words = $('#words-'+captionIndex+'-'+wordIndex).val();
-            captionData[captionIndex].words[wordIndex].w = words;
-            captionData[captionIndex].words[wordIndex].c = 1;
-            var caption = "";
-            for (var i = 0; i < captionData[captionIndex].words.length; i++)
-            {
-                caption += captionData[captionIndex].words[i].w;
-
-                if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-                    caption += " ";
-                }
-            }
-            captionData[captionIndex].caption = caption;
-            $('#currentCaption').html(caption);
-            renderCaption();
-			updateCaptions(videoId, captionIndex, wordIndex, words, "MODIFY-WORD");
-        }
-
-        function splitCaption(captionIndex, wordIndex) {
-            console.log("captionIndex is " + captionIndex + " and wordIndex is " + wordIndex);
-            var captionPart = {
-                start: 0,
-                caption: "",
-                wordConfidence: [],
-                words: []
-            };
-
-            var captionValue1 = captionValue2 = "";
-
-            for (var i=captionData.length; i > captionIndex; i--) {
-                captionData[i] = captionData[i-1];
-            }
-
-            console.log("words length is " + captionData[captionIndex].words.length);
-            console.log("wordIndex + 1 = " + (wordIndex+1));
-
-            for (var i=wordIndex+1; i < captionData[captionIndex].words.length; i++) {
-                console.log("current i is " + i);
-                if (i == wordIndex+1) {
-                    console.log("first words:");
-                    console.dir(captionData[captionIndex].words[i]);
-                    if ("st" in captionData[captionIndex].words[i]) {
-                        captionPart.start = Number(captionData[captionIndex].words[i].st);
-                    } else {
-                        captionPart.start = Number(captionData[captionIndex].words[i+1].st);
-                    }
-                }
-                if (i == (captionData[captionIndex].words.length - 1)) {
-                    captionPart.end = Number(captionData[captionIndex].words[i].et);
-                }
-                captionPart.words[i-wordIndex-1] = captionData[captionIndex].words[i];
-                captionValue2 += captionData[captionIndex].words[i].w;
-
-                if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-                    captionValue2 += " ";
-                }
-
-            }
-            captionData[captionIndex].words.splice(wordIndex+1);
-            captionPart.caption = captionValue2;
-            console.log("captionPart:");
-            console.dir(captionPart);
-
-            console.log("captionLeft with index " + captionIndex + ":");
-            console.dir(captionData[captionIndex]);
-
-            for (var i=0; i < captionData[captionIndex].words.length; i++) {
-                captionValue1 += captionData[captionIndex].words[i].w;
-
-                if (videoLanguage != 'zh-CN' && i < (captionData[captionIndex].words.length - 1)) {
-                    captionValue1 += " ";
-                }
-            }
-
-            captionData[captionIndex].caption = captionValue1;
-            if ("et" in captionData[captionIndex].words[wordIndex]) {
-                captionData[captionIndex].end = Number(captionData[captionIndex].words[wordIndex].et);
-            } else {
-                captionData[captionIndex].end = Number(captionData[captionIndex].words[wordIndex-1].et);
-            }
-
-            captionData[captionIndex+1] = captionPart;
-
+        function saveCaptions() {
+			console.log("captionEdit value: ", captionEdit.value);
+			captionData[captionIndex].text = captionEdit.value;
 			updateCaptionEditor();
 			renderCaption();
-			updateCaptions(videoId, captionIndex, wordIndex, "", "SPLITE");
+			updateCaptions(videoId, captionIndex, captionEdit.value, 0, language, "SAVE-CAPTION", translated);
+
+			markDirty(false);
         }
 
         function mergeCaptions() {
-            var checkedCaptions = [];
-            var part1Index = part2Index = 0;
-            $("input[name='caption']:checked").each(function(i) {
-                checkedCaptions[i] = $(this).val();
-            });
+			if (captionIndex >= captionData.length - 1) {
+				console.log("captionIndex is the last caption, cannot merge");
+				return;
+			}
 
-            part1Index = parseInt(checkedCaptions[0]);
-            part2Index = parseInt(checkedCaptions[1]);
+            part1Index = captionIndex;
+            part2Index = captionIndex + 1;
+			
+			captionData[part1Index].text = captionEdit.value;
+			if (language != 'zh-CN') {
+				captionData[part1Index].text += " ";
+			}
+			captionData[part1Index].text += captionData[part2Index].text;
+			captionData[part1Index].endTime = captionData[part2Index].endTime;
 
-            if (checkedCaptions.length == 3 || (part2Index - part1Index) > 1) {
-                $("input[name='caption']").prop("checked",false);
-                return "";
-            }
-
-            console.log(checkedCaptions);
-
-            for (var i=0; i < captionData[part2Index].words.length; i++) {
-                captionData[part1Index].words.push(captionData[part2Index].words[i]);
-                if (videoLanguage != 'zh-CN') {
-                    captionData[part1Index].caption += " ";
-                }
-                captionData[part1Index].caption += captionData[part2Index].words[i].w;
-            }
-            captionData[part1Index].end = captionData[part2Index].end;
-
-            for (var i=part2Index; i < captionData.length; i++) {
-                captionData[i] = captionData[i+1];
-            }
+			for (var i=part2Index; i < captionData.length - 1; i++) {
+				captionData[i] = cloneCaptionDataElement(captionData[i+1]);
+				captionData[i].id = Number(captionData[i].id) - 1 + '';				
+			}
 
             captionData.pop();
 
             console.dir(captionData);
 
-            $("input[name='caption']").prop("checked",false);
-
 			updateCaptionEditor();
 			renderCaption();
-			updateCaptions(videoId, checkedCaptions, 0, "", "MERGE");
+			updateCaptions(videoId, captionIndex, captionData[captionIndex].text, 0, language, "MERGE", translated);
+        }
+ 
+        function splitCaptions() {
+			var wordLength = captionEdit.selectionStart;
+			if (wordLength == captionEdit.value.length) {
+				console.log("please choose the right position to split captions");
+				return;
+			}
+			var captionText = captionEdit.value;
+
+			var id = captionData[captionIndex].id;
+
+			var captionText1 = captionText.substring(0, wordLength);
+			var captionText2 = captionText.substring(wordLength, captionText.length);
+
+			var splitTime = getSplitTime(captionText, captionData[captionIndex].startTime, captionData[captionIndex].endTime, wordLength);
+
+			var endTime = captionData[captionIndex].endTime;
+
+			captionData[captionIndex].text = captionText1;
+			captionData[captionIndex].endTime = splitTime;
+								
+			if (captionIndex < captionData.length - 1) {
+				captionData.push(cloneCaptionDataElement(captionData[captionData.length - 1]));
+				captionData[captionData.length - 1].id = Number(captionData[captionData.length - 1].id) + 1 + ''; 
+				for (var i = captionData.length - 2; i > captionIndex + 1; i--) {
+					captionData[i] = cloneCaptionDataElement(captionData[i-1]);
+					captionData[i].id = Number(captionData[i-1].id) + 1 + '';
+				}
+				captionData[captionIndex + 1].id = Number(id) + 1 + ''; 
+				captionData[captionIndex + 1].text = captionText2;
+				captionData[captionIndex + 1].startTime = splitTime;
+				captionData[captionIndex + 1].endTime = endTime;				
+			} else {
+				var captionElement = {};
+				captionElement.id = Number(id) + 1 + '';
+				captionElement.text = captionText2;
+				captionElement.startTime = splitTime;
+				captionElement.endTime = endTime;
+				captionData.push(captionElement);
+			}
+			updateCaptionEditor();
+			renderCaption();
+			updateCaptions(videoId, captionIndex, captionText, wordLength, language, "SPLITE", translated);
         }
 
-		function updateCaptionEditor() {
+		function cloneCaptionDataElement(captionDataElement) {
+			var newCaptionDataElement = {};
+			newCaptionDataElement.id = captionDataElement.id; 
+			newCaptionDataElement.startTime = captionDataElement.startTime; 
+			newCaptionDataElement.endTime = captionDataElement.endTime; 
+			newCaptionDataElement.text = captionDataElement.text; 
+			return newCaptionDataElement;
+		}						
 
+		function updateCaptionEditor() {
             if (captionData.hasOwnProperty(captionIndex-1)) {
-                $('#prevTime').html(formatTime(captionData[captionIndex-1].start) + "<br />" + formatTime(captionData[captionIndex-1].end));
-                $('#prevCaption').html(captionData[captionIndex-1].caption);
+                $('#prevTime').html(captionData[captionIndex-1].startTime + "<br />" + captionData[captionIndex-1].endTime);
+                $('#prevCaption').html(captionData[captionIndex-1].text);
             } else {
                 $('#prevTime').html("");
                 $('#prevCaption').html("");
             }
 
-            $('#currentTime').html(formatTime(captionData[captionIndex].start) + "<br />" + formatTime(captionData[captionIndex].end));
-			$('#currentCaption').html(captionData[captionIndex].caption);
-
-            var currentCaptionHtml = "";
-            for (var i = 0; i < captionData[captionIndex].words.length; i++)
-            {
-                currentCaptionHtml += "<tr>"
-                if ("st" in captionData[captionIndex].words[i] && "et" in captionData[captionIndex].words[i]) {
-                    currentCaptionHtml += "<td width=\"25%\">" + captionData[captionIndex].words[i].st + "-" + captionData[captionIndex].words[i].et + "</td>"
-                } else {
-                    currentCaptionHtml += "<td width=\"25%\"></td>"
-                }
-                currentCaptionHtml += "<td width=\"55%\"><input type=\"text\" id=\"words-" + captionIndex + "-" + i + "\" class=\"form-control\" value=\"" + captionData[captionIndex].words[i].w + "\" /></td>"
-                currentCaptionHtml += "<td width=\"10%\"><button type=\"button\" class=\"btn btn-light\" onclick=\"javascript:modifyWords('" + captionIndex + "', '" + i + "');\">Save</button></td>"
-                if (i == (captionData[captionIndex].words.length - 1)) {
-                    currentCaptionHtml += "<td width=\"10%\"></td>";
-                } else {
-                    currentCaptionHtml += "<td width=\"10%\"><button type=\"button\" class=\"btn btn-light\" onclick=\"javascript:splitCaption(" + captionIndex + ", " + i + ");\">Split Paragraph</button></td>"
-                }
-                currentCaptionHtml += "</tr>"
-            }
-            $('#currentCaptionTbody').empty();
-            $('#currentCaptionTbody').append(currentCaptionHtml);
-
+            $('#currentTime').html(captionData[captionIndex].startTime + "<br />" + captionData[captionIndex].endTime);
+			$('#currentCaption').val(captionData[captionIndex].text)
 
             if (captionData.hasOwnProperty(captionIndex+1)) {
-                $('#nextTime').html(formatTime(captionData[captionIndex+1].start) + "<br />" + formatTime(captionData[captionIndex+1].end));
-                $('#nextCaption').html(captionData[captionIndex+1].caption);
+                $('#nextTime').html(captionData[captionIndex+1].startTime + "<br />" + captionData[captionIndex+1].endTime);
+                $('#nextCaption').html(captionData[captionIndex+1].text);
             } else {
                 $('#nextTime').html("");
                 $('#nextCaption').html("");
@@ -499,23 +442,7 @@
 
 			$('#prevCaptionIndex').html(captionIndex);
 			$('#captionIndex').html(captionIndex + 1);
-			$('#nextCaptionIndex').html(captionIndex + 2);
-		}
-
-		confidenceHighlight.oninput = function() {
-
-			confidence = parseFloat(this.value);
-
-			if (confidence == NaN)
-			{
-				confidence = 0.75;
-			}
-			else
-			{
-				console.log('[INFO] Got new confidence: ' + confidence);
-			}
-			
-			renderCaption();
+			$('#nextCaptionIndex').html(captionIndex + 2);			
 		}
 
 		video.addEventListener("ended", function() {
@@ -531,16 +458,16 @@
 			{
 				if (pausePerCaption)
 				{
-					if (video.currentTime >= captionData[captionIndex].end)
+					if (video.currentTime >= secondNumber(captionData[captionIndex].endTime))
 					{
 						video.pause();
-						video.currentTime = captionData[captionIndex].start;
+						video.currentTime = secondNumber(captionData[captionIndex].startTime);
 						updatePlayPauseUI();
 					}
 				}
 				else
 				{
-					if (video.currentTime >= captionData[captionIndex].end)
+					if (video.currentTime >= secondNumber(captionData[captionIndex].endTime))
 					{
 						stepForward(false, false);
 					}
@@ -548,23 +475,48 @@
 			}
 		});
 
-        function formatTime(timeSeconds)
+        function secondNumber(time)
         {
-            const ONE_HOUR = 60 * 60;
-            const ONE_MINUTE = 60;
-            var hours = Math.floor(timeSeconds / ONE_HOUR);
-            var remainder = timeSeconds - (hours * ONE_HOUR);
-            var minutes = Math.floor(remainder / 60);
-            remainder = remainder - (minutes * ONE_MINUTE);
-            var seconds = Math.floor(remainder);
-            remainder = remainder - seconds;
-            var millis = remainder;
+			var a = time.split(':'); 
 
-            return (hours + '').padStart(2, '0') + ':' +
-                    (minutes + '').padStart(2, '0') + ':' +
-                    (seconds + '').padStart(2, '0') + '.' +
-                    (Math.floor(millis*1000) + '').padStart(3, '0');
-        }		
+			// minutes are worth 60 seconds. Hours are worth 60 minutes.
+			var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2].split(',')[0]) + (+a[2].split(',')[1])/1000; 
+			return seconds;
+        }
+
+		function getSplitTime(captionText, startTime, endTime, wordLength) {
+			// console.log(time.substring(0, 12));
+			// console.log(time.substring(12, time.length));
+			var startTimeMiSecond = secondNumber(startTime) * 1000;
+			var endTimeMiSecond = secondNumber(endTime) * 1000;
+			
+			var miSecond = endTimeMiSecond - startTimeMiSecond;
+			
+			var miStartSecond = parseInt(wordLength/captionText.length * miSecond);
+			
+			var splitTime = formatTimeFromMiSecond(miStartSecond + startTimeMiSecond);
+
+			return splitTime;  
+		}
+
+		function formatTimeFromMiSecond(miSecondsTime)
+		{
+			const ONE_HOUR = 60 * 60 * 1000;
+			const ONE_MINUTE = 60 * 1000;
+			const ONE_SECOND = 1000;
+			var hours = Math.floor(miSecondsTime / ONE_HOUR);
+			var remainder = miSecondsTime - (hours * ONE_HOUR);
+			var minutes = Math.floor(remainder / ONE_MINUTE);
+			remainder = remainder - (minutes * ONE_MINUTE);
+			var seconds = Math.floor(remainder/ONE_SECOND);
+			remainder = remainder - (seconds * ONE_SECOND);
+			var millis = remainder;
+
+			return (hours + '').padStart(2, '0') + ':' +
+					(minutes + '').padStart(2, '0') + ':' +
+					(seconds + '').padStart(2, '0') + ',' +
+					(Math.floor(millis) + '').padStart(3, '0');
+		}						
 
 		function showControls()
 		{
@@ -680,7 +632,7 @@
 
 			if (seek)
 			{
-				video.currentTime = captionData[captionIndex].start;
+				video.currentTime = secondNumber(captionData[captionIndex].startTime);
 			}
 		}
 
@@ -691,8 +643,8 @@
 				(captionIndex > captionData.length - 1))
 			{
 				captionData.push({
-					start: captionData[captionData.length - 1].end,
-					end: Number(captionData[captionData.length - 1].end) + 5,
+					startTime: captionData[captionData.length - 1].endTime,
+					endTime: Number(captionData[captionData.length - 1].endTime) + 5,
 					caption: ''
 				});
 
@@ -765,34 +717,32 @@
 
         function burnCaptionsLocal()
         {
-            burnCaptions(videoId, '');
+            burnCaptions(videoId, language, translated);
         }
 
 		function downloadCaptionsSRTLocal()
 		{
-			downloadCaptionsSRT(videoId, videoName, '');
+			downloadCaptionsSRT(videoId, videoName, language, translated);
 		}
 
 		function downloadCaptionsVTTLocal()
 		{
-			downloadCaptionsVTT(videoId, videoName, '');
+			downloadCaptionsVTT(videoId, videoName, language, translated);
 		}
 
-		function translateChineseSimplified()
+		function downloadBurnedVideoLocal()
 		{
-			translateCaptions(videoId, 'zh');
+			if (translated == 'true') {
+				downloadBurnedVideo(videoId, videoName, language);
+			} else {
+				downloadBurnedVideo(videoId, videoName, '');			
+			}
 		}
-		
-		function translateChineseTraditional()
-		{
-			translateCaptions(videoId, 'zh-TW');
-		}		
-		
-		function translateChineseEnglish()
-		{
-			translateCaptions(videoId, 'en');
-		}		
 
+		function translateWithLanguageCode(translateLanguageCode)
+		{
+			translateCaptions(videoId, translateLanguageCode);
+		}
 
 		function markDirty(dirtyFlag)
 		{
@@ -841,7 +791,7 @@
 //			{
 //				$('#burnCaptionsButton').attr('disabled','disabled');
 //			}
-			$('#burnCaptionsButton').removeAttr('disabled');
+			$('#burnCaptionsButton').removeAttr('disabled');			
 		}		
 
 		function markComplete(videoId)
