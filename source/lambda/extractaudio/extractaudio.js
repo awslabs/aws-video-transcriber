@@ -32,7 +32,7 @@ exports.handler = async (event, context, callback) => {
     {
         params.dynamoVideoTable = process.env.DYNAMO_VIDEO_TABLE;
         //check request from api or s3
-        if (event.Records != null && event.Records[0].eventSource == "aws:s3") {
+        if (event.Records != null && event.Records[0].hasOwnProperty('s3')) {
             /**
              * Minimum parameters to check for prior processings
              */
