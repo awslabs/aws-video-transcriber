@@ -467,7 +467,7 @@ function translateCaptions(videoId, targetLanguage)
 		 toastr.success('Downloaded Video with Captions');
 		 console.log('[INFO] download url' + response.data);
  
-		 window.open(response.data.toString(), videoName + ".mp4");
+		 window.open(response.data.toString(), videoName + ".mp4", "noopener,noreferrer");
 	 })
 	 .catch(function (error) 
 	 {
