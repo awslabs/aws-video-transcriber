@@ -5,7 +5,7 @@
 - 每月读写Amazon DynamoDB的次数
 - 每月使用Amazon Elemental MediaConvert处理视频的数量。本方案使用Amazon Elemental MediaConvert从视频提取音频或将字幕烧入到视频中
 - 每月使用Amazon Transcribe处理音频的数量。本方案使用Amazon Transcribe从音频中提取文字，生成字幕
-- 每月使用Amazon Translate翻译字幕的数量。本方案使用Amazon Translate将原字幕翻译成另一种语言
+- 每月使用Amazon Translate翻译字幕的数量。本方案使用Amazon Translate将原字幕翻译成另一种语言。**目前仅支持全球区域**
 
 ## 示例1: 以中国（宁夏）区域（cn-northwest-1)为例，每月处理100个视频，每个视频时长为1小时
 
@@ -27,10 +27,10 @@
 
 | 服务 | 用量 | 费用 |
 |---|---|---|
-| Amazon Elemental Mediaconvert | 提取音频 100小时 | $18     |
-| Amazon Elemental Mediaconvert | 烧入字幕 100小时 | $45     |
-| Amazon Transcribe | 语音转文字 100小时 | $144 |
-| Amazon Translate | 翻译文字 1百万字符 | $15 |
+| Amazon Elemental MediaConvert | 提取音频100小时 | $18     |
+| Amazon Elemental MediaConvert | 烧入字幕100小时 | $45     |
+| Amazon Transcribe | 语音转文字100小时 | $144 |
+| Amazon Translate | 翻译文字1百万字符 | $15 |
 | Amazon API Gateway | 5万个请求 | $0.17 |
 | Amazon Lambda | 10万次调用 （平均300ms，128M内存） | $0 |
 | Amazon DynamoDB | 5万次读/写 | $0.06 |
