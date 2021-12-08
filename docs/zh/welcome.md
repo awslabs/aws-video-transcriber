@@ -2,7 +2,7 @@
 
 本解决方案主要包括以下功能：
 
-- 字幕生成：支持MP4，MOV和MKV的视频格式；支持四个小时以内的视频（基于Amazon Transcribe的限制）。
+- 字幕生成：支持MP4，MOV和MKV的视频格式；支持四个小时以内的视频（基于[Amazon Transcribe的限制][transcribe_restrict]）。
 - 字幕编辑：支持校对字幕、编辑字幕、段落拆分及合并，字幕映射以及字幕替换。
 - 字幕翻译：支持从源语言翻译成目标语言，并生成字幕（**仅全球区域部署版本支持**）。
 - 字幕下载：将已经生成的字幕下载成SRT或WEBVTT格式的字幕。
@@ -16,4 +16,5 @@
 
 [lambda]: https://aws.amazon.com/cn/lambda/
 [transcribe]: https://aws.amazon.com/cn/transcribe/
+[transcribe_restrict]: https://docs.aws.amazon.com/zh_cn/transcribe/latest/dg/input.html
 [cloudformation]: https://aws.amazon.com/en/cloudformation/
