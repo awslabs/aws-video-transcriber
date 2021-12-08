@@ -7,8 +7,8 @@
 您可以在亚马逊云科技上部署并使用解决方案，过程如下：
 
 - 步骤1：启动堆栈。
-  - 从中国区启动堆栈 
-  - 从海外区启动堆栈
+  - 从中国区域启动堆栈 
+  - 从全球区域启动堆栈
 - 步骤2：访问网页控制台。
 - 步骤3：开始使用。
 
@@ -16,16 +16,16 @@
 
 此自动化Amazon CloudFormation模板在亚马逊云科技中部署解决方案。
 
-### 从中国区启动堆栈
+### 从中国区域启动堆栈
 
 **前提条件**
 
-1. 申请经过ICP备案的域名。因为中国区的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。
+1. 申请经过ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。
 2. 创建域名托管区域。如果还没有创建托管区域，请参考[使用托管区域][hostedzone]。
 
 **部署Amazon CloudFormation模板**
 
-1. 登录到Amazon Web Service管理控制台，选择[中国区（北京）链接][template-china1]或[中国区（宁夏）链接][template-china2]启动Amazon CloudFormation模板。
+1. 登录到Amazon Web Service管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动Amazon CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -37,8 +37,8 @@
 
 |  参数名称   |  默认值 |  描述 |
 |  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 部署完成后登录系统需要输入的认证信息|
-| **TranscribeLanguage**    | zh-CN    | 默认的字幕处理语言 |
+| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
+| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -70,11 +70,11 @@
 
 1. 选择**创建分配**。等待CloudFront自动完成部署，配置即可生效。
 
-### 从海外区启动堆栈
+### 从全球区域启动堆栈
 
 **部署Amazon CloudFormation模板**
 
-1. 登录到Amazon Web Service管理控制台，选择[海外区链接][template-global]启动Amazon CloudFormation模板。
+1. 登录到Amazon Web Service管理控制台，选择[全球区域链接][template-global]启动Amazon CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -86,8 +86,8 @@
 
 |  参数名称   |  默认值 |  描述 |
 |  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 部署完成后登录系统需要输入的认证信息|
-| **TranscribeLanguage**    | zh-CN    | 默认的字幕处理语言 |
+| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
+| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -101,15 +101,15 @@
 
 在堆栈创建成功后，您可在Amazon CloudFormation的**输出**标签页中查看访问网页控制台需要的认证信息（**APIKey**）和创建的CloudFront地址（**ConsoleUrl**）。
 
-根据您启动堆栈的区域情况，您可以选择从中国区或海外区访问网页控制台。
+根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。
 
-### 从中国区访问
+### 从中国区域访问
 
 1. 在浏览器的地址栏输入https://<域名>。例如，域名为 video-transcriber.ch.test.com。
 
 1. 选择**Enter API Key**，在弹出的输入框中输入认证信息。
 
-### 从海外区访问
+### 从全球区域访问
 
 1. 在浏览器的地址栏输入CloudFront地址。
 
@@ -187,6 +187,7 @@
 
 [template-china2]:https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template
 
+[what-is-translate]:https://docs.aws.amazon.com/zh_cn/translate/latest/dg/what-is.html
 
 [template-global]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template
 
