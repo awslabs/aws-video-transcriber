@@ -324,11 +324,12 @@
 		}
 
         function saveCaptions() {
-			console.log("captionEdit value: ", captionEdit.value);
-			captionData[captionIndex].text = captionEdit.value;
+			var captionEditValue = escapeHtml(captionEdit.value);
+			console.log("captionEdit value: ", captionEditValue);
+			captionData[captionIndex].text = captionEditValue;
 			updateCaptionEditor();
 			renderCaption();
-			updateCaptions(videoId, captionIndex, captionEdit.value, 0, language, "SAVE-CAPTION", translated);
+			updateCaptions(videoId, captionIndex, captionEditValue, 0, language, "SAVE-CAPTION", translated);
 
 			markDirty(false);
         }
@@ -341,8 +342,8 @@
 
             part1Index = captionIndex;
             part2Index = captionIndex + 1;
-			
-			captionData[part1Index].text = captionEdit.value;
+			var captionEditValue = escapeHtml(captionEdit.value);
+			captionData[part1Index].text = captionEditValue;
 			if (language != 'zh-CN') {
 				captionData[part1Index].text += " ";
 			}
@@ -369,7 +370,7 @@
 				console.log("please choose the right position to split captions");
 				return;
 			}
-			var captionText = captionEdit.value;
+			var captionText = escapeHtml(captionEdit.value);
 
 			var id = captionData[captionIndex].id;
 
@@ -910,7 +911,8 @@
 
 		$('#videoNameSave').click(function(event)
 		{
-			var newVideoName = $('#videoNameEdit').val();
+			var newVideoName = escapeHtml($('#videoNameEdit').val());
+			console.log("newVideoName: ", newVideoName);
 
 			if (newVideoName.length == 0)
 			{
@@ -926,7 +928,7 @@
 
 		$('#videoDescriptionSave').click(function(event)
 		{
-			var newVideoDesc = $('#videoDescriptionEdit').val();
+			var newVideoDesc = escapeHtml($('#videoDescriptionEdit').val());
 
 			if (newVideoDesc.length == 0)
 			{

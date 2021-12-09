@@ -632,6 +632,22 @@ function translateCaptions(videoId, targetLanguage)
 	 console.log('[INFO] navigating dynamically to: ' + pathName);
 	 router.navigateTo(pathName);
  }
+
+ function escapeHtml (string) {
+	var entityMap = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#39;',
+		'/': '&#x2F;',
+		'`': '&#x60;',
+		'=': '&#x3D;'
+	};	 
+	return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+	  return entityMap[s];
+	});
+  }
  
  /**
   * Fired once on page load, sets up the router
