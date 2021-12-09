@@ -11,9 +11,9 @@
 3. [Amazon Lambda][lambda] Function接收Amazon API Gateway的请求，处理本方案的业务逻辑
 4. 客户端从Amazon Lambda获得signURL之后上传需要处理的视频
 5. Amazon Lambda Function从[Amazon DynamoDB][dynamodb]中获取/更新视频的相关信息
-6. Amazon Lambda Function调用[Amazon Elemental MediaConvert][mediaconvert]进行视频处理，包括从视频中提取音频和将字幕烧入视频中，并将结果保存到Amazon S3 (Videos and Captions)
-7. Amazon Lambda Function调用[Amazon Transcribe][transcribe]从音频中提取字幕，并将结果保存到Amazon S3 (Videos and Captions)
-8. Amazon Lambda Function调用[Amazon Translate][translate]将字幕翻译成其它语言，并将结果保存到Amazon S3 (Videos and Captions)
+6. Amazon Lambda Function调用[Amazon Elemental MediaConvert][mediaconvert]进行视频处理，包括从视频中提取音频和将字幕烧入视频中，并将结果保存到Amazon S3 (Videos)
+7. Amazon Lambda Function调用[Amazon Transcribe][transcribe]从音频中提取字幕，并将结果保存到Amazon S3 (Captions)
+8. Amazon Lambda Function调用[Amazon Translate][translate]将字幕翻译成其它语言，并将结果保存到Amazon S3 (Captions)
 
 本方案在Amazon S3存储桶中部署了一个Web应用，Amazon S3存储桶只能通过CloudFront访问。
 

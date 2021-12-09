@@ -8,7 +8,6 @@
 - 欧洲（爱尔兰）区域:   eu-west-1
 - 欧洲（伦敦）区域:   eu-west-2
 - 欧洲（巴黎）区域:   eu-west-3
-- 欧洲（米兰）区域:   eu-north-1
 - 欧洲（法兰克福）区域:   eu-central-1
 - 亚太地区（东京）区域:   ap-northeast-1
 - 亚太地区（首尔）区域:   ap-northeast-2

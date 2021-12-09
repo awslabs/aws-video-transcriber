@@ -1,20 +1,37 @@
-您需要承担运行此解决方案时使用亚马逊云科技各个服务的费用。截止2021年12月，此解决方案主要包括以下费用：
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the factors affecting the cost of the solution include:
 
-- 每月向Amazon API Gateway发送的请求的次数
-- 每月调用Amazon Lambda的次数
-- 每月读写Amazon DynamoDB的次数
-- 每月使用Amazon Elemental Mediaconvert处理视频的数量。此方案使用Amazon Elemental Mediaconvert从视频提取音频或将字幕烧入到视频中
-- 每月使用Amazon Transcribe处理音频的数量。此方案使用Amazon Transcribe从音频中提取文字，生成字幕
-- 每月使用Amazon Translate翻译字幕的数量。此方案使用Amazon Translate将原字幕翻译成另一种语言
+- The number of request to Amazon API Gateway
+- The number of invoking Amazon Lambda
+- The number of read/write Amazon DynamoDB
+- The number of videos that Amazon Elemental MediaConvert process. The solution uses Amazon Elemental MediaConvert to extract audios from videos or burn captions into videos
+- The number of audio that Amazon Transcribe process。The solution uses Amazon Transcribe to extract text from audio
+- The number of captions characters that Amazon Translate process. The solution uses Amazon Translate to translate the captions to another language. **Only support Global Region**
 
-下表以美东1（N. Virginia)为例，每月处理100个视频，每个视频一个小时，该方案每月所需的费用。
-| 服务        | 用量                          | 费用     |
-| ----------- | ------------------------------------ |
-| Amazon Elemental Mediaconvert       | 提取音频 100小时        |   $18    ｜
-| Amazon Elemental Mediaconvert       | 烧入字幕 100小时        |   $45    ｜
-| Amazon Transcribe                   | 语音转文字 100小时       |   $144   |
-| Amazon Translate                    | 翻译文字 1百万字符       |   $15    |
-| Amazon API Gateway                  | 5万个请求               |   $0.17  |
-| Amazon Lambda                       | 10万次调用 （平均300ms，128M内存）               |   $0  |
-| Amazon DynamoDB                     | 5万次读/写               |   $0.06   |
-|                                     |                       |   总费用：$222.23   |
+## Example 1: In Ningxia (cn-northwest-1) Region operated by NWCD，process 1 hour video, edit video captions for 500 times
+
+The cost of using this solution to process this video display as below:
+
+| Service | Dimensions | Cost |
+|---|---|---|
+| Amazon Elemental MediaConvert | Extract 1 hour audio | ¥1.24 |
+| Amazon Elemental MediaConvert | Burn captions into 1 hour video | ¥3.87 |
+| Amazon Transcribe | Extract text from 1 hour audio | ¥9.72 |
+| Amazon API Gateway | 500 requests | ¥0.015 |
+| Amazon Lambda | 500 requests （avg 300ms，128M Memory） | ¥0.00281 |
+| Amazon DynamoDB | 1000 read/write | ¥0.007 |
+|  |  | 总费用：¥14.86 |
+
+## Example 2: In US East (N. Virginia) Region, process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions
+
+The cost of using this solution to process this video display as below:
+
+| Service | Dimensions | Cost |
+|---|---|---|
+| Amazon Elemental MediaConvert | Extract 1 hour audio | $0.18     |
+| Amazon Elemental MediaConvert | Burn captions into 1 hour video | $0.45     |
+| Amazon Transcribe | Extract text from 1 hour audio | $1.44 |
+| Amazon Translate | tranlsate 10000 characters | $0.15 |
+| Amazon API Gateway | 500 requests | $0.0017 |
+| Amazon Lambda | 500 requests （avg 300ms，128M Memory） | $0.0001 |
+| Amazon DynamoDB | 1000 read/write | $0.00075 |
+|  |  | 总费用：$2.22 |

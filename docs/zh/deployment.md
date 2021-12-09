@@ -62,13 +62,13 @@
 
 **在CloudFront中配置CNAME**
 
-1. 登陆CloudFront的管理页面，选择**创建分配**。
+1. 登陆CloudFront的管理页面，选择该方案的**分配**。
 
-1. 在**源域**中输入域名。例如：video-transctiber.ch.test.com。
+1. 选择**编辑**进入**编辑设置**.
 
-1. 在**名称**中输入源的名称。
+1. 在**备用域名(CNAME)**项选择**添加项目**，输入域名。例如：video-transctiber.ch.test.com。
 
-1. 选择**创建分配**。等待CloudFront自动完成部署，配置即可生效。
+1. 选择**保存更改**。等待CloudFront自动完成部署，配置即可生效。
 
 ### 从全球区域启动堆栈
 
