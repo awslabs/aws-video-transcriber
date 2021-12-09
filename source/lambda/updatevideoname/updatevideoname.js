@@ -37,15 +37,24 @@ exports.handler = async (event, context, callback) => {
 
         var requestData = JSON.parse(event.body);
         var name = requestData.name;
+        if (name.toLowerCase().endsWith(".mp4") || name.toLowerCase().endsWith(".mkv") || name.toLowerCase().endsWith(".mov")) {
+            await updateDynamoDB(videoId, name);
 
-        await updateDynamoDB(videoId, name);
-
-        const response = {
-            statusCode: 200,
-            headers: responseHeaders
-        };
-
-        callback(null, response);
+            const response = {
+                statusCode: 200,
+                headers: responseHeaders
+            };
+    
+            callback(null, response);            
+        } else {
+            console.log("[ERROR] Failed to update video name, video name must be endwith .mp4/.mov/.mkv");
+            const response = {
+                statusCode: 500,
+                headers: responseHeaders,
+                body: JSON.stringify({  "message": "Failed to update video name, video name must be endwith .mp4/.mov/.mkv"})
+            };
+            callback(null, response);            
+        }          
     }
     catch (error)
     {
