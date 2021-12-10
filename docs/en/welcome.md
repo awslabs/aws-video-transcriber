@@ -1,14 +1,14 @@
-This solution is based on [Amazon Lambda][lambda] serverless architecture, integrates services such as [Amazon Transcribe][transcribe], and provides a web console to help customers complete video caption related operations. For example, automatically generate video captions, proofread and edit captions comparing with video, translate captions, and generate video with captions.
+The Video Transcriber solution is built on [AWS Lambda][lambda] serverless architecture, and integrates services such as [Amazon Transcribe][transcribe]. Meanwhile, the solution provides a web interface to help customers complete video caption related operations. For example, automatically generating video captions, proofreading and editing video captions, translating captions, and burning captions into videos.
 
-This solution includes the following main functions:
+The solution includes the following main functions:
 
-- Captions generation: support MP4, MOV and MKV video's format; supports video within four hours（Due to [Amazon Transcribe Restriction][transcribe_restrict]）。
-- Captions Editing: Support proofreading captions, editing captions, paragraph splitting and merging, captions mapping replacement.
-- Captions translation: Support captions translation from the source language to the target language(**Only supported by the global regional deployment version**).
-- Download captions: Download the generated captions as SRT or WEBVTT format.
-- Make video with captions: Burn captions into video.
+- Generating captions: supports MP4, MOV and MKV; supports videos within four hours（according to [Amazon Transcribe Restriction][transcribe_restrict]）。
+- Editing captions: supports proofreading, editing, paragraph splitting and merging, mapping, and replacement of captions.
+- Translating captions: supports translation from the source language to the target language (**only supported by the deployment in AWS Standard Regions**).
+- Downloading captions: supports SRT or WEBVTT.
+- Burning captions: supports burning generated captions into videos.
 
-This solution is suitable for industries that need to generate video captions, such as education and media. For example, adding captions and translating captions to videos can greatly reduce labor costs and improve efficiency.
+The Video Transcriber solution is intended for customers with video caption processing requirements in industries like education or media. For example, customers can use the solution to generate video captions precisely or translate video captions with lower cost and higher efficiency.
 
 This implementation guide describes architectural considerations and configuration steps for deploying the Video Transcriber solution in the Amazon Web Services (AWS) cloud. It includes links to [CloudFormation][cloudformation] templates that launches and configures the AWS services required to deploy this solution using AWS best practices for security and availability.
 

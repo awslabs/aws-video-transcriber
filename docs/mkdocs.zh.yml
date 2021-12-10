@@ -1,5 +1,5 @@
 INHERIT: ./mkdocs.base.yml
-site_name: 视频字幕 部署文档
+site_name: 视频字幕解决方案 实施指南
 site_description: 视频字幕解决方案
 docs_dir: zh
 site_dir: ./site/zh

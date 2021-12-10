@@ -1,15 +1,15 @@
-You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the factors affecting the cost of the solution include:
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021， the cost of the solution varies depending on:
 
-- The number of request to Amazon API Gateway
-- The number of invoking Amazon Lambda
+- The number of requests to Amazon API Gateway
+- The number of invoking AWS Lambda 
 - The number of read/write Amazon DynamoDB
-- The number of videos that Amazon Elemental MediaConvert process. The solution uses Amazon Elemental MediaConvert to extract audios from videos or burn captions into videos
-- The number of audio that Amazon Transcribe process。The solution uses Amazon Transcribe to extract text from audio
-- The number of captions characters that Amazon Translate process. The solution uses Amazon Translate to translate the captions to another language. **Only support Global Region**
+- The number of videos that AWS Elemental MediaConvert processed. The solution uses AWS Elemental MediaConvert to extract audios from videos or burn captions into videos
+- The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions
+- The number of captions characters that Amazon Translate processed. The solution uses Amazon Translate to translate the captions to another language. **Only supported by deployment in Amazon Standard Regions**
 
-## Example 1: In Ningxia (cn-northwest-1) Region operated by NWCD，process 1 hour video, edit video captions for 500 times
+## Example 1: In AWS China (Ningxia) Region operated by NWCD (cn-northwest-1)，process 1 hour video, edit video captions for 500 times
 
-The cost of using this solution to process this video display as below:
+The cost of using this solution to process this video is shown below:
 
 | Service | Dimensions | Cost |
 |---|---|---|
@@ -19,11 +19,11 @@ The cost of using this solution to process this video display as below:
 | Amazon API Gateway | 500 requests | ¥0.015 |
 | Amazon Lambda | 500 requests （avg 300ms，128M Memory） | ¥0.00281 |
 | Amazon DynamoDB | 1000 read/write | ¥0.007 |
-|  |  | 总费用：¥14.86 |
+|  |  | Total：¥14.86 |
 
-## Example 2: In US East (N. Virginia) Region, process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions
+## Example 2: In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions
 
-The cost of using this solution to process this video display as below:
+The cost of using this solution to process this video is shown below:
 
 | Service | Dimensions | Cost |
 |---|---|---|
@@ -34,4 +34,4 @@ The cost of using this solution to process this video display as below:
 | Amazon API Gateway | 500 requests | $0.0017 |
 | Amazon Lambda | 500 requests （avg 300ms，128M Memory） | $0.0001 |
 | Amazon DynamoDB | 1000 read/write | $0.00075 |
-|  |  | 总费用：$2.22 |
+|  |  | Total：$2.22 |

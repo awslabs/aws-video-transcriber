@@ -6,8 +6,8 @@ AWS Identity and Access Management (IAM) roles allow customers to assign granula
 
 ## MediaConvert Policy
 
-The MediaConvert policy is created in this solution to allows Amazon Elemental MediaConvert to access Amazon S3 buckets.
+The MediaConvert policy is created in this solution to allows AWS Elemental MediaConvert to access Amazon S3 buckets.
 
 ## Lambda Policy
 
-The Lambda policy is created in this solution to allows Amazon Lambda Functions to access Amazon DynamoDB, Amazon Elemental MediaConvert, Amazon Transcribe and Amazon Translate services.
+The Lambda policy is created in this solution to allows AWS Lambda Functions to access Amazon DynamoDB, AWS Elemental MediaConvert, Amazon Transcribe and Amazon Translate services.
