@@ -52,7 +52,7 @@
   * 2 second time out for toasts
   */
  console.log('Default toast time out: ' + toastr.options.timeOut);
- toastr.options.timeOut = 2;
+ toastr.options.timeOut = 5;
  console.log('New toast time out: ' + toastr.options.timeOut);
  
  /**
@@ -647,7 +647,14 @@ function translateCaptions(videoId, targetLanguage)
 	return String(string).replace(/[&<>"'`=\/]/g, function (s) {
 	  return entityMap[s];
 	});
+
   }
+
+function validateInput(input) {
+	var isValid = /^[a-zA-z0-9, !?._-]+$/.test(input);
+	return isValid;	
+}
+
  
  /**
   * Fired once on page load, sets up the router

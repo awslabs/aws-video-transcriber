@@ -911,6 +911,7 @@
 
 		$('#videoNameSave').click(function(event)
 		{
+
 			var newVideoName = escapeHtml($('#videoNameEdit').val());
 			console.log("newVideoName: ", newVideoName);
 
@@ -928,16 +929,21 @@
 
 		$('#videoDescriptionSave').click(function(event)
 		{
-			var newVideoDesc = escapeHtml($('#videoDescriptionEdit').val());
+	
+			var newVideoDesc = $('#videoDescriptionEdit').val();
 
-			if (newVideoDesc.length == 0)
+			var isValid = validateInput(newVideoDesc);
+			console.log('isValid: ', isValid);
+
+			if (isValid && newVideoDesc.length != 0)
 			{
-				$('#videoDescriptionEdit').val(videoDescription);
-				toastr.error('Video description must not be blank');
+				updateVideoDescription('{{video.videoId}}', newVideoDesc);				
 			}
 			else
 			{
-				updateVideoDescription('{{video.videoId}}', newVideoDesc);
+				$('#videoDescriptionEdit').val(videoDescription);
+				toastr.error('Video description must not be blank or should just contain letter, number, . ! ? _ and -');				
+				
 			}
 		});		
 
