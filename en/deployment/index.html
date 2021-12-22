@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/deployment/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Automated deployment - Video Transcriber Implementation Guide</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Video Transcriber Implementation Guide</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../welcome/" class="nav-link">Welcome</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cost/" class="nav-link">Cost</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../architecture/" class="nav-link">Architecture overview</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../security/" class="nav-link">Security</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../regions/" class="nav-link">Supported regions</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../template/" class="nav-link">AWS CloudFormation template</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Automated deployment</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../additional-resources/" class="nav-link">Additional resources</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uninstall/" class="nav-link">Uninstall the solution</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../source/" class="nav-link">Source code</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../revisions/" class="nav-link">Revisions</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../notices/" class="nav-link">Notices</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../template/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../additional-resources/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/awslabs/aws-video-transcriber/edit/master/docs/deployment.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#deployment-overview" class="nav-link">Deployment overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#step-1-launch-the-aws-cloudformation-template" class="nav-link">Step 1: Launch the AWS CloudFormation template</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#step-2-access-the-web-interface" class="nav-link">Step 2: Access the web interface</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#step-3-upload-videos-and-perform-operations-related-to-video-captions" class="nav-link">Step 3: Upload videos and perform operations related to video captions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>Before you launch the solution, review the architecture, supported regions, and other considerations discussed in this guide. Follow the step-by-step instructions in this section to configure and deploy the solution into your account.</p>
+<p><strong>Time to deploy</strong>: Approximately 10 minutes</p>
+<h2 id="deployment-overview">Deployment overview</h2>
+<p>Use the following steps to deploy this solution on AWS.</p>
+<ul>
+<li>step 1：Launch the AWS CloudFormation template into your AWS account.</li>
+<li>Launch CloudFormation tempalte in AWS China Regions </li>
+<li>Launch CloudFormation template in AWS Standard Regions</li>
+<li>step 2：Access the web interface </li>
+<li>step 3：Upload videos and perform operations related to video captions</li>
+</ul>
+<h2 id="step-1-launch-the-aws-cloudformation-template">Step 1: Launch the AWS CloudFormation template</h2>
+<p>This automatic AWS CloudFormation template deploys the solution in AWS.</p>
+<h3 id="launch-cloudformation-tempalte-in-aws-china-regions">Launch CloudFormation tempalte in AWS China Regions</h3>
+<p><strong>Prerequisites</strong></p>
+<ol>
+<li>Make sure a domain registered by ICP is available. Because the CloudFront address in AWS China Regions cannot be accessed directly, this domain name will be used as a CNAME to point to the CloudFront address created after the solution is deployed, and you can access the solution through this domain.</li>
+<li>Make sure a domain hosting zone is available. If you haven’t created a hosted zone, please refer to<a href="https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/hosted-zones-working-with.html">Use hosted zone</a>.</li>
+</ol>
+<p><strong>Launch Amazon CloudFormation template</strong></p>
+<ol>
+<li>
+<p>Log in to the AWS management console, select <a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">AWS China (Beijing) Region operated by Sinnet</a> or <a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">AWS China (Ningxia) Region operated by NWCD</a> to launch AWS CloudFormation template.</p>
+</li>
+<li>
+<p>The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.</p>
+</li>
+<li>
+<p>On the <strong>Create stack</strong> page, confirm that the correct template URL is displayed in the Amazon S3 URL text box, and then choose <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Specify stack details</strong> page, assign a unique name in your account that meets the naming requirements for your solution stack.</p>
+</li>
+<li>
+<p>In the <strong>Parameters</strong> section, view the parameters of the solution template and modify as needed, and then choose <strong>Next</strong>.</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIKey</strong></td>
+<td>N/A</td>
+<td>Enter the authentication information required to log in to the web interface after the deployment</td>
+</tr>
+<tr>
+<td><strong>TranscribeLanguage</strong></td>
+<td>zh-CN</td>
+<td>Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to <a href="https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html">Amazon Transcribe</a> to learn more about supported language and language code.</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>On the <strong>Configure stack options</strong> page, choose <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review</strong> page, review and confirm the settings. Check the box acknowledging that the tempalte creates AWS Identity and Access Management (IAM) resources.</p>
+</li>
+<li>
+<p>Choose <strong>Create stack</strong> to deploy the stack.</p>
+</li>
+</ol>
+<p>You can check the status of the stack in the <strong>Status</strong> column of the AWS CloudFormation console. You should receive a <strong>CREATE_COMPLETE</strong> status in approximately 10 minutes.</p>
+<p><strong>Create records on Route53 to resolve domain names</strong></p>
+<ol>
+<li>
+<p>Log in to Route53 Console, and choose <strong>Create record</strong>.</p>
+</li>
+<li>
+<p>Enter the required subdomain in <strong>Record name</strong> text box. The suffix is the top-level domain registered by ICP, for example, video-transctiber.ch.test.com.</p>
+</li>
+<li>
+<p>Choose <strong>Record type</strong> as CNAME.</p>
+</li>
+<li>
+<p>Enter the CloudFront URL into <strong>Value</strong> text box, not including https://. For example: xxxxxx.cloudfront.cn. </p>
+</li>
+</ol>
+<p>You can get CloudFront URL from the solution AWS CloudFormation stack <strong>Outputs</strong> page.</p>
+<ol>
+<li>Choose <strong>Create records</strong>.</li>
+</ol>
+<p><strong>Configure CNAME in the CloudFront</strong></p>
+<ol>
+<li>
+<p>Log in to CloudFront Console，and choose <strong>Distributions</strong> of this solution.</p>
+</li>
+<li>
+<p>Choose "Edit" to enter the <strong>Edit settings</strong>.</p>
+</li>
+<li>
+<p>Choose <strong>Add item</strong>, then enter domain name in <strong>Alternate domain name (CNAME)</strong> text box. For example, video-transctiber.ch.test.com。</p>
+</li>
+<li>
+<p>Choose <strong>Save changes</strong>. The configuration take effect upon the automatic CloudFront deployment.</p>
+</li>
+</ol>
+<h3 id="launch-cloudformation-tempalte-in-aws-standard-regions">Launch CloudFormation tempalte in AWS Standard Regions</h3>
+<p><strong>Launch AWS CloudFormation template</strong></p>
+<ol>
+<li>
+<p>Log in to the AWS management console, select <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">Global region</a> to to launch AWS CloudFormation template.</p>
+</li>
+<li>
+<p>The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.</p>
+</li>
+<li>
+<p>On the <strong>Create stack</strong> page, confirm that the correct template URL is displayed in the Amazon S3 URL text box, and then select <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Specify stack details</strong> page, assign a unique name in your account that meets the naming requirements for your solution stack.</p>
+</li>
+<li>
+<p>In the <strong>Parameters</strong> section, view the parameters of the solution template and modify as needed, and then select <strong>Next</strong>.</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIKey</strong></td>
+<td>N/A</td>
+<td>Enter the authentication information required to log in to the web interface after the deployment</td>
+</tr>
+<tr>
+<td><strong>TranscribeLanguage</strong></td>
+<td>zh-CN</td>
+<td>Select the default caption processing language. Currently, it supports en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR. Refer to <a href="https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html">Amazon Transcribe</a> to learn more about supported language and language code.</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>On the <strong>Configure stack options</strong> page, select <strong>Next</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Review</strong> page, Check the box acknowledging that the tempalte creates AWS Identity and Access Management (IAM) resources.</p>
+</li>
+<li>
+<p>Choose <strong>Create stack</strong> to deploy the stack.</p>
+</li>
+</ol>
+<p>You can check the status of the stack in the <strong>Status</strong> column of the AWS CloudFormation console. You should receive a <strong>CREATE_COMPLETE</strong> status in approximately 10 minutes.</p>
+<h2 id="step-2-access-the-web-interface">Step 2: Access the web interface</h2>
+<p>After the stack is successfully created, you can view the authentication information (<strong>APIKey</strong>) required to access the web interface and the created CloudFront URL (<strong>ConsoleUrl</strong>) on the <strong>Outputs</strong> tab of AWS CloudFormation stack.</p>
+<p>Depending on the region where you create the stack, you can choose to access the web interface from the AWS China Regions or the AWS Standard Regions.</p>
+<h3 id="access-from-aws-china-regions">Access from AWS China Regions</h3>
+<ol>
+<li>
+<p>Enter https://<domain> in the address bar of the browser. For example, the domain is video-transcriber.ch.test.com.</p>
+</li>
+<li>
+<p>Select <strong>Enter API Key</strong>, and enter the authentication information in the pop-up input box.</p>
+</li>
+</ol>
+<h3 id="access-from-aws-standard-regions">Access from AWS Standard Regions</h3>
+<ol>
+<li>
+<p>Enter the CloudFront URL in the address bar of the browser.</p>
+</li>
+<li>
+<p>Select <strong>Enter API Key</strong>, and enter the authentication information in the pop-up input box.</p>
+</li>
+</ol>
+<h2 id="step-3-upload-videos-and-perform-operations-related-to-video-captions">Step 3: Upload videos and perform operations related to video captions</h2>
+<p>In the web interface, select <strong>Videos</strong> at the top of the page. The page displays four tabs, corresponding to the different status of videos:</p>
+<ul>
+<li>Videos being processed</li>
+<li>Videos ready for editing</li>
+<li>Videos marked as editing completed</li>
+<li>Videos with errors during processing</li>
+</ul>
+<p><img alt="" src="../images/user-guide-video-management.png" /></p>
+<h3 id="upload-video">Upload video</h3>
+<p>You can upload videos without captions for processing.</p>
+<ol>
+<li>
+<p>On the <strong>Videos</strong> page, select <strong>Upload videos...</strong>.</p>
+</li>
+<li>
+<p>Select the video, then select <strong>Open</strong>.</p>
+</li>
+<li>
+<p>Select the video language, and then choose <strong>Start</strong>. The system will start uploading the video and automatically process and generate captions.</p>
+<p>Firstly, the video is displayed on the <strong>Processing</strong> tab, and after the captions are generated, the video will be displayed on the <strong>Ready to edit</strong> tab.</p>
+</li>
+</ol>
+<h3 id="proofread-and-edit-captions">Proofread and edit captions</h3>
+<p>You can proofread and edit the video captions.</p>
+<ol>
+<li>
+<p>On the <strong>Videos</strong> page, select the <strong>Ready to edit</strong> tab.</p>
+</li>
+<li>
+<p>Select the language link from the <strong>Video Language</strong> column to enter the captions editing page. The functions include:</p>
+</li>
+<li>Play the video content paragraph by paragraph to proofread the captions.</li>
+<li>Modify the captions.</li>
+<li>Merge or split captions parapraphs.</li>
+</ol>
+<h3 id="translate-captions">Translate captions</h3>
+<p>You can translate the video captions, and then proofread and edit translated captions.
+<strong>Note: Currently, this feature is only supported by the deployment in AWS Standard Regions.</strong></p>
+<ol>
+<li>
+<p>On the captions editing page, select <strong>Translate to</strong>.</p>
+</li>
+<li>
+<p>After selecting the target language in the drop-down list, the system will translate the captions into the target language. After the translation is completed, you can also proofread and edit the translated captions.</p>
+</li>
+</ol>
+<p><img alt="" src="../images/user-guide-video-translate.png" />
+<img alt="" src="../images/user-guide-video-translate-1.png" /></p>
+<h3 id="burn-captions-into-the-video">Burn captions into the video</h3>
+<p>You can burn the generated captions into the video to create the video with captions.</p>
+<ol>
+<li>
+<p>On the <strong>Videos</strong> page, select the <strong>Ready to edit</strong> tab.</p>
+</li>
+<li>
+<p>Select the language link from the <strong>Video Language</strong> column to enter the captions editing page.</p>
+</li>
+<li>
+<p>Select <strong>Burn in</strong>。
+<img alt="" src="../images/user-guide-video-burn.png" /></p>
+</li>
+</ol>
+<h3 id="download-captions-or-video-with-captions">Download captions or video with captions</h3>
+<p>After the captions or videos with captions are generated, you can download them directly:</p>
+<ul>
+<li>
+<p>If the video is in the editing status, select the video and the corresponding language to enter the video editing page to download.
+<img alt="" src="../images/user-guide-video-download-1.png" /></p>
+</li>
+<li>
+<p>If the video is in the completed status, you can directly download the captions or videos in the corresponding language of the video on the <strong>Completed</strong> tab of the <strong>Videos</strong> page.
+<img alt="" src="../images/user-guide-video-download-2.png" /></p>
+</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

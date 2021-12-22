@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/deployment/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>部署解决方案 - 视频字幕解决方案 实施指南</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">视频字幕解决方案 实施指南</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../welcome/" class="nav-link">概述</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cost/" class="nav-link">成本预估</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../architecture/" class="nav-link">架构概览</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../security/" class="nav-link">安全信息</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../regions/" class="nav-link">区域支持</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../template/" class="nav-link">模板信息</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">部署解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../additional-resources/" class="nav-link">更多资源</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uninstall/" class="nav-link">卸载解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../source/" class="nav-link">源代码</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../revisions/" class="nav-link">文档发布说明</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../template/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../additional-resources/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/awslabs/aws-video-transcriber/edit/master/docs/deployment.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">部署概述</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#1" class="nav-link">步骤1: 启动堆栈</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#2" class="nav-link">步骤2: 访问网页控制台</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#3" class="nav-link">步骤3: 上传视频并进行视频字幕操作</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>在部署解决方案之前，建议您先查看本指南中有关架构图和区域支持等信息，然后按照下面的说明配置解决方案并将其部署到您的账户中。</p>
+<p><strong>部署时间</strong>：约10分钟</p>
+<h2 id="_1">部署概述</h2>
+<p>您可以在亚马逊云科技上部署并使用解决方案，过程如下：</p>
+<ul>
+<li>步骤1：启动堆栈。</li>
+<li>从中国区域启动堆栈 </li>
+<li>从全球区域启动堆栈</li>
+<li>步骤2：访问网页控制台。</li>
+<li>步骤3：上传视频并进行视频字幕操作。</li>
+</ul>
+<h2 id="1">步骤1: 启动堆栈</h2>
+<p>此自动化AWS CloudFormation模板在亚马逊云科技中部署解决方案。</p>
+<h3 id="_2">从中国区域启动堆栈</h3>
+<p><strong>前提条件</strong></p>
+<ol>
+<li>确认已有ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。</li>
+<li>创建域名托管区域。如果还没有创建托管区域，请参考<a href="https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/hosted-zones-working-with.html">使用托管区域</a>。</li>
+</ol>
+<p><strong>部署AWS CloudFormation模板</strong></p>
+<ol>
+<li>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由光环新网运营的亚马逊云科技中国（北京）区域链接</a>或<a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由西云数据运营的亚马逊云科技中国（宁夏）区域链接</a>启动AWS CloudFormation模板。</p>
+</li>
+<li>
+<p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
+</li>
+<li>
+<p>在<strong>创建堆栈</strong>页面上，确认Amazon S3 URL文本框中显示正确的模板URL，然后选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>在<strong>指定堆栈详细信息</strong>页面，为您的解决方案堆栈分配一个账户内唯一且符合命名要求的名称。</p>
+</li>
+<li>
+<p>在<strong>参数</strong>部分，查看解决方案模板的参数并根据需要进行修改，然后选择<strong>下一步</strong>。</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIKey</strong></td>
+<td>无</td>
+<td>输入部署完成后登录系统所需的认证信息</td>
+</tr>
+<tr>
+<td><strong>TranscribeLanguage</strong></td>
+<td>zh-CN</td>
+<td>从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅<a href="https://docs.aws.amazon.com/zh_cn/translate/latest/dg/what-is.html">什么是Amazon Translate</a>。</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>在<strong>配置堆栈选项</strong>页面，选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>在<strong>审核</strong>页面，查看并确认设置。确保选中确认模板将创建Amazon Identity and Access Management（IAM）资源的复选框。选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
+</li>
+</ol>
+<p>您可以在AWS CloudFormation控制台的<strong>状态</strong>列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<p><strong>在Route53创建记录用于解析域名</strong></p>
+<ol>
+<li>
+<p>登录Route53的管理界面，选择<strong>创建记录</strong>。</p>
+</li>
+<li>
+<p>在<strong>记录名称</strong>文本框内输入所需要的二级域名，后缀默认为ICP备案的一级域名，例如，video-transctiber.ch.test.com。</p>
+</li>
+<li>
+<p>选择<strong>记录类型</strong>为CNAME。</p>
+</li>
+<li>
+<p>在<strong>值</strong>文本框内输入CloudFront的地址，注意其中不包括https://。例如，xxxxxx.cloudfront.cn。您可在Amazon CloudFormation的<strong>输出</strong>标签页中查看创建的CloudFront的地址。</p>
+</li>
+<li>
+<p>选择<strong>创建记录</strong>完成操作。</p>
+</li>
+</ol>
+<p><strong>在CloudFront中配置CNAME</strong></p>
+<ol>
+<li>
+<p>登录CloudFront的管理页面，选择该方案的<strong>分配</strong>。</p>
+</li>
+<li>
+<p>选择<strong>编辑</strong>进入<strong>编辑设置</strong>.</p>
+</li>
+<li>
+<p>在<strong>备用域名(CNAME)</strong>项选择<strong>添加项目</strong>，输入域名。例如：video-transctiber.ch.test.com。</p>
+</li>
+<li>
+<p>选择<strong>保存更改</strong>。等待CloudFront自动完成部署，配置即可生效。</p>
+</li>
+</ol>
+<h3 id="_3">从全球区域启动堆栈</h3>
+<p><strong>部署AWS CloudFormation模板</strong></p>
+<ol>
+<li>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">全球区域链接</a>启动AWS CloudFormation模板。</p>
+</li>
+<li>
+<p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
+</li>
+<li>
+<p>在<strong>创建堆栈</strong>页面上，确认Amazon S3 URL文本框中显示正确的模板URL，然后选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>在<strong>指定堆栈详细信息</strong>页面，为您的解决方案堆栈分配一个账户内唯一且符合命名要求的名称。</p>
+</li>
+<li>
+<p>在<strong>参数</strong>部分，查看解决方案模板的参数并根据需要进行修改，然后选择<strong>下一步</strong>。</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIKey</strong></td>
+<td>无</td>
+<td>输入部署完成后登录系统所需的认证信息。</td>
+</tr>
+<tr>
+<td><strong>TranscribeLanguage</strong></td>
+<td>zh-CN</td>
+<td>从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考<a href="https://docs.aws.amazon.com/zh_cn/translate/latest/dg/what-is.html">什么是Amazon Translate</a>。</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>在<strong>配置堆栈选项</strong>页面，选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>在<strong>审核</strong>页面，查看并确认设置。确保选中确认模板将创建Amazon Identity and Access Management（IAM）资源的复选框。选择<strong>下一步</strong>。</p>
+</li>
+<li>
+<p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
+</li>
+</ol>
+<p>您可以在AWS CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<h2 id="2">步骤2: 访问网页控制台</h2>
+<p>在堆栈创建成功后，您可在AWS CloudFormation的<strong>输出</strong>标签页中查看访问网页控制台需要的认证信息（<strong>APIKey</strong>）和创建的CloudFront地址（<strong>ConsoleUrl</strong>）。</p>
+<p>根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。</p>
+<h3 id="_4">从中国区域访问</h3>
+<ol>
+<li>
+<p>在浏览器的地址栏输入https://&lt;域名&gt;。例如，域名为 video-transcriber.ch.test.com。</p>
+</li>
+<li>
+<p>选择<strong>Enter API Key</strong>，在弹出的输入框中输入认证信息。</p>
+</li>
+</ol>
+<h3 id="_5">从全球区域访问</h3>
+<ol>
+<li>
+<p>在浏览器的地址栏输入CloudFront地址。</p>
+</li>
+<li>
+<p>选择<strong>Enter API Key</strong>，在弹出的输入框中输入认证信息。</p>
+</li>
+</ol>
+<h2 id="3">步骤3: 上传视频并进行视频字幕操作</h2>
+<p>在网页控制台选择页面上方的<strong>Videos</strong>，页面显示四个页签，分别对应视频的不同状态：</p>
+<ul>
+<li>处理中的视频</li>
+<li>处理完毕，可以编辑的视频</li>
+<li>标记为编辑完成的视频</li>
+<li>处理过程中出错的视频</li>
+</ul>
+<p><img alt="" src="../images/user-guide-video-management.png" /></p>
+<h3 id="_6">上传视频</h3>
+<p>您可以上传没有字幕的视频进行处理。</p>
+<ol>
+<li>
+<p>在<strong>Videos</strong>页面，选择<strong>Upload videos…</strong>。</p>
+</li>
+<li>
+<p>选中视频，然后选择<strong>打开</strong>。</p>
+</li>
+<li>
+<p>从列表中选中想要生成的字幕语言，然后选择<strong>Start</strong>。系统将开始上传视频并自动处理生成字幕。</p>
+<p>首先视频显示在<strong>Processing</strong>页签，当生成字幕完成后，将显示在<strong>Ready to edit</strong>页签。</p>
+</li>
+</ol>
+<h3 id="_7">对照视频校对和编辑字幕</h3>
+<p>您可以对视频字幕进行校对和编辑。</p>
+<ol>
+<li>
+<p>在<strong>Videos</strong>页面，选择<strong>Ready to edit</strong>页签。</p>
+</li>
+<li>
+<p>从<strong>Video Language</strong>列选择语言，进入字幕编辑页面。功能包括：</p>
+</li>
+<li>逐段播放视频内容从而校对字幕内容。</li>
+<li>修改字幕内容。</li>
+<li>将字幕段落进行合并和拆分。</li>
+</ol>
+<h3 id="_8">翻译字幕</h3>
+<p>您可以对视频字幕进行翻译以及后续的校对和编辑操作。
+<strong>注意：该功能目前仅全球区域部署版本支持。</strong></p>
+<ol>
+<li>
+<p>在字幕编辑页面，选择<strong>Translate to</strong>。</p>
+</li>
+<li>
+<p>在下拉列表中选择目标语言后，系统会在后台将字幕翻译成目标语言。翻译结束后，还可以对翻译后的字幕进行校对和编辑。</p>
+</li>
+</ol>
+<p><img alt="" src="../images/user-guide-video-translate.png" />
+<img alt="" src="../images/user-guide-video-translate-1.png" /></p>
+<h3 id="_9">烧入字幕</h3>
+<p>您可将已经生成好的字幕烧入到视频中，制作出硬字幕视频。</p>
+<ol>
+<li>
+<p>在<strong>Videos</strong>页面，选择<strong>Ready to edit</strong>页签。</p>
+</li>
+<li>
+<p>从<strong>Video Language</strong>列选择语言，进入字幕编辑页面。</p>
+</li>
+<li>
+<p>选择<strong>Burn in</strong>。
+<img alt="" src="../images/user-guide-video-burn.png" /></p>
+</li>
+</ol>
+<h3 id="_10">下载字幕或硬字幕视频</h3>
+<p>字幕或硬字幕视频生成后，您可通过网页控制台直接下载：</p>
+<ul>
+<li>
+<p>如果视频处于编辑状态，选择视频和对应语言进入视频编辑页面进行下载。
+<img alt="" src="../images/user-guide-video-download-1.png" /></p>
+</li>
+<li>
+<p>如果视频处于完成状态，可直接在<strong>Videos</strong>页面的<strong>Completed</strong>页签中下载视频对应语言的字幕或视频。
+<img alt="" src="../images/user-guide-video-download-2.png" /></p>
+</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

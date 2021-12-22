@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/cost/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>成本预估 - 视频字幕解决方案 实施指南</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">视频字幕解决方案 实施指南</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../welcome/" class="nav-link">概述</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">成本预估</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../architecture/" class="nav-link">架构概览</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../security/" class="nav-link">安全信息</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../regions/" class="nav-link">区域支持</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../template/" class="nav-link">模板信息</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../deployment/" class="nav-link">部署解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../additional-resources/" class="nav-link">更多资源</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uninstall/" class="nav-link">卸载解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../source/" class="nav-link">源代码</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../revisions/" class="nav-link">文档发布说明</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../welcome/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../architecture/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/awslabs/aws-video-transcriber/edit/master/docs/cost.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#1-cn-northwest-11500" class="nav-link">示例1: 以由西云数据运营的亚马逊云科技中国（宁夏）区域（cn-northwest-1）为例，处理时长1小时视频，编辑操作500次</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#2-us-east-115001" class="nav-link">示例2: 以美国东部（弗吉尼亚北部）区域（us-east-1）为例，处理时长1小时视频，编辑操作500次，翻译字幕1万个字符</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>您需要承担运行视频字幕解决方案时使用亚马逊云科技各个服务的成本费用。截至2021年12月，影响解决方案的成本因素主要包括：</p>
+<ul>
+<li>向Amazon API Gateway发送请求的次数。</li>
+<li>调用AWS Lambda的次数。</li>
+<li>读写Amazon DynamoDB的次数。</li>
+<li>使用AWS Elemental MediaConvert处理视频的数量。本方案使用AWS Elemental MediaConvert从视频提取音频或将字幕烧入到视频中。</li>
+<li>使用Amazon Transcribe处理音频的数量。本方案使用Amazon Transcribe从音频中提取文字，生成字幕。</li>
+<li>每月使用Amazon Translate翻译字幕的数量。本方案使用Amazon Translate将原字幕翻译成另一种语言。<strong>目前仅全球区域部署版本支持。</strong></li>
+</ul>
+<h2 id="1-cn-northwest-11500">示例1: 以由西云数据运营的亚马逊云科技中国（宁夏）区域（cn-northwest-1）为例，处理时长1小时视频，编辑操作500次</h2>
+<p>使用本方案处理此视频所需的成本费用如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>服务</th>
+<th>用量</th>
+<th>费用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>提取音频1小时</td>
+<td>¥1.24</td>
+</tr>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>烧入字幕1小时</td>
+<td>¥3.87</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>语音转文字1小时</td>
+<td>¥9.72</td>
+</tr>
+<tr>
+<td>Amazon API Gateway</td>
+<td>500个请求</td>
+<td>¥0.015</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>1000次调用 （平均300ms，128MB内存）</td>
+<td>¥0</td>
+</tr>
+<tr>
+<td>Amazon DynamoDB</td>
+<td>500次读/写</td>
+<td>¥0.006</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>总费用：¥14.85</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-us-east-115001">示例2: 以美国东部（弗吉尼亚北部）区域（us-east-1）为例，处理时长1小时视频，编辑操作500次，翻译字幕1万个字符</h2>
+<p>使用本方案处理此视频所需的成本费用如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>服务</th>
+<th>用量</th>
+<th>费用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>提取音频1小时</td>
+<td>$0.18</td>
+</tr>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>烧入字幕1小时</td>
+<td>$0.45</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>语音转文字1小时</td>
+<td>$1.44</td>
+</tr>
+<tr>
+<td>Amazon Translate</td>
+<td>翻译文字1万字符</td>
+<td>$0.15</td>
+</tr>
+<tr>
+<td>Amazon API Gateway</td>
+<td>500个请求</td>
+<td>$0.0017</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>1000次调用 （平均300ms，128MB内存）</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Amazon DynamoDB</td>
+<td>500次读/写</td>
+<td>$0.0006</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>总费用：$2.22</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

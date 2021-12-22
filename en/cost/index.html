@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/cost/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Cost - Video Transcriber Implementation Guide</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Video Transcriber Implementation Guide</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../welcome/" class="nav-link">Welcome</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Cost</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../architecture/" class="nav-link">Architecture overview</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../security/" class="nav-link">Security</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../regions/" class="nav-link">Supported regions</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../template/" class="nav-link">AWS CloudFormation template</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../deployment/" class="nav-link">Automated deployment</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../additional-resources/" class="nav-link">Additional resources</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uninstall/" class="nav-link">Uninstall the solution</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../source/" class="nav-link">Source code</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../revisions/" class="nav-link">Revisions</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../notices/" class="nav-link">Notices</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../welcome/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../architecture/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/awslabs/aws-video-transcriber/edit/master/docs/cost.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#example-1-in-aws-china-ningxia-region-operated-by-nwcd-cn-northwest-1process-1-hour-video-edit-video-captions-for-500-times" class="nav-link">Example 1: In AWS China (Ningxia) Region operated by NWCD (cn-northwest-1)，process 1 hour video, edit video captions for 500 times</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#example-2-in-us-east-n-virginia-regionus-east-1-process-1-hour-video-edit-video-captions-for-500-timestranlsate-10000-characters-captions" class="nav-link">Example 2: In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021， the cost of the solution varies depending on:</p>
+<ul>
+<li>The number of requests to Amazon API Gateway</li>
+<li>The number of invoking AWS Lambda </li>
+<li>The number of read/write Amazon DynamoDB</li>
+<li>The number of videos that AWS Elemental MediaConvert processed. The solution uses AWS Elemental MediaConvert to extract audios from videos or burn captions into videos</li>
+<li>The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions</li>
+<li>The number of captions characters that Amazon Translate processed. The solution uses Amazon Translate to translate the captions to another language. <strong>Currently, this is only supported by the deployment in AWS Standard Regions.</strong></li>
+</ul>
+<h2 id="example-1-in-aws-china-ningxia-region-operated-by-nwcd-cn-northwest-1process-1-hour-video-edit-video-captions-for-500-times">Example 1: In AWS China (Ningxia) Region operated by NWCD (cn-northwest-1)，process 1 hour video, edit video captions for 500 times</h2>
+<p>The cost of using this solution to process this video is shown below:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Dimensions</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>Extract 1 hour audio</td>
+<td>¥1.24</td>
+</tr>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>Burn captions into 1 hour video</td>
+<td>¥3.87</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>Extract text from 1 hour audio</td>
+<td>¥9.72</td>
+</tr>
+<tr>
+<td>Amazon API Gateway</td>
+<td>500 requests</td>
+<td>¥0.015</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>500 requests （avg 300ms，128MB Memory）</td>
+<td>¥0.00281</td>
+</tr>
+<tr>
+<td>Amazon DynamoDB</td>
+<td>1000 read/write</td>
+<td>¥0.007</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Total：¥14.86</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-2-in-us-east-n-virginia-regionus-east-1-process-1-hour-video-edit-video-captions-for-500-timestranlsate-10000-characters-captions">Example 2: In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions</h2>
+<p>The cost of using this solution to process this video is shown below:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Dimensions</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>Extract 1 hour audio</td>
+<td>$0.18</td>
+</tr>
+<tr>
+<td>AWS Elemental MediaConvert</td>
+<td>Burn captions into 1 hour video</td>
+<td>$0.45</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>Extract text from 1 hour audio</td>
+<td>$1.44</td>
+</tr>
+<tr>
+<td>Amazon Translate</td>
+<td>tranlsate 10000 characters</td>
+<td>$0.15</td>
+</tr>
+<tr>
+<td>Amazon API Gateway</td>
+<td>500 requests</td>
+<td>$0.0017</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>500 requests （avg 300ms，128MB Memory）</td>
+<td>$0.0001</td>
+</tr>
+<tr>
+<td>Amazon DynamoDB</td>
+<td>1000 read/write</td>
+<td>$0.00075</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Total：$2.22</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/welcome/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>概述 - 视频字幕解决方案 实施指南</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">视频字幕解决方案 实施指南</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">概述</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cost/" class="nav-link">成本预估</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../architecture/" class="nav-link">架构概览</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../security/" class="nav-link">安全信息</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../regions/" class="nav-link">区域支持</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../template/" class="nav-link">模板信息</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../deployment/" class="nav-link">部署解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../additional-resources/" class="nav-link">更多资源</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uninstall/" class="nav-link">卸载解决方案</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../source/" class="nav-link">源代码</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../revisions/" class="nav-link">文档发布说明</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" class="nav-link disabled">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../cost/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/awslabs/aws-video-transcriber/edit/master/docs/welcome.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>视频字幕解决方案基于<a href="https://aws.amazon.com/cn/lambda/">Amazon Lambda</a>无服务器架构，集成<a href="https://aws.amazon.com/cn/transcribe/">Amazon Transcribe</a>等服务，并提供网页控制台帮助客户完成视频字幕相关操作。例如，自动生成视频字幕，对照视频校对和编辑字幕，翻译字幕以及生成硬字幕视频。</p>
+<p>本解决方案主要包括以下功能：</p>
+<ul>
+<li>字幕生成：支持MP4、MOV和MKV的视频格式；支持四个小时以内的视频（基于<a href="https://docs.aws.amazon.com/zh_cn/transcribe/latest/dg/input.html">Amazon Transcribe的限制</a>）。</li>
+<li>字幕编辑：支持校对字幕、编辑字幕、段落拆分与合并，字幕映射和字幕替换。</li>
+<li>字幕翻译：支持从源语言翻译成目标语言，并生成字幕。<strong>目前仅全球区域部署版本支持。</strong></li>
+<li>字幕下载：将已经生成的字幕下载成SRT或WEBVTT格式的字幕。</li>
+<li>硬字幕制作：将已经生成的字幕烧入视频中。</li>
+</ul>
+<p>本解决方案适用于教育、媒体等需要处理视频字幕的行业。例如，对视频精准添加字幕和翻译字幕等场景，都可以大幅减少人工成本，提高效率。</p>
+<p>本实施指南介绍在Amazon Web Services（亚马逊云科技）云中部署视频字幕解决方案的架构信息和具体配置步骤。它包含指向<a href="https://aws.amazon.com/en/cloudformation/">CloudFormation</a>模板的链接，这些模板使用亚马逊云科技在安全性和可用性方面的最佳实践来启动和配置本解决方案所需的亚马逊云科技服务。</p>
+<p>本指南面向具有亚马逊云科技架构实践经验的IT架构师、开发人员、DevOps工程师、数据科学家和算法工程师等专业人士。</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
