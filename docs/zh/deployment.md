@@ -1,4 +1,4 @@
-在部署解决方案之前，建议您先查看本指南中有关架构图和区域支持等信息。然后按照下面的说明配置解决方案并将其部署到您的帐户中。
+在部署解决方案之前，建议您先查看本指南中有关架构图和区域支持等信息，然后按照下面的说明配置解决方案并将其部署到您的账户中。
 
 **部署时间**：约10分钟
 
@@ -14,18 +14,18 @@
 
 ## 步骤1: 启动堆栈
 
-此自动化Amazon CloudFormation模板在亚马逊云科技中部署解决方案。
+此自动化AWS CloudFormation模板在亚马逊云科技中部署解决方案。
 
 ### 从中国区域启动堆栈
 
 **前提条件**
 
-1. 申请经过ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。
+1. 确认已有ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。
 2. 创建域名托管区域。如果还没有创建托管区域，请参考[使用托管区域][hostedzone]。
 
-**部署Amazon CloudFormation模板**
+**部署AWS CloudFormation模板**
 
-1. 登录到Amazon Web Service管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动Amazon CloudFormation模板。
+1. 登录到Amazon Web Services管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动AWS CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -38,7 +38,7 @@
 |  参数名称   |  默认值 |  描述 |
 |  ----------  | ---------| -----------  |
 | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
-| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
+| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -46,7 +46,7 @@
 
 8. 选择**创建堆栈**以部署堆栈。
 
-您可以在Amazon CloudFormation控制台的**状态**列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为**CREATE_COMPLETE**。
+您可以在AWS CloudFormation控制台的**状态**列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为**CREATE_COMPLETE**。
 
 **在Route53创建记录用于解析域名**
 
@@ -62,7 +62,7 @@
 
 **在CloudFront中配置CNAME**
 
-1. 登陆CloudFront的管理页面，选择该方案的**分配**。
+1. 登录CloudFront的管理页面，选择该方案的**分配**。
 
 2. 选择**编辑**进入**编辑设置**.
 
@@ -72,9 +72,9 @@
 
 ### 从全球区域启动堆栈
 
-**部署Amazon CloudFormation模板**
+**部署AWS CloudFormation模板**
 
-1. 登录到Amazon Web Service管理控制台，选择[全球区域链接][template-global]启动Amazon CloudFormation模板。
+1. 登录到Amazon Web Services管理控制台，选择[全球区域链接][template-global]启动AWS CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -86,7 +86,7 @@
 
 |  参数名称   |  默认值 |  描述 |
 |  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
+| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
 | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
@@ -95,11 +95,11 @@
 
 8. 选择**创建堆栈**以部署堆栈。
 
-您可以在Amazon CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为**CREATE_COMPLETE**。
+您可以在AWS CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为**CREATE_COMPLETE**。
 
 ## 步骤2: 访问网页控制台
 
-在堆栈创建成功后，您可在Amazon CloudFormation的**输出**标签页中查看访问网页控制台需要的认证信息（**APIKey**）和创建的CloudFront地址（**ConsoleUrl**）。
+在堆栈创建成功后，您可在AWS CloudFormation的**输出**标签页中查看访问网页控制台需要的认证信息（**APIKey**）和创建的CloudFront地址（**ConsoleUrl**）。
 
 根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。
 
@@ -162,7 +162,7 @@
 ![](./images/user-guide-video-translate-1.png)
 
 ### 烧入字幕
-您可将已经生成好的字幕烧入到视频中制作出硬字幕视频。
+您可将已经生成好的字幕烧入到视频中，制作出硬字幕视频。
 
 1. 在**Videos**页面，选择**Ready to edit**页签。
 
@@ -175,10 +175,10 @@
 
 字幕或硬字幕视频生成后，您可通过网页控制台直接下载：
 
-- 视频如果处于编辑状态，选择视频和对应语言进入视频编辑页面进行下载。
+- 如果视频处于编辑状态，选择视频和对应语言进入视频编辑页面进行下载。
 ![](./images/user-guide-video-download-1.png)
 
-- 视频如果处于完成状态，可直接在**Videos**页面的**Completed**页签中下载视频对应语言的字幕或视频。
+- 如果视频处于完成状态，可直接在**Videos**页面的**Completed**页签中下载视频对应语言的字幕或视频。
 ![](./images/user-guide-video-download-2.png)
 
 [hostedzone]:https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/hosted-zones-working-with.html

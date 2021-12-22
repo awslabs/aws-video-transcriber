@@ -14,7 +14,7 @@ Use the following steps to deploy this solution on AWS.
 
 ## Step 1: Launch the AWS CloudFormation template
 
-This automatic Amazon CloudFormation template deploys the solution in AWS.
+This automatic AWS CloudFormation template deploys the solution in AWS.
 
 ### Launch CloudFormation tempalte in AWS China Regions
 
@@ -25,7 +25,7 @@ This automatic Amazon CloudFormation template deploys the solution in AWS.
 
 **Launch Amazon CloudFormation template**
 
-1. Log in to the AWS management console, select [AWS China (Beijing) Region operated by Sinnet][template-china1] or [AWS China (Ningxia) Region operated by NWCD][template-china2] to launch Amazon CloudFormation template.
+1. Log in to the AWS management console, select [AWS China (Beijing) Region operated by Sinnet][template-china1] or [AWS China (Ningxia) Region operated by NWCD][template-china2] to launch AWS CloudFormation template.
 
 2. The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.
 
@@ -38,7 +38,7 @@ This automatic Amazon CloudFormation template deploys the solution in AWS.
 |  Parameter Name   |  Default Value |  Description |
 |  ----------  | ---------| -----------  |
 | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
-| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, choose **Next**.
 
@@ -46,7 +46,7 @@ This automatic Amazon CloudFormation template deploys the solution in AWS.
 
 8. Choose **Create stack** to deploy the stack.
 
-You can check the status of the stack in the **Status** column of the Amazon CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
+You can check the status of the stack in the **Status** column of the AWS CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
 
 **Create records on Route53 to resolve domain names**
 
@@ -58,7 +58,7 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 4. Enter the CloudFront URL into **Value** text box, not including https://. For example: xxxxxx.cloudfront.cn. 
 
-  You can get CloudFront URL from the solution Amazon CloudFormation stack **Outputs** page.
+  You can get CloudFront URL from the solution AWS CloudFormation stack **Outputs** page.
 
 5. Choose **Create records**.
 
@@ -72,11 +72,11 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 4. Choose **Save changes**. The configuration take effect upon the automatic CloudFront deployment.
 
-### Launch CloudFormation tempalte in Global region
+### Launch CloudFormation tempalte in AWS Standard Regions
 
-**Launch Amazon CloudFormation template**
+**Launch AWS CloudFormation template**
 
-1. Log in to the AWS management console, select [Global region][template-global] to to launch Amazon CloudFormation template.
+1. Log in to the AWS management console, select [Global region][template-global] to to launch AWS CloudFormation template.
 
 2. The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.
 
@@ -97,11 +97,11 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 8. Choose **Create stack** to deploy the stack.
 
-You can check the status of the stack in the **Status** column of the Amazon CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
+You can check the status of the stack in the **Status** column of the AWS CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
 
 ## Step 2: Access the web interface
 
-After the stack is successfully created, you can view the authentication information (**APIKey**) required to access the web interface and the created CloudFront URL (**ConsoleUrl**) on the **Outputs** tab of Amazon CloudFormation stack.
+After the stack is successfully created, you can view the authentication information (**APIKey**) required to access the web interface and the created CloudFront URL (**ConsoleUrl**) on the **Outputs** tab of AWS CloudFormation stack.
 
 Depending on the region where you create the stack, you can choose to access the web interface from the AWS China Regions or the AWS Standard Regions.
 
