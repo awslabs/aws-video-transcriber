@@ -9,6 +9,17 @@ videos.
 ## Architecture
 ![architecture](./docs/en/images/Video-Transcriber-Architecture.png)
 
+This solution deploys the Amazon CloudFormation template in your AWS Cloud account and completes the following settings.
+
+1. [Amazon S3][s3] (Web App) stores front-end static files
+2. Client side sends the request through [Amazon API Gateway][api-gateway]
+3. [AWS Lambda][lambda] Function receives the request from Amazon API Gateway, and process the business logic
+4. Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed
+5. AWS Lambda Function gets/updates videos' profile from [Amazon DynamoDB][dynamodb]
+6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)
+7. AWS Lambda Function invokes [Amazon Transcribe][transcribe] captions from audio and store the result into Amazon S3 (Captions)
+8. AWS Lambda Function invokes [Amazon Translate][translate] to translate captions to another language and stores the result into Amazon S3 (Captions)
+
 ## Deploying the Solution
 
 Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elemental MediaConvert. When launching the template, you will need to enter a stack name, an API key and choose a language as default language that Transcribe will use to process your video's audio data. You can still select language before upload the video to process
@@ -129,4 +140,12 @@ After the captions or videos with captions are generated, you can download them 
 
 ## License
 
-This library is licensed under the Apache 2.0 License.	
+This library is licensed under the Apache 2.0 License.
+
+[s3]: https://aws.amazon.com/s3/
+[api-gateway]: https://aws.amazon.com/api-gateway/
+[lambda]: https://aws.amazon.com/lambda/
+[dynamodb]: https://aws.amazon.com/dynamodb/
+[mediaconvert]: https://aws.amazon.com/mediaconvert/
+[transcribe]: https://aws.amazon.com/transcribe/
+[translate]: https://aws.amazon.com/translate/
