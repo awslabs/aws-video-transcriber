@@ -5,7 +5,7 @@ site_dir: ./site/en
 theme:
   language: en
 nav:
-  - Welcome: welcome.md
+  - Welcome: index.md
   - Cost: cost.md
   - Architecture overview: architecture.md
   - Security: security.md
