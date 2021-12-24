@@ -9,7 +9,6 @@ theme:
     - search.highlight
 plugins:
   - search
-  - macros   
 extra:
   alternate:
     - name: English
