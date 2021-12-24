@@ -12,8 +12,8 @@ plugins:
 extra:
   alternate:
     - name: English
-      link: /video-transcriber/en/
+      link: /aws-video-transcriber/en/
       lang: en
     - name: 中文
-      link: /video-transcriber/cn/
+      link: /aws-video-transcriber/cn/
       lang: zh
