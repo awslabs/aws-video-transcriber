@@ -6,7 +6,7 @@ site_dir: ./site/zh
 theme:
   language: zh
 extra:
-  company: AWS
+  company: 亚马逊云科技
 nav:
   - 概述: welcome.md
   - 成本预估: cost.md

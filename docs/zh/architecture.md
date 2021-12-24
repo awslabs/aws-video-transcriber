@@ -4,7 +4,7 @@
       
 图：视频字幕解决方案架构
 
-本解决方案在您的亚马逊云科技账户中部署Amazon CloudFormation模板并完成以下设置。
+本解决方案在您的{{ company }}账户中部署Amazon CloudFormation模板并完成以下设置。
 
 1. [Amazon S3][s3] (Web App)保存前端静态文件
 2. 客户端通过[Amazon API Gateway][api-gateway]发送请求

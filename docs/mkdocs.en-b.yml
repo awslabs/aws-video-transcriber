@@ -5,7 +5,7 @@ site_dir: ./site/en
 theme:
   language: en
 extra:
-  company: AWS  
+  company: Amazon Web Services  
 nav:
   - Welcome: welcome.md
   - Cost: cost.md
