@@ -5,9 +5,6 @@ docs_dir: zh
 site_dir: ./site/zh
 theme:
   language: zh
-plugins:
-  - search
-  - macros  
 extra:
   company: 亚马逊云科技
 nav:

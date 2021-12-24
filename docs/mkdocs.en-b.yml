@@ -3,10 +3,7 @@ site_name: Video Transcriber Implementation Guide
 docs_dir: en
 site_dir: ./site/en
 theme:
-  language: en
-plugins:
-  - search
-  - macros  
+  language: en 
 extra:
   company: Amazon Web Services  
 nav:

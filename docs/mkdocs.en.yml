@@ -4,9 +4,6 @@ docs_dir: en
 site_dir: ./site/en
 theme:
   language: en
-plugins:
-  - search
-  - macros  
 extra:
   company: AWS  
 nav:
