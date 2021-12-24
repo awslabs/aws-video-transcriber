@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
+         <loc>https://www.amazonaws.cn/solutions/video-transcriber/</loc>
+         <lastmod>2021-12-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.amazonaws.cn/solutions/video-transcriber/additional-resources/</loc>
          <lastmod>2021-12-24</lastmod>
          <changefreq>daily</changefreq>
@@ -47,11 +52,6 @@
     </url>
     <url>
          <loc>https://www.amazonaws.cn/solutions/video-transcriber/uninstall/</loc>
-         <lastmod>2021-12-24</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.amazonaws.cn/solutions/video-transcriber/welcome/</loc>
          <lastmod>2021-12-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
