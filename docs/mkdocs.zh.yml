@@ -1,12 +1,10 @@
 INHERIT: ./mkdocs.base.yml
 site_name: 视频字幕解决方案 实施指南
 site_description: 视频字幕解决方案
-docs_dir: zh
+docs_dir: zh-branded
 site_dir: ./site/zh
 theme:
   language: zh
-extra:
-  company: AWS
 nav:
   - 概述: welcome.md
   - 成本预估: cost.md

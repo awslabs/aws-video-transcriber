@@ -1,6 +1,6 @@
 INHERIT: ./mkdocs.base.yml
 site_name: Video Transcriber Implementation Guide
-docs_dir: en
+docs_dir: en-branded
 site_dir: ./site/en
 theme:
   language: en
