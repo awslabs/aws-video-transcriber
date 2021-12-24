@@ -4,8 +4,6 @@ docs_dir: en-branded
 site_dir: ./site/en
 theme:
   language: en
-extra:
-  company: AWS
 nav:
   - Welcome: welcome.md
   - Cost: cost.md

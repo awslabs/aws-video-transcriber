@@ -4,7 +4,7 @@ Deploying this solution with the default parameters builds the following environ
 
 Figure: Solution Architecture
 
-This solution deploys the Amazon CloudFormation template in your {{ company }} Cloud account and completes the following settings.
+This solution deploys the Amazon CloudFormation template in your AWS Cloud account and completes the following settings.
 
 1. [Amazon S3][s3] (Web App) stores front-end static files
 2. Client side sends the request through [Amazon API Gateway][api-gateway]
