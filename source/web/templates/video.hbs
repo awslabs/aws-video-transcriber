@@ -91,6 +91,7 @@
 							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 								<a class="dropdown-item" onclick="downloadCaptionsVTTLocal()">WEBVTT</a>
 								<a class="dropdown-item" onclick="downloadCaptionsSRTLocal()">SRT</a>
+								<a class="dropdown-item" onclick="downloadCaptionsTEXTLocal()">TEXT</a>
 								{{#if video.translated}}	
 									{{#if video.s3BurnedTranslatedVideoPath}}							
 										<a class="dropdown-item" onclick="downloadBurnedVideoLocal()">BurnedVideo</a>
@@ -730,6 +731,11 @@
 		{
 			downloadCaptionsVTT(videoId, videoName, language, translated);
 		}
+
+		function downloadCaptionsTEXTLocal()
+		{
+			downloadCaptionsTEXT(videoId, videoName, language, translated);
+		}		
 
 		function downloadBurnedVideoLocal()
 		{

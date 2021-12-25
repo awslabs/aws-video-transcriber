@@ -16,7 +16,6 @@
 var AWS = require('aws-sdk');
 AWS.config.update({region: process.env.REGION});
 var s3 = new AWS.S3();
-var zlib = require('zlib');
 
 /**
  * Fetches captions in WEBVTT or SRT formats
@@ -41,9 +40,12 @@ exports.handler = async (event, context, callback) => {
             language = event.queryStringParameters.language;
         }        
 
-        if (format === 'srt')
-        {
+        if (format === 'srt') {
             contentType = 'text/srt';
+        } else if (format === 'text') {
+            contentType = 'text/plain';
+        } else {
+            contentType = 'text/vtt';
         }
 
         console.log('[INFO] exporting in: %s format', format);
@@ -140,6 +142,28 @@ async function exportCaptions(format, captions, language)
         }
 
         return srt;
+    }
+    else if (format === 'text') 
+    {
+        var text = '';
+
+        for (var i in captions)
+        {
+            var caption = captions[i];
+
+            if (caption.text.trim() === '')
+            {
+              continue;
+            }
+
+            if (language.indexOf('zh') > -1 || language.indexOf('ja') > -1 || language.indexOf('ko') > -1) {
+                text += caption.text
+            } else {
+                text += caption.text + ' ';
+            }
+        }
+
+        return text;
     }
     else
     {

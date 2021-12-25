@@ -411,6 +411,38 @@ function translateCaptions(videoId, targetLanguage)
 		 toastr.error('Failed to generate WEBVTT captions');
 	 });
  }
+
+  /**
+  * Downloads captions in TEXT format
+  */
+	function downloadCaptionsTEXT(videoId, videoName, language, translated)
+	{
+		if (translated == 'true')
+		{
+			videoId = videoId + '_' + language;
+		}
+		var api = siteConfig.api_base + siteConfig.api_captions + '/' + videoId + '?format=text&language=' + language;
+		console.log('[INFO] downloading TEXT captions: ' + api);
+		let axiosConfig = {
+			headers: {
+				'Content-Type': 'application/json;charset=UTF-8',
+				'X-Api-Key': localStorage.apiKey
+				}
+		};
+		axios.get(api, axiosConfig)
+		.then(function (response) 
+		{
+			toastr.success('Generated TEXT captions');
+			var blob = new Blob([response.data], 
+				{type: "text/plain;charset=utf-8"});
+			saveAs(blob, videoName + '.txt');
+		})
+		.catch(function (error) 
+		{
+			console.log('[ERROR] error while generating TEXT captions" ' + error);
+			toastr.error('Failed to generate TEXT captions');
+		});
+	}
  
  /**
   * Downloads captions in SRT format
