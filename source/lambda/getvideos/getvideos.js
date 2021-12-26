@@ -13,8 +13,8 @@
   permissions and limitations under the License.
 */
 
-var AWS = require('aws-sdk');
-AWS.config.update({region: process.env.REGION});  
+var AWS = require("aws-sdk");
+AWS.config.update({ region: process.env.REGION });
 var dynamoDB = new AWS.DynamoDB();
 
 /**
@@ -22,102 +22,100 @@ var dynamoDB = new AWS.DynamoDB();
  * the environment variable: DYNAMO_VIDEO_TABLE
  */
 exports.handler = async (event, context, callback) => {
+  console.log("[INFO] got event: %j", event);
 
-    console.log('[INFO] got event: %j', event);
+  var responseHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+    "Content-Type": "application/json",
+  };
 
-    var responseHeaders = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-        'Content-Type': 'application/json'
-    }; 
+  try {
+    var scanParams = {
+      TableName: process.env.DYNAMO_VIDEO_TABLE,
+      AttributesToGet: [
+        "videoId",
+        "processedDate",
+        "name",
+        "language",
+        "translatedLanguage",
+        "s3BurnedTranslatedVideoPath",
+        "s3BurnedVideoPath",
+        "description",
+        "status",
+        "statusText",
+      ],
+      Select: "SPECIFIC_ATTRIBUTES",
+    };
 
-    try
-    {
-        var scanParams = {
-            TableName: process.env.DYNAMO_VIDEO_TABLE,
-            AttributesToGet: [
-                'videoId',
-                'processedDate',
-                'name',
-                'language',
-                'translatedLanguage',
-                's3BurnedTranslatedVideoPath',
-                's3BurnedVideoPath',
-                'description',
-                'status',
-                'statusText'
-            ],
-            Select: 'SPECIFIC_ATTRIBUTES'
-        };
+    var scanResponse = await dynamoDB.scan(scanParams).promise();
+    var videos = scanResponse.Items.map(mapper);
 
-        var scanResponse = await dynamoDB.scan(scanParams).promise();
-        var videos = scanResponse.Items.map(mapper);
-
-        var enableTranslate = false;
-        if (process.env.REGION != 'cn-north-1' && process.env.REGION != 'cn-northwest-1')
-        {
-            enableTranslate = true
-        }
-
-        for (let video of videos) {
-            video.enableTranslate = enableTranslate;
-        }
-        var responseBody = {  
-            "videos": videos,
-            "enableTranslate": enableTranslate,
-            "defaultLanguage": process.env.TRANSCRIBE_LANGUAGE
-        };
-        console.log("Successfully scanned: %d videos from Dynamo", videos.length); 
-        
-        console.log("Successfully response body: %j videos from Dynamo", responseBody); 
-
-        const response = {
-            statusCode: 200,
-            headers: responseHeaders,
-            body: JSON.stringify(responseBody)
-        };
-
-        callback(null, response);        
+    var enableTranslate = false;
+    if (
+      process.env.REGION != "cn-north-1" &&
+      process.env.REGION != "cn-northwest-1"
+    ) {
+      enableTranslate = true;
     }
-    catch (error)
-    {
-        console.log("Failed to load videos", error);
-        const response = {
-            statusCode: 500,
-            headers: responseHeaders,
-            body: JSON.stringify({  "message": "Failed to load videos: " + error })
-        };
-        callback(null, response);
+
+    for (let video of videos) {
+      video.enableTranslate = enableTranslate;
     }
+    var responseBody = {
+      videos: videos,
+      enableTranslate: enableTranslate,
+      defaultLanguage: process.env.TRANSCRIBE_LANGUAGE,
+    };
+    console.log("Successfully scanned: %d videos from Dynamo", videos.length);
+
+    console.log(
+      "Successfully response body: %j videos from Dynamo",
+      responseBody
+    );
+
+    const response = {
+      statusCode: 200,
+      headers: responseHeaders,
+      body: JSON.stringify(responseBody),
+    };
+
+    callback(null, response);
+  } catch (error) {
+    console.log("Failed to load videos", error);
+    const response = {
+      statusCode: 500,
+      headers: responseHeaders,
+      body: JSON.stringify({ message: "Failed to load videos: " + error }),
+    };
+    callback(null, response);
+  }
 };
 
 /**
  * Mapper which flattens item keys for 'S' types
  */
 function mapper(data) {
-    
-    let S = "S";
+  let S = "S";
 
-    if (isObject(data)) 
-    {
-        let keys = Object.keys(data);
-        while (keys.length) 
-        {
-            let key = keys.shift();
-            let types = data[key];
+  if (isObject(data)) {
+    let keys = Object.keys(data);
+    while (keys.length) {
+      let key = keys.shift();
+      let types = data[key];
 
-            if (isObject(types) && types.hasOwnProperty(S)) {
-                data[key] = types[S];
-            } 
-        }
+      if (isObject(types) && types.hasOwnProperty(S)) {
+        data[key] = types[S];
+      }
     }
+  }
 
-    return data;
+  return data;
 }
 
 /**
  * isObject helper function
  */
 function isObject(value) {
-    return typeof value === "object" && value !== null;
+  return typeof value === "object" && value !== null;
 }
