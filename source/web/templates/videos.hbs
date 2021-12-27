@@ -205,6 +205,7 @@
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '')">WEBVTT</a>
 									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '')">SRT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsTEXT('{{videoId}}', '{{name}}', '')">TEXT</a>
 									{{#if s3BurnedVideoPath}}
 										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '')">BurnedVideo</a>
 									{{/if}}
@@ -216,8 +217,9 @@
 							<div class="dropdown show">
 								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{translatedLanguage}}</a>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">WEBVTT</a>
-									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">SRT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">SRT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsTEXT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">TEXT</a>			
 									{{#if s3BurnedTranslatedVideoPath}}
 										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">BurnedVideo</a>
 									{{/if}}	

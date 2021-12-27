@@ -66,7 +66,7 @@ exports.handler = async (event, context, callback) => {
           targetLanguage,
           captionText
         );
-        caption.text = captionTranslatedText;
+        caption.text = escapeHtml(captionTranslatedText);
       }
 
       await saveCaptions(videoId, captions, targetLanguage);
@@ -218,4 +218,18 @@ async function updateDynamoDB(videoId, targetLanguage) {
     console.log("[ERROR] to update DynamoDB status", error);
     throw error;
   }
+}
+
+function escapeHtml(string) {
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;",
+  };
+  return String(string).replace(/[&<>`=\/]/g, function (s) {
+    return entityMap[s];
+  });
 }
