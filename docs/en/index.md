@@ -1,6 +1,6 @@
 Built on [AWS Lambda][lambda] serverless architecture, the Video Transcriber solution integrates services such as [Amazon Transcribe][transcribe] to help customers complete video caption related operations on a web interface. For example, automatically generating video captions, proofreading and editing video captions, translating captions, and burning captions into videos.
 
-The solution includes the following main functions:
+The solution includes the following functions:
 
 - Generating captions: supports MP4, MOV and MKV; supports videos within four hours according to [Amazon Transcribe Restriction][transcribe_restrict].
 - Editing captions: supports proofreading, editing, paragraph splitting and merging, mapping, and replacement of captions.

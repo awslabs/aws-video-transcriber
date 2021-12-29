@@ -4,28 +4,28 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 ## Deployment overview
 
-Use the following steps to deploy this solution on AWS.
+Use the following steps to deploy this solution on Amazon Web Services.
 
-- step 1：Launch the AWS CloudFormation template into your AWS account.
-  - Launch CloudFormation tempalte in AWS China Regions 
-  - Launch CloudFormation template in AWS Standard Regions
+- step 1：Launch the Amazon CloudFormation template into your Amazon account.
+  - Launch CloudFormation tempalte in Amazon Web Services China Regions 
+  - Launch CloudFormation template in Amazon Web Services Standard Regions
 - step 2：Access the web interface 
 - step 3：Upload videos and perform operations related to video captions
 
-## Step 1: Launch the AWS CloudFormation template
+## Step 1: Launch the Amazon CloudFormation template
 
-This automatic AWS CloudFormation template deploys the solution in AWS.
+This automatic Amazon CloudFormation template deploys the solution in Amazon Web Services.
 
-### Launch CloudFormation tempalte in AWS China Regions
+### Launch CloudFormation tempalte in Amazon Web Services China Regions
 
 **Prerequisites**
 
-1. Make sure a domain registered by ICP is available. Because the CloudFront address in AWS China Regions cannot be accessed directly, this domain name will be used as a CNAME to point to the CloudFront address created after the solution is deployed, and you can access the solution through this domain.
+1. Make sure a domain registered by ICP is available. Because the CloudFront address in Amazon China Regions cannot be accessed directly, this domain name will be used as a CNAME to point to the CloudFront address created after the solution is deployed, and you can access the solution through this domain.
 2. Make sure a domain hosting zone is available. If you haven’t created a hosted zone, please refer to[Use hosted zone][hostedzone].
 
 **Launch Amazon CloudFormation template**
 
-1. Log in to the AWS management console, select [AWS China (Beijing) Region operated by Sinnet][template-china1] or [AWS China (Ningxia) Region operated by NWCD][template-china2] to launch AWS CloudFormation template.
+1. Log in to the Amazon Web Services management console, select [Amazon Web Services China (Beijing) Region operated by Sinnet][template-china1] or [Amazon Web Services China (Ningxia) Region operated by NWCD][template-china2] to launch Amazon CloudFormation template.
 
 2. The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.
 
@@ -42,11 +42,11 @@ This automatic AWS CloudFormation template deploys the solution in AWS.
 
 6. On the **Configure stack options** page, choose **Next**.
 
-7. On the **Review** page, review and confirm the settings. Check the box acknowledging that the tempalte creates AWS Identity and Access Management (IAM) resources.
+7. On the **Review** page, review and confirm the settings. Check the box acknowledging that the tempalte creates Amazon Identity and Access Management (IAM) resources.
 
 8. Choose **Create stack** to deploy the stack.
 
-You can check the status of the stack in the **Status** column of the AWS CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
+You can check the status of the stack in the **Status** column of the Amazon CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
 
 **Create records on Route53 to resolve domain names**
 
@@ -58,7 +58,7 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 4. Enter the CloudFront URL into **Value** text box, not including https://. For example: xxxxxx.cloudfront.cn. 
 
-  You can get CloudFront URL from the solution AWS CloudFormation stack **Outputs** page.
+  You can get CloudFront URL from the solution Amazon CloudFormation stack **Outputs** page.
 
 5. Choose **Create records**.
 
@@ -72,11 +72,11 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 4. Choose **Save changes**. The configuration take effect upon the automatic CloudFront deployment.
 
-### Launch CloudFormation tempalte in AWS Standard Regions
+### Launch CloudFormation tempalte in Amazon Standard Regions
 
-**Launch AWS CloudFormation template**
+**Launch Amazon CloudFormation template**
 
-1. Log in to the AWS management console, select [Global region][template-global] to to launch AWS CloudFormation template.
+1. Log in to the Amazon Web Services management console, select [Global region][template-global] to to launch Amazon CloudFormation template.
 
 2. The template will be launched in the default region after you log in to the console. Please select from the region drop-down list in the console navigation bar to switch to other regions if you need to change the region.
 
@@ -93,25 +93,25 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 6. On the **Configure stack options** page, select **Next**.
 
-7. On the **Review** page, Check the box acknowledging that the tempalte creates AWS Identity and Access Management (IAM) resources.
+7. On the **Review** page, Check the box acknowledging that the tempalte creates Amazon Identity and Access Management (IAM) resources.
 
 8. Choose **Create stack** to deploy the stack.
 
-You can check the status of the stack in the **Status** column of the AWS CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
+You can check the status of the stack in the **Status** column of the Amazon CloudFormation console. You should receive a **CREATE_COMPLETE** status in approximately 10 minutes.
 
 ## Step 2: Access the web interface
 
-After the stack is successfully created, you can view the authentication information (**APIKey**) required to access the web interface and the created CloudFront URL (**ConsoleUrl**) on the **Outputs** tab of AWS CloudFormation stack.
+After the stack is successfully created, you can view the authentication information (**APIKey**) required to access the web interface and the created CloudFront URL (**ConsoleUrl**) on the **Outputs** tab of Amazon CloudFormation stack.
 
-Depending on the region where you create the stack, you can choose to access the web interface from the AWS China Regions or the AWS Standard Regions.
+Depending on the region where you create the stack, you can choose to access the web interface from the Amazon Web Services China Regions or the Amazon Web Services Standard Regions.
 
-### Access from AWS China Regions
+### Access from Amazon China Regions
 
 1. Enter https://<domain> in the address bar of the browser. For example, the domain is video-transcriber.ch.test.com.
 
 1. Select **Enter API Key**, and enter the authentication information in the pop-up input box.
 
-### Access from AWS Standard Regions
+### Access from Amazon Web Services Standard Regions
 
 1. Enter the CloudFront URL in the address bar of the browser.
 
@@ -154,7 +154,7 @@ You can proofread and edit the video captions.
 ### Translate captions
 
 You can translate the video captions, and then proofread and edit translated captions.
-**Note: Currently, this feature is only supported by the deployment in AWS Standard Regions.**
+**Note: Currently, this feature is only supported by the deployment in Amazon Web Services Standard Regions.**
 
 1. On the captions editing page, select **Translate to**.
 

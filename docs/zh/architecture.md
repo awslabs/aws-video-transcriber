@@ -1,6 +1,6 @@
 使用默认参数部署视频字幕字幕解决方案后，在亚马逊云科技中构建的环境如下图所示。
 
-![architecture](./images/Video-Transcriber-Architecture.png)
+![architecture](./images/Video-Transcriber-Architecture-Base.png)
       
 图：视频字幕解决方案架构
 

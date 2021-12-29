@@ -1,8 +1,8 @@
 - [Amazon S3][s3]
 - [Amazon API Gateway][api-gateway]
-- [AWS Lambda][lambda]
+- [Amazon Lambda][lambda]
 - [Amazon DynamoDB][dynamodb]
-- [AWS Elemental MediaConvert][mediaconvert]
+- [Amazon Elemental MediaConvert][mediaconvert]
 - [Amazon Transcribe][transcribe]
 - [Amazon Translate][translate]
 
