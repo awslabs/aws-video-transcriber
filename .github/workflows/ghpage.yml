@@ -26,6 +26,8 @@ jobs:
       
       - name: Build mkdocs
         run: |
+          sed -i 's/zh-branded/zh/g' docs/mkdocs.zh.yml
+          sed -i 's/en-branded/en/g' docs/mkdocs.en.yml
           mkdocs build -f ./docs/mkdocs.en.yml
           mkdocs build -f ./docs/mkdocs.zh.yml
           cp -av ./docs/index.html ./docs/site
