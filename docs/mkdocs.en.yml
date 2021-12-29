@@ -1,0 +1,19 @@
+INHERIT: ./mkdocs.base.yml
+site_name: Video Transcriber Implementation Guide
+docs_dir: en-branded
+site_dir: ./site/en
+theme:
+  language: en
+nav:
+  - Welcome: index.md
+  - Cost: cost.md
+  - Architecture overview: architecture.md
+  - Security: security.md
+  - Supported regions: regions.md
+  - CloudFormation template: template.md
+  - Automated deployment: deployment.md
+  - Additional resources: additional-resources.md
+  - Uninstall the solution: uninstall.md
+  - Source code: source.md
+  - Revisions: revisions.md
+  - Notices: notices.md

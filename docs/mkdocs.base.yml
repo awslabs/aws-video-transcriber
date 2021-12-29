@@ -1,0 +1,19 @@
+site_name: Video Transcriber Docs
+site_url: https://www.amazonaws.cn/solutions/video-transcriber/
+repo_url: https://github.com/awslabs/aws-video-transcriber
+theme:
+  name: material
+  features:
+    - tabs
+    - search.suggest
+    - search.highlight
+plugins:
+  - search
+extra:
+  alternate:
+    - name: English
+      link: /aws-video-transcriber/en/
+      lang: en
+    - name: 中文
+      link: /aws-video-transcriber/zh/
+      lang: zh

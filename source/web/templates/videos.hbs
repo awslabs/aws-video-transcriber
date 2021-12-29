@@ -1,0 +1,496 @@
+<!--
+  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  A copy of the License is located at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+  or in the "license" file accompanying this file. This file is distributed 
+  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+  express or implied. See the License for the specific language governing 
+  permissions and limitations under the License.
+-->
+
+{{#if loading}}
+	<div class="text-center"><img src="img/loading.gif" class="img-fluid"/></div>
+{{else}}		
+	<div class="jumbotron">
+		<p class="lead"><a href="{{refreshLink}}"><i class="fas fa-sync-alt" title="Refresh videos"></i></a> The following videos have been added to the system. Click on a video to preview, edit, download captions and burn captions into video. You may also upload new MP4, MKV or MOV videos for processing. </p>
+	</div>
+
+	<div id="uploadContainer" class="m-4">
+		<div id="actions" class="row">
+		    <div class="col-lg-12">
+		      <span class="btn btn-primary fileinput-button dz-clickable">
+		          <i class="fa fa-cloud-upload-alt"></i>
+		          <span>Upload videos...</span>
+		      </span>
+		    </div>
+		</div>
+		<div class="table table-striped files" id="previews">
+		    <div id="template" class="file-row dz-image-preview">
+		        <div>
+		            <span class="preview"><img data-dz-thumbnail></span>
+		        </div>
+		        <div>
+		            <p class="name" data-dz-name></p>
+		            <strong class="error text-danger" data-dz-errormessage></strong>
+		        </div>
+		        <div>
+		            <p class="size" data-dz-size></p>
+		            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+		                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+		            </div>
+		        </div>
+		        <div class="p-1">
+		            <button class="btn btn-success start">
+		                <i class="fa fa-cloud-upload-alt"></i>
+		                <span>Start</span>
+		            </button>
+					<select id="languageSelection" class="form-select btn btn-success" aria-label="Default select example">
+						<option selected value="{{defaultLanguage}}">{{defaultLanguage}}</option>						
+						<option value="zh-CN">zh-CN</option>
+						<option value="en-AU">en-AU</option>
+						<option value="en-US">en-US</option>
+						<option value="en-GB">en-GB</option>
+						<option value="es-US">es-US</option>
+						<option value="en-IN">en-IN</option>
+						<option value="de-DE">de-DE</option>
+						<option value="fr-CA">fr-CA</option>
+						<option value="fr-FR">fr-FR</option>
+						<option value="it-IT">it-IT</option>
+						<option value="pt-BR">pt-BR</option>
+						<option value="ta-IN">ta-IN</option>
+						<option value="te-IN">te-IN</option>
+						<option value="ja-JP">ja-JP</option>
+						<option value="ko-KR">ko-KR</option>
+					</select>							
+		            <button data-dz-remove class="btn btn-default cancel">
+		                <i class="fa fa-ban"></i>
+		                <span>Cancel</span>
+		            </button>
+		            <button data-dz-remove class="btn btn-default delete">
+		                <i class="fa fa-check-circle"></i>
+		                <span>Upload complete</span>
+		            </button>
+		        </div>
+		    </div>
+		</div>
+	</div>	
+
+	<hr/>
+
+	<ul class="nav nav-tabs" id="videoTabs" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" id="processing-tab" data-toggle="tab" href="#processing" role="tab" aria-controls="processing" aria-selected="true"><span class="badge badge-secondary">{{processingVideos.length}}</span> Processing</a>
+		</li>	
+		<li class="nav-item">
+			<a class="nav-link" id="ready-tab" data-toggle="tab" href="#ready" role="tab" aria-controls="ready" aria-selected="false"><span class="badge badge-primary">{{readyVideos.length}}</span> Ready to edit</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="completed-tab" data-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="false"><span class="badge badge-success">{{completedVideos.length}}</span> Completed</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="errored-tab" data-toggle="tab" href="#errored" role="tab" aria-controls="errored" aria-selected="false"><span class="badge badge-warning">{{erroredVideos.length}}</span> Errored</a>
+		</li>			
+	</ul>
+	<div class="tab-content" id="videoTabsContent">
+		<br/>
+
+		<div class="tab-pane fade show active" id="processing" role="tabpanel" aria-labelledby="processing-tab">
+			<div class="p-2">
+				{{#if processingVideos.length}}
+				<table class="table table-striped" id="processingVideoTable">
+					<thead>
+						<tr>
+							<th scope="col">&nbsp;</th>
+							<th scope="col">Processed</th>
+							<th scope="col">Name</th>							
+							<th scope="col">Description</th>
+							<th scope="col">Status</th>
+							<th scope="col">&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#each processingVideos}}
+					<tr>
+						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
+						<td>{{formattedDate}}</td>
+						<td class="wrappable">{{name}}</td>											
+						<td class="wrappable">{{description}}</td>
+						<td class="wrappable">{{statusText}}</td>
+						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
+					</tr>
+					{{/each}}
+					</tbody>
+				</table>
+				{{else}}
+					<div class="alert alert-secondary">
+  						<a href="{{refreshLink}}"><i class="fas fa-sync-alt" title="Refresh videos"></i></a> No videos are currently being processed.
+					</div>
+				{{/if}}
+			</div>
+		</div>
+		
+		<div class="tab-pane fade" id="ready" role="tabpanel" aria-labelledby="ready-tab">
+			<div class="p-2">
+				{{#if readyVideos.length}}
+				<table class="table table-striped" id="readyVideoTable">
+					<thead>
+						<tr>
+							<th scope="col">&nbsp;</th>
+							<th scope="col">Processed</th>
+							<th scope="col">Name</th>
+							<th scope="col">Video Language</th>	
+							{{#if enableTranslate}}							
+							<th scope="col">Translated Language</th>
+							{{/if}}												
+							<th scope="col">Description</th>
+							<th scope="col">Status</th>
+							<th scope="col">&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#each readyVideos}}
+					<tr>
+						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
+						<td>{{formattedDate}}</td>		
+						<td class="wrappable">{{name}}</td>
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{language}}</a></td>					
+						{{#if enableTranslate}}
+						<td class="wrappable"><a href="#video/{{videoId}}_{{translatedLanguage}}" onclick="dynamicRoute(event);">{{translatedLanguage}}</a></td>
+						{{/if}}						
+						<td class="wrappable">{{description}}</td>						
+						<td class="wrappable">{{statusText}}</td>
+						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
+					</tr>
+					{{/each}}
+					</tbody>
+				</table>
+				{{else}}
+					<div class="alert alert-secondary">
+  						<a href="{{refreshLink}}"><i class="fas fa-sync-alt" title="Refresh videos"></i></a> No videos are currently currently ready for editing.
+					</div>
+				{{/if}}
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+			<div class="p-2">
+				{{#if completedVideos.length}}
+				<table class="table table-striped" id="completedVideoTable">
+					<thead>
+						<tr>
+							<th scope="col">Processed</th>
+							<th scope="col">Name</th>
+							<th scope="col">Video Language</th>	
+							{{#if enableTranslate}}
+							<th scope="col">Translated Language</th>
+							{{/if}}												
+							<th scope="col">Description</th>
+							<th scoqpe="col">Status</th>
+							<th scope="col">&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#each completedVideos}}
+					<tr>
+						<td>{{formattedDate}}</td>
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>
+						<td>
+							<div class="dropdown show">
+								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{language}}</a>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '')">SRT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsTEXT('{{videoId}}', '{{name}}', '')">TEXT</a>
+									{{#if s3BurnedVideoPath}}
+										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '')">BurnedVideo</a>
+									{{/if}}
+								</div>
+							</div>
+						</td>
+						{{#if enableTranslate}}						
+						<td>
+							<div class="dropdown show">
+								<a href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{translatedLanguage}}</a>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<a class="dropdown-item" onclick="downloadCaptionsVTT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">WEBVTT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsSRT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">SRT</a>
+									<a class="dropdown-item" onclick="downloadCaptionsTEXT('{{videoId}}', '{{name}}', '{{translatedLanguage}}', 'true')">TEXT</a>			
+									{{#if s3BurnedTranslatedVideoPath}}
+										<a class="dropdown-item" onclick="downloadBurnedVideo('{{videoId}}', '{{name}}', '{{translatedLanguage}}')">BurnedVideo</a>
+									{{/if}}	
+								</div>
+							</div>
+						</td>
+						{{/if}}						
+						<td class="wrappable">{{description}}</td>
+						<td class="wrappable">{{statusText}}</td>
+						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
+					</tr>
+					{{/each}}
+					</tbody>
+				</table>
+				{{else}}
+					<div class="alert alert-secondary">
+  						<a href="{{refreshLink}}"><i class="fas fa-sync-alt" title="Refresh videos"></i></a> No completed videos found.
+					</div>
+				{{/if}}
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="errored" role="tabpanel" aria-labelledby="errored-tab">
+			<div class="p-2">
+				{{#if erroredVideos.length}}
+				<table class="table table-striped" id="erroredVideoTable">
+					<thead>
+						<tr>
+							<th scope="col">&nbsp;</th>
+							<th scope="col">Processed</th>
+							<th scope="col">Name</th>							
+							<th scope="col">Description</th>
+							<th scope="col">Status</th>
+							<th scope="col">&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#each erroredVideos}}
+					<tr>
+						<td><a href="javascript: reprocessVideo('{{videoId}}');"><i class="fa fa-play" title="Reprocess video"></i></a></td>
+						<td>{{formattedDate}}</td>		
+						<td class="wrappable"><a href="#video/{{videoId}}" onclick="dynamicRoute(event);">{{name}}</a></td>					
+						<td class="wrappable">{{description}}</td>
+						<td class="wrappable">{{statusText}}</td>
+						<td><a href="javascript: deleteVideo('{{videoId}}');"><i class="fa fa-trash" title="Delete video"></i></a></td>
+					</tr>
+					{{/each}}
+					</tbody>
+				</table>
+				{{else}}
+					<div class="alert alert-secondary">
+  						<a href="{{refreshLink}}"><i class="fas fa-sync-alt" title="Refresh videos"></i></a> No videos have failed processing.
+					</div>
+				{{/if}}
+			</div>
+		</div>		
+
+	</div>
+
+	<script>
+		var enableTranslate = '{{enableTranslate}}';
+		console.log('enableTranslate: ' + enableTranslate);
+		$(function() {
+//			renderSelection();
+			$("#erroredVideoTable").dataTable({
+				"language": {
+      				"emptyTable": "No errored videos were found."
+    			},			
+				"order": [[ 1, "desc" ]],
+				"iDisplayLength": 10,
+				"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+				"columns": [
+					{ "orderable": false },				
+					null,
+					null,
+					null,
+					null,
+					{ "orderable": false }
+				]
+			});
+
+			$("#processingVideoTable").dataTable({
+				"language": {
+      				"emptyTable": "No currently processing videos were found."
+    			},
+				"order": [[ 1, "desc" ]],
+				"iDisplayLength": 10,
+				"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+				"columns": [
+					{ "orderable": false },				
+					null,
+					null,
+					null,
+					null,
+					{ "orderable": false }
+				]				
+			});
+			if (enableTranslate == 'true')
+			{
+				$("#readyVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No videos ready for editing were found."
+					},			
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [
+						{ "orderable": false },				
+						null,
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]				
+				});
+			}
+			else
+			{			
+				$("#readyVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No videos ready for editing were found."
+					},			
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [
+						{ "orderable": false },				
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]				
+				});
+			}	
+			if (enableTranslate == 'true')
+			{
+				console.log("this branch")
+				console.log("enableTranslate: " + enableTranslate);
+				$("#completedVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No completed videos were found."
+					},
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [			
+						null,
+						null,
+						null,
+						null,					
+						null,
+						null,
+						{ "orderable": false }
+					]
+				});
+			} 
+			else
+			{				
+				$("#completedVideoTable").dataTable({
+					"language": {
+						"emptyTable": "No completed videos were found."
+					},
+					"order": [[ 1, "desc" ]],
+					"iDisplayLength": 10,
+					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"columns": [			
+						null,
+						null,
+						null,
+						null,
+						null,
+						{ "orderable": false }
+					]
+				});
+			}
+
+			// https://codepen.io/fuxy22/pen/pyYByO
+		    var previewNode = document.querySelector("#template");
+			previewNode.id = "";
+			var previewTemplate = previewNode.parentNode.innerHTML;
+			previewNode.parentNode.removeChild(previewNode);
+
+			var dropZoneOptions = {
+
+				url: '/',
+				uploadMultiple: false,
+				method: 'put',			
+				autoProcessQueue: true,
+				previewTemplate: previewTemplate,
+				autoQueue: false,
+				previewsContainer: "#previews",
+				clickable: ".fileinput-button",
+				maxFiles: 5,
+				maxFilesize: 5119,
+				acceptedFiles: 'video/mp4,video/quicktime,.mkv',
+				timeout: 360000000,
+				thumbnailWidth: 80,
+				thumbnailHeight: 80,
+				thumbnailMethod: 'contain',
+
+				init: function() {
+
+					/**
+					 * Send raw file content
+					 * https://github.com/enyo/dropzone/issues/590
+					 */
+					this.on('sending', function(file, xhr) {
+					
+						file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+
+						console.log('[INFO] swap to send raw file content');
+						var _send = xhr.send;
+						xhr.send = function() 
+						{
+							_send.call(xhr, file);
+						};
+					});									
+
+					/**
+					 * Fired when files are added
+					 */
+					this.on("addedfile", function(file) {
+						file.previewElement.querySelector(".start").onclick = function() {
+							var url = getSignedUrl(file).then(function(response) {
+								myDropZone.options.url = response.data.signedUrl;
+								console.log('[INFO] set url: ' + myDropZone.options.url);
+
+								myDropZone.options.headers = {
+									'Content-Type': file.type
+								};
+															
+								myDropZone.enqueueFile(file);
+			    			}).catch(function(error) {
+			    				console.log('[ERROR] failed to fetch signed url', error);
+			    			});
+							var languageSelect = document.getElementById("languageSelection");
+							console.log('language is: ' + languageSelect.value);
+							console.log('file name is: ' + file.name);
+							putLanguage(file.name, languageSelect.value);
+						};
+					});
+				}
+		    };
+
+			var myDropZone = new Dropzone("#uploadContainer", dropZoneOptions);
+		    
+		});
+
+		$(function()
+		{
+			var defaultTab = '#processing-tab';
+			var sessionKey = 'videoLastTab';
+
+			$('a[data-toggle="tab"]').on('click', function (e)
+			{
+				sessionStorage.setItem(sessionKey, $(e.target).attr('href'));
+			});
+
+			var lastTab = sessionStorage.getItem(sessionKey);
+
+			if (!lastTab)
+			{
+				lastTab = defaultTab;
+				sessionStorage.setItem(sessionKey, lastTab);
+			}
+
+			$('a[href="'+lastTab+'"]').click();
+		});		
+    </script>
+{{/if}}

@@ -1,207 +1,151 @@
 ## AWS Video Transcriber
 
-This solution provides a serverless, single page web application and set of supporting Amazon API Gateway end points and backing AWS Lambda functions which allow users to upload videos into Amazon S3 and compute and edit closed captions.
-
-## On this Page
-- [Architecture](#architecture)
-- [Deploying the Solution](#deploying-the-solution)
-- [Solution Pricing](#solution-pricing)
-- [Launching the Website](#launching-the-website)
-- [Entering your API Key](#entering-your-api-key)
-- [Creating a Vocabulary](#creating-a-vocabulary)
-- [Creating Tweaks](#creating-tweaks)
-- [Listing Videos](#listing-videos)
-- [Uploading Videos](#uploading-videos) 
-- [Editing Captions](#editing-captions)
-- [Downloading Captions](#downloading-captions)
-- [License](#license)
-- Support Appendix
-  - [Troubleshooting Deployment](#troubleshooting-deployment)
-  - [Removing the Solution](#removing-the-solution)
-  - [Troubleshooting Solution Removal](#troubleshooting-solution-removal)
-
+This solution is built on AWS Lambda serverless architecture, the solution integrates
+services such as Amazon Transcribe, Amazon Translate and Amazon Elemental MediaConvert to help customers complete video caption related
+operations on a web interface. For example, automatically generating video captions,
+proofreading and editing video captions, translating captions, and burning captions into
+videos.
 
 ## Architecture
+![architecture](./docs/en/images/Video-Transcriber-Architecture-Base.png)
 
-![Architecture](./web/img/architecture-001.png)
+This solution deploys the Amazon CloudFormation template in your AWS Cloud account and completes the following settings.
+
+1. [Amazon S3][s3] (Web App) stores front-end static files
+2. Client side sends the request through [Amazon API Gateway][api-gateway]
+3. [AWS Lambda][lambda] Function receives the request from Amazon API Gateway, and process the business logic
+4. Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed
+5. AWS Lambda Function gets/updates videos' profile from [Amazon DynamoDB][dynamodb]
+6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)
+7. AWS Lambda Function invokes [Amazon Transcribe][transcribe] captions from audio and store the result into Amazon S3 (Captions)
+8. AWS Lambda Function invokes [Amazon Translate][translate] to translate captions to another language and stores the result into Amazon S3 (Captions)
 
 ## Deploying the Solution
 
-Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elastic Transcoder. Click a button below to deploy to your region of choice.
+Prebuilt CloudFormation templates and assets have been deployed to AWS regions with both Amazon Transcribe and Amazon Elemental MediaConvert. When launching the template, you will need to enter a stack name, an API key and choose a language as default language that Transcribe will use to process your video's audio data. You can still select language before upload the video to process
 
-When launching the template, you will need to enter a stack name, an API key and choose a locale that Transcribe will use to process your video's audio data. 
+The API Key is used to provide to users access to the system. You must provide a strong, random, alpha-numeric API key between 20 and 70 characters long. Otherwise the stack will fail to launch and you will see "Invalid Key Error"
+![Invalid Key Error](./docs/img/InvalidKey.png)
 
-*The API Key is used to provide to users access to the system. You must provide a strong, random, alpha-numeric API key between 20 and 70 characters long. Otherwise the stack will fail to launch and you will see [this error](#invalid-api-key).*
 
 ### One click deployment
 
 | AWS Region Name | AWS Region Id | Deploy Solution |
 | ---- | ----  | ---- |
-| US East (N. Virginia) | us-east-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-east-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-east-1&stackName=&templateURL=https://s3.us-east-1.amazonaws.com/aws-captions-deployment-us-east-1/cloudformation/aws-video-transcriber-cloudformation.json) |
-| US West (N. California) | us-west-1 | [![Launch Stack](web/img/launch-stack.svg)](https://us-west-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-west-1&stackName=&templateURL=https://s3.us-west-1.amazonaws.com/aws-captions-deployment-us-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
-| US West (Oregon) | us-west-2 | [![Launch Stack](web/img/launch-stack.svg)](https://us-west-2.console.aws.amazon.com/cloudformation/home#/stacks/new?region=us-west-2&stackName=&templateURL=https://s3.us-west-2.amazonaws.com/aws-captions-deployment-us-west-2/cloudformation/aws-video-transcriber-cloudformation.json) |
-| EU (Ireland) | eu-west-1 | [![Launch Stack](web/img/launch-stack.svg)](https://eu-west-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=eu-west-1&stackName=&templateURL=https://s3.eu-west-1.amazonaws.com/aws-captions-deployment-eu-west-1/cloudformation/aws-video-transcriber-cloudformation.json) |
-| Asia Pacific (Singapore) | ap-southeast-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-southeast-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-southeast-1&stackName=&templateURL=https://s3.ap-southeast-1.amazonaws.com/aws-captions-deployment-ap-southeast-1/cloudformation/aws-video-transcriber-cloudformation.json) |
-| Asia Pacific (Sydney) | ap-southeast-2 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-southeast-2&stackName=&templateURL=https://s3.ap-southeast-2.amazonaws.com/aws-captions-deployment-ap-southeast-2/cloudformation/aws-video-transcriber-cloudformation.json) |
-| Asia Pacific (Mumbai) | ap-south-1 | [![Launch Stack](web/img/launch-stack.svg)](https://ap-south-1.console.aws.amazon.com/cloudformation/home#/stacks/new?region=ap-south-1&stackName=&templateURL=https://s3.ap-south-1.amazonaws.com/aws-captions-deployment-ap-south-1/cloudformation/aws-video-transcriber-cloudformation.json) |
+| US East (N. Virginia) | us-east-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template) |
+| China (Beijing) | cn-north-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template) |
+| China (Ningxia) | cn-northwest-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template) |
 
-![Stack parameters](manual/img/StackParameters.png)
+![Stack parameters](./docs/img/stack-info.png)
 
 ## Solution Pricing
 
-You are responsible for the cost of the AWS services used while running the video transcription solution. As of the date of publication, the costs for running this solution in the US East (N. Virginia) Region are shown in the table below. 
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021， the cost of the solution varies depending on:
 
-The cost depends on the number of and length of uploaded videos, and does not include data transfer fees, which will vary depending on the number of users and frequency of viewing.
+- The number of requests to Amazon API Gateway
+- The number of invoking AWS Lambda 
+- The number of read/write Amazon DynamoDB
+- The number of videos that AWS Elemental MediaConvert processed. The solution uses AWS Elemental MediaConvert to extract audios from videos or burn captions into videos
+- The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions
+- The number of captions characters that Amazon Translate processed. The solution uses Amazon Translate to translate the captions to another language. 
 
-You will also be charged for stored video and audio files in S3.
-		
-Video transcoding costs (for non-MP4 videos):
+## Example: In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions
 
-	$0.03 per minute
+The cost of using this solution to process this video is shown below:
 
-Audio Transcoding costs:
+| Service | Dimensions | Cost |
+|---|---|---|
+| AWS Elemental MediaConvert | Extract 1 hour audio | $0.18     |
+| AWS Elemental MediaConvert | Burn captions into 1 hour video | $0.45     |
+| Amazon Transcribe | Extract text from 1 hour audio | $1.44 |
+| Amazon Translate | tranlsate 10000 characters | $0.15 |
+| Amazon API Gateway | 500 requests | $0.0017 |
+| AWS Lambda | 500 requests （avg 300ms，128MB Memory） | $0.0001 |
+| Amazon DynamoDB | 1000 read/write | $0.00075 |
+|  |  | Total：$2.22 |
 
-	$0.0045 per minute
+## Access the web interface
 
-Transcribe costs:
+After the stack is successfully created, you can view the authentication information (**APIKey**) required to access the web interface and the created CloudFront URL (**ConsoleUrl**) on the **Outputs** tab of AWS CloudFormation stack.
 
-	$0.024 per minute
-	
-Amazon S3 Storage costs:
+1. Enter the CloudFront URL in the address bar of the browser.
 
-	$0.023 per GB per month
+2. Select **Enter API Key**, and enter the authentication information in the pop-up input box.
 
-Pricing is quoted per minute but Amazon Transcribe actually charges per second. Prices are subject to change. For full details, see the pricing webpage for each AWS service for the region you deploy the solution to.
+## Upload videos and perform operations related to video captions
 
-[Amazon Transcribe Pricing](https://aws.amazon.com/transcribe/pricing/)
+In the web interface, select **Videos** at the top of the page. The page displays four tabs, corresponding to the different status of videos:
 
-[Amazon Elastic Transcoder Pricing](https://aws.amazon.com/elastictranscoder/pricing/)
+- Videos being processed
+- Videos ready for editing
+- Videos marked as editing completed
+- Videos with errors during processing
 
-[Amazon S3 Pricing](https://aws.amazon.com/s3/pricing/)
+![](./docs/en/images/user-guide-video-management.png)
 
-## Launching the Website
+### Upload video
 
-Once you have deployed your stack, the link to your website is displayed in the *CloudFormation Outputs tab* along with your API Key. Click the *Website* link to access the site.
+You can upload videos without captions for processing.
 
-![CloudFormation outputs](manual/img/CloudFormationParameters.png)
+1. On the **Videos** page, select **Upload videos...**.
 
-## Entering your API key
+2. Select the video, then select **Open**.
 
-On the home page there an *Enter API Key* button used for entering your API key, locate your API key using the *Outputs* tab of the CloudFormation service after deployment and enter it.
+3. Select the video language, and then choose **Start**. The system will start uploading the video and automatically process and generate captions.
 
-![Home page and API Key](manual/img/HomePage.png)	
-## Creating a Vocabulary
+    Firstly, the video is displayed on the **Processing** tab, and after the captions are generated, the video will be displayed on the **Ready to edit** tab.
 
-After deployment and before uploading videos, log into your site, click on the *Vocabulary* page and create a custom vocabulary with at least one term. You might consider using:
+### Proofread and edit captions 
 
-	A.W.S.
-	
-You can enter up to 50kb of custom vocabulary terms, if you get a failure to save please read the [Amazon Transcribe formatting guide for custom vocabularies](https://github.com/awsdocs/amazon-transcribe-developer-guide/blob/master/doc_source/custom-vocabulary-files.md).
-	
-![Vocabulary page](manual/img/VocabularyPage.png)
+You can proofread and edit the video captions.
 
-You can add common terms for your business here such as brand names and industry specific terms to guide Transcribe in providing the best automated result.
+1. On the **Videos** page, select the **Ready to edit** tab.
 
-After saving the vocabulary, Transcribe needs to train against the new vocabulary which can take several minutes. You are given visual feedback as to when this process is complete. Videos launched during this time will fail if the vocabulary is not in a ready state.
-	
-## Creating Tweaks
+2. Select the language link from the **Video Language** column to enter the captions editing page. The functions include:
+- Play the video content paragraph by paragraph to proofread the captions.
+- Modify the captions.
+- Merge or split captions parapraphs.
 
-After deployment log into your site, click on the Tweaks tab and create a custom tweak configuration with at least one term. You might consider using:
+### Translate captions
 
-	A.W.S.=AWS
-	
-Tweaks are used to transform common transcription issues you might find and also to correct Amazon Transcribe custom vocabulary verbatim transcriptions.
+You can translate the video captions, and then proofread and edit translated captions.
+**Note: Currently, this feature is only supported by the deployment in AWS Standard Regions.**
 
-![Tweaks page](manual/img/TweaksPage.png)
+1. On the captions editing page, select **Translate to**.
 
-## Listing Videos
+2. After selecting the target language in the drop-down list, the system will translate the captions into the target language. After the translation is completed, you can also proofread and edit the translated captions.
 
-The Videos page shows the current videos in the system and organizes them into tabs based on their processing status. You can search for videos here, start the caption editing process, trigger reprocessing, delete videos and download captions for completed videos.
+![](./docs/en/images/user-guide-video-translate.png)
+![](./docs/en/images/user-guide-video-translate-1.png)
 
-![Videos page](manual/img/VideosPage.png)
+### Burn captions into the video
+You can burn the generated captions into the video to create the video with captions.
 
-## Uploading Videos
+1. On the **Videos** page, select the **Ready to edit** tab.
 
-You can upload videos from any browser and launching the site on mobile allows users to capture and upload videos directly from a mobile phone.
+2. Select the language link from the **Video Language** column to enter the captions editing page.
 
-Click on the *Upload Videos...* button to start the video upload process.
+3. Select **Burn in**。
+![](./docs/en/images/user-guide-video-burn.png)
 
-New AWS accounts have a service limit of 10 concurrent transcription jobs, this limit can be raised with an AWS service ticket. Videos launched above this threshold will fail and can be relaunched from the *Errored tab*.
+### Download captions or video with captions
 
-## Editing Captions
+After the captions or videos with captions are generated, you can download them directly:
 
-Once your video has been transcribed you can tweak the captions to get things perfect. When first viewing the video, the system starts in a mode that pauses between each caption block, toggle this mode to view the video continuously.
+- If the video is in the editing status, select the video and the corresponding language to enter the video editing page to download.
+![](./docs/en/images/user-guide-video-download-1.png)
 
-You can also edit the video name and description here to assist in searching for the video and organising your video collection.
-
-Once you have perfected the captions for a video, click the *Done* button to move the video to the completed tab.
-
-The *Auto save* function flushes edits regularly to DynamoDB.
-
-![Video page](manual/img/VideoPage.png)
+- If the video is in the completed status, you can directly download the captions or videos in the corresponding language of the video on the **Completed** tab of the **Videos** page.
+![](./docs/en/images/user-guide-video-download-2.png)
 
 ## License
 
 This library is licensed under the Apache 2.0 License.
 
-## Downloading Captions
-
-You can download completed captions from the [Caption editing page](#editing-captions) or from the table on the completed videos tab.
-
-## Troubleshooting Deployment
-
-### Deploying to multiple regions
-
-IAM roles and policies are global and are prefixed with the stack name, if you get IAM role or policy conflicts, simply use a different stack name in each deployed region.
-
-### Deploying multiple solution instances to a single AWS region
-
-This is not currently supported but will be considered if there is customer demand. It will require all resources to be prefixed with the CloudFormation AWS::StackName pseudo parameter.
-
-### Invalid API Key
-
-If you see the following error while launching your CloudFormation stack:
-
-![Invalid API Key](manual/img/InvalidKey.png)
-
-Please verify the API Key you provided is between 20 and 70 characters long and only contains Alpha-Numeric characters, it uses the following regex:
-
-	[a-zA-Z0-9]{20,70}
-	
-### CloudWatch log group already exists
-	
-If you are deploying to the same region after previously removing the stack you may see the following error:
-
-![Log group exists](manual/img/LogGroupExists.png)
-
-Simply delete the stack, go to the [CloudWatch Logs Console](https://console.aws.amazon.com/cloudwatch/home#logs) in the region and remove the dangling log group:
-
-	/aws/lambda/prod-aws-captions-customresource
-
-It can remain after a stack removal due to CloudWatch log flushing recreating the log group. Then simply deploy the CloudFormation stack once again.
-
-### Custom Resource Creation Failures
-
-Please raise a GitHub Issue with the error reported in the stack and we will investigate.
-
-## Removing the Solution
-
-To remove the solution delete the CloudFormation stack. Note that deletion will fail if you have not emptied the video, audio and transcribe buckets created as part of the stack.
-
-## Troubleshooting Solution Removal
-
-### CloudWatch log group not removed
-
-After remove the stack, the [CloudWatch Log Group](https://console.aws.amazon.com/cloudwatch/home#logs) for the Lambda custom resource is left behind and must be manually removed before redeploying:
-
-	/aws/lambda/prod-aws-captions-customresource
-
-### S3 buckets not empty
-
-CloudFormation will refuse to remove non-empty [S3 buckets](https://s3.console.aws.amazon.com/s3/home) so these must be manually emptied before removing the stack:
-
-	prod-aws-captions-audio-<region>-<accountId>
-	prod-aws-captions-video-<region>-<accountId>
-	prod-aws-captions-transcribe-<region>-<accountId>
-
-If you get this failure, empty the buckets using the [S3 console](https://s3.console.aws.amazon.com/s3/home) and try deleting the stack again.
+[s3]: https://aws.amazon.com/s3/
+[api-gateway]: https://aws.amazon.com/api-gateway/
+[lambda]: https://aws.amazon.com/lambda/
+[dynamodb]: https://aws.amazon.com/dynamodb/
+[mediaconvert]: https://aws.amazon.com/mediaconvert/
+[transcribe]: https://aws.amazon.com/transcribe/
+[translate]: https://aws.amazon.com/translate/

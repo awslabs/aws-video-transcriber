@@ -1,0 +1,15 @@
+{
+    "name": "VideoTranscriber",
+    "version": "1.0.0",
+    "description": "Welcome to the AWS Video Transcriber demo. This code base aims to deomonstrate development of a serverless framework for creating closed captions from video content and uses a variety of AWS services.",
+    "repository": {
+        "type": "git",
+        "url": "ssh://git-codecommit.us-west-2.amazonaws.com/v1/repos/VideoTranscriber"
+    },
+    "keywords": [],
+    "author": "Mingtong",
+    "license": "Apache License",
+    "dependencies": {
+        "srt-parser-2": "1.1.6"
+    }
+}
