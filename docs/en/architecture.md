@@ -1,6 +1,6 @@
 Deploying this solution with the default parameters builds the following environment in the AWS Cloud.
 
-![architecture](./images/Video-Transcriber-Architecture.png)
+![architecture](./images/Video-Transcriber-Architecture-Base.png)
 
 Figure: Solution Architecture
 

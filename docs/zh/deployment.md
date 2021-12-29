@@ -7,8 +7,8 @@
 您可以在亚马逊云科技上部署并使用解决方案，过程如下：
 
 - 步骤1：启动堆栈。
-  - 从中国区域启动堆栈 
-  - 从全球区域启动堆栈
+    - 从中国区域启动堆栈 
+    - 从全球区域启动堆栈
 - 步骤2：访问网页控制台。
 - 步骤3：上传视频并进行视频字幕操作。
 
@@ -35,10 +35,10 @@
 
 5. 在**参数**部分，查看解决方案模板的参数并根据需要进行修改，然后选择**下一步**。
 
-|  参数名称   |  默认值 |  描述 |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
-| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
+    |  参数名称   |  默认值 |  描述 |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -52,11 +52,11 @@
 
 1. 登录Route53的管理界面，选择**创建记录**。
 
-2. 在**记录名称**文本框内输入所需要的二级域名，后缀默认为ICP备案的一级域名，例如，video-transctiber.ch.test.com。
+2. 在**记录名称**文本框内输入所需要的二级域名，后缀默认为ICP备案的一级域名，例如，`video-transctiber.ch.test.com`。
 
 3. 选择**记录类型**为CNAME。
 
-4. 在**值**文本框内输入CloudFront的地址，注意其中不包括https://。例如，xxxxxx.cloudfront.cn。您可在Amazon CloudFormation的**输出**标签页中查看创建的CloudFront的地址。
+4. 在**值**文本框内输入CloudFront的地址，注意其中不包括`https://`。例如，`xxxxxx.cloudfront.cn`。您可在Amazon CloudFormation的**输出**标签页中查看创建的CloudFront的地址。
 
 5. 选择**创建记录**完成操作。
 
@@ -66,7 +66,7 @@
 
 2. 选择**编辑**进入**编辑设置**.
 
-3. 在**备用域名(CNAME)**项选择**添加项目**，输入域名。例如：video-transctiber.ch.test.com。
+3. 在**备用域名(CNAME)**项选择**添加项目**，输入域名。例如：`video-transctiber.ch.test.com`。
 
 4. 选择**保存更改**。等待CloudFront自动完成部署，配置即可生效。
 
@@ -84,10 +84,10 @@
 
 5. 在**参数**部分，查看解决方案模板的参数并根据需要进行修改，然后选择**下一步**。
 
-|  参数名称   |  默认值 |  描述 |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
-| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
+    |  参数名称   |  默认值 |  描述 |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -105,7 +105,7 @@
 
 ### 从中国区域访问
 
-1. 在浏览器的地址栏输入https://<域名>。例如，域名为 video-transcriber.ch.test.com。
+1. 在浏览器的地址栏输入https://<域名>。例如，域名为`video-transcriber.ch.test.com`。
 
 1. 选择**Enter API Key**，在弹出的输入框中输入认证信息。
 

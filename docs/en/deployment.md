@@ -6,11 +6,11 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 Use the following steps to deploy this solution on AWS.
 
-- step 1：Launch the AWS CloudFormation template into your AWS account.
-  - Launch CloudFormation tempalte in AWS China Regions 
-  - Launch CloudFormation template in AWS Standard Regions
-- step 2：Access the web interface 
-- step 3：Upload videos and perform operations related to video captions
+- Step 1：Launch the AWS CloudFormation template into your AWS account.
+    - Launch CloudFormation tempalte in AWS China Regions 
+    - Launch CloudFormation template in AWS Standard Regions
+- Step 2：Access the web interface 
+- Step 3：Upload videos and perform operations related to video captions
 
 ## Step 1: Launch the AWS CloudFormation template
 
@@ -35,10 +35,10 @@ This automatic AWS CloudFormation template deploys the solution in AWS.
 
 5. In the **Parameters** section, view the parameters of the solution template and modify as needed, and then choose **Next**.
 
-|  Parameter Name   |  Default Value |  Description |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
-| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    |  Parameter Name   |  Default Value |  Description |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, choose **Next**.
 
@@ -52,11 +52,11 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 1. Log in to Route53 Console, and choose **Create record**.
 
-2. Enter the required subdomain in **Record name** text box. The suffix is the top-level domain registered by ICP, for example, video-transctiber.ch.test.com.
+2. Enter the required subdomain in **Record name** text box. The suffix is the top-level domain registered by ICP, for example, `video-transctiber.ch.test.com`.
 
 3. Choose **Record type** as CNAME.
 
-4. Enter the CloudFront URL into **Value** text box, not including https://. For example: xxxxxx.cloudfront.cn. 
+4. Enter the CloudFront URL into **Value** text box, not including `https://`. For example, `xxxxxx.cloudfront.cn`. 
 
   You can get CloudFront URL from the solution AWS CloudFormation stack **Outputs** page.
 
@@ -66,9 +66,9 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 1. Log in to CloudFront Console，and choose **Distributions** of this solution.
 
-2. Choose "Edit" to enter the **Edit settings**.
+2. Choose **Edit** to enter the **Edit settings**.
 
-3. Choose **Add item**, then enter domain name in **Alternate domain name (CNAME)** text box. For example, video-transctiber.ch.test.com。
+3. Choose **Add item**, then enter domain name in **Alternate domain name (CNAME)** text box. For example, `video-transctiber.ch.test.com`。
 
 4. Choose **Save changes**. The configuration take effect upon the automatic CloudFront deployment.
 
@@ -86,10 +86,10 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 5. In the **Parameters** section, view the parameters of the solution template and modify as needed, and then select **Next**.
 
-|  Parameter Name   |  Default Value |  Description |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
-| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    |  Parameter Name   |  Default Value |  Description |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment. |
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, select **Next**.
 
@@ -107,7 +107,7 @@ Depending on the region where you create the stack, you can choose to access the
 
 ### Access from AWS China Regions
 
-1. Enter https://<domain> in the address bar of the browser. For example, the domain is video-transcriber.ch.test.com.
+1. Enter https://<domain> in the address bar of the browser. For example, the domain is `video-transcriber.ch.test.com`.
 
 1. Select **Enter API Key**, and enter the authentication information in the pop-up input box.
 

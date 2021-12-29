@@ -12,7 +12,7 @@
 
 本实施指南介绍在Amazon Web Services（亚马逊云科技）云中部署视频字幕解决方案的架构信息和具体配置步骤。它包含指向[CloudFormation][cloudformation]模板的链接，这些模板使用亚马逊云科技在安全性和可用性方面的最佳实践来启动和配置本解决方案所需的亚马逊云科技服务。
 
-本指南面向具有亚马逊云科技架构实践经验的IT架构师、开发人员、DevOps工程师、数据科学家和算法工程师等专业人士。
+本指南面向具有亚马逊云科技架构实践经验的IT架构师、开发人员、运维人员、数据科学家和算法工程师等专业人士。
 
 [lambda]: https://aws.amazon.com/cn/lambda/
 [transcribe]: https://aws.amazon.com/cn/transcribe/

@@ -14,7 +14,7 @@
 
 ## 步骤1: 启动堆栈
 
-此自动化AWS CloudFormation模板在亚马逊云科技中部署解决方案。
+此自动化Amazon CloudFormation模板在亚马逊云科技中部署解决方案。
 
 ### 从中国区域启动堆栈
 
@@ -23,9 +23,9 @@
 1. 确认已有ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。
 2. 创建域名托管区域。如果还没有创建托管区域，请参考[使用托管区域][hostedzone]。
 
-**部署AWS CloudFormation模板**
+**部署Amazon CloudFormation模板**
 
-1. 登录到Amazon Web Services管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动AWS CloudFormation模板。
+1. 登录到Amazon Web Services管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动Amazon CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -46,7 +46,7 @@
 
 8. 选择**创建堆栈**以部署堆栈。
 
-您可以在AWS CloudFormation控制台的**状态**列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为**CREATE_COMPLETE**。
+您可以在Amazon CloudFormation控制台的**状态**列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为**CREATE_COMPLETE**。
 
 **在Route53创建记录用于解析域名**
 
@@ -72,9 +72,9 @@
 
 ### 从全球区域启动堆栈
 
-**部署AWS CloudFormation模板**
+**部署Amazon CloudFormation模板**
 
-1. 登录到Amazon Web Services管理控制台，选择[全球区域链接][template-global]启动AWS CloudFormation模板。
+1. 登录到Amazon Web Services管理控制台，选择[全球区域链接][template-global]启动Amazon CloudFormation模板。
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -95,11 +95,11 @@
 
 8. 选择**创建堆栈**以部署堆栈。
 
-您可以在AWS CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为**CREATE_COMPLETE**。
+您可以在Amazon CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为**CREATE_COMPLETE**。
 
 ## 步骤2: 访问网页控制台
 
-在堆栈创建成功后，您可在AWS CloudFormation的**输出**标签页中查看访问网页控制台需要的认证信息（**APIKey**）和创建的CloudFront地址（**ConsoleUrl**）。
+在堆栈创建成功后，您可在Amazon CloudFormation的**输出**标签页中查看访问网页控制台需要的认证信息（**APIKey**）和创建的CloudFront地址（**ConsoleUrl**）。
 
 根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。
 

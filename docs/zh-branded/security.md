@@ -6,8 +6,8 @@
 
 ## MediaConvert策略
 
-此解决方案中创建的MediaConvert策略允许AWS Elemental MediaConvert访问Amazon S3存储桶。
+此解决方案中创建的MediaConvert策略允许Amazon Elemental MediaConvert访问Amazon S3存储桶。
 
 ## Lambda策略
 
-此解决方案中创建的Lambda策略允许AWS Lambda Functions访问Amazon DynamoDB、AWS Elemental MediaConvert、Amazon Transcribe和Amazon Translate服务。
+此解决方案中创建的Lambda策略允许Amazon Lambda Functions访问Amazon DynamoDB、Amazon Elemental MediaConvert、Amazon Transcribe和Amazon Translate服务。
