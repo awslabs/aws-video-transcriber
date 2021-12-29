@@ -6,11 +6,11 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 Use the following steps to deploy this solution on Amazon Web Services.
 
-- step 1：Launch the Amazon CloudFormation template into your Amazon account.
-  - Launch CloudFormation tempalte in Amazon Web Services China Regions 
-  - Launch CloudFormation template in Amazon Web Services Standard Regions
-- step 2：Access the web interface 
-- step 3：Upload videos and perform operations related to video captions
+- Step 1：Launch the Amazon CloudFormation template into your Amazon account.
+    - Launch CloudFormation tempalte in Amazon Web Services China Regions 
+    - Launch CloudFormation template in Amazon Web Services Standard Regions
+- Step 2：Access the web interface 
+- Step 3：Upload videos and perform operations related to video captions
 
 ## Step 1: Launch the Amazon CloudFormation template
 

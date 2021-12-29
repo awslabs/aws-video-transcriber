@@ -7,7 +7,7 @@ proofreading and editing video captions, translating captions, and burning capti
 videos.
 
 ## Architecture
-![architecture](./docs/en/images/Video-Transcriber-Architecture.png)
+![architecture](./docs/en/images/Video-Transcriber-Architecture-Base.png)
 
 This solution deploys the Amazon CloudFormation template in your AWS Cloud account and completes the following settings.
 
