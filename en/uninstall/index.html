@@ -60,7 +60,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#uninstall-the-stack-using-the-aws-management-console" class="md-skip">
+        <a href="#uninstall-the-stack-using-the-amazon-management-console" class="md-skip">
           Skip to content
         </a>
       
@@ -307,7 +307,7 @@
   
     <li class="md-nav__item">
       <a href="../template/" class="md-nav__link">
-        AWS CloudFormation template
+        CloudFormation template
       </a>
     </li>
   
@@ -381,15 +381,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#uninstall-the-stack-using-the-aws-management-console" class="md-nav__link">
-    Uninstall the stack using the AWS Management Console
+  <a href="#uninstall-the-stack-using-the-amazon-management-console" class="md-nav__link">
+    Uninstall the stack using the Amazon Management Console
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#uninstall-the-stack-using-aws-command-line-interface" class="md-nav__link">
-    Uninstall the stack using AWS Command Line Interface
+  <a href="#uninstall-the-stack-using-amazon-web-services-command-line-interface" class="md-nav__link">
+    Uninstall the stack using Amazon Web Services Command Line Interface
   </a>
   
 </li>
@@ -472,15 +472,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#uninstall-the-stack-using-the-aws-management-console" class="md-nav__link">
-    Uninstall the stack using the AWS Management Console
+  <a href="#uninstall-the-stack-using-the-amazon-management-console" class="md-nav__link">
+    Uninstall the stack using the Amazon Management Console
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#uninstall-the-stack-using-aws-command-line-interface" class="md-nav__link">
-    Uninstall the stack using AWS Command Line Interface
+  <a href="#uninstall-the-stack-using-amazon-web-services-command-line-interface" class="md-nav__link">
+    Uninstall the stack using Amazon Web Services Command Line Interface
   </a>
   
 </li>
@@ -504,18 +504,18 @@
 
   <h1>Uninstall the solution</h1>
 
-<p>To uninstall the Video Transcriber solution, you must delete the AWS CloudFormation stack. </p>
-<p>You can use either the AWS Management Console or the AWS Command Line Interface (AWS CLI) to delete the CloudFormation stack.</p>
-<h2 id="uninstall-the-stack-using-the-aws-management-console">Uninstall the stack using the AWS Management Console</h2>
+<p>To uninstall the Video Transcriber solution, you must delete the Amazon CloudFormation stack. </p>
+<p>You can use either the Amazon Web Services Management Console or the Amazon Web Services Command Line Interface (CLI) to delete the CloudFormation stack.</p>
+<h2 id="uninstall-the-stack-using-the-amazon-management-console">Uninstall the stack using the Amazon Management Console</h2>
 <ol>
-<li>Sign in to the <a href="https://console.aws.amazon.com/cloudformation/home">AWS CloudFormation</a> console.</li>
+<li>Sign in to the <a href="https://console.aws.amazon.com/cloudformation/home">Amazon CloudFormation</a> console.</li>
 <li>Select this solution’s installation parent stack.</li>
 <li>Choose <strong>Delete</strong>.</li>
 </ol>
-<h2 id="uninstall-the-stack-using-aws-command-line-interface">Uninstall the stack using AWS Command Line Interface</h2>
+<h2 id="uninstall-the-stack-using-amazon-web-services-command-line-interface">Uninstall the stack using Amazon Web Services Command Line Interface</h2>
 <ol>
-<li>Determine whether the AWS Command Line Interface (AWS CLI) is available in your environment. For installation instructions, refer to <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html">What Is the AWS Command Line Interface</a> in the <em>AWS CLI User Guide</em>.</li>
-<li>After confirming that the AWS CLI is available, run the following command:</li>
+<li>Determine whether the CLI is available in your environment. For installation instructions, refer to <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html">What Is the Amazon Web Services Command Line Interface</a> in the <em>Amazon Web Services CLI User Guide</em>.</li>
+<li>After confirming that the CLI is available, run the following command:</li>
 </ol>
 <pre><code class="language-bash">aws cloudformation delete-stack --stack-name &lt;installation-stack-name&gt; --region &lt;aws-region&gt;
 </code></pre>

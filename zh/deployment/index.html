@@ -523,7 +523,7 @@
   
     <li class="md-nav__item">
       <a href="../revisions/" class="md-nav__link">
-        文档发布说明
+        版本发布说明
       </a>
     </li>
   
@@ -693,17 +693,17 @@
 <li>步骤3：上传视频并进行视频字幕操作。</li>
 </ul>
 <h2 id="1">步骤1: 启动堆栈</h2>
-<p>此自动化AWS CloudFormation模板在亚马逊云科技中部署解决方案。</p>
+<p>此自动化Amazon CloudFormation模板在亚马逊云科技中部署解决方案。</p>
 <h3 id="_2">从中国区域启动堆栈</h3>
 <p><strong>前提条件</strong></p>
 <ol>
 <li>确认已有ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。</li>
 <li>创建域名托管区域。如果还没有创建托管区域，请参考<a href="https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/hosted-zones-working-with.html">使用托管区域</a>。</li>
 </ol>
-<p><strong>部署AWS CloudFormation模板</strong></p>
+<p><strong>部署Amazon CloudFormation模板</strong></p>
 <ol>
 <li>
-<p>登录到Amazon Web Services管理控制台，选择<a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由光环新网运营的亚马逊云科技中国（北京）区域链接</a>或<a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由西云数据运营的亚马逊云科技中国（宁夏）区域链接</a>启动AWS CloudFormation模板。</p>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由光环新网运营的亚马逊云科技中国（北京）区域链接</a>或<a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由西云数据运营的亚马逊云科技中国（宁夏）区域链接</a>启动Amazon CloudFormation模板。</p>
 </li>
 <li>
 <p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
@@ -750,7 +750,7 @@
 <p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
 </li>
 </ol>
-<p>您可以在AWS CloudFormation控制台的<strong>状态</strong>列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<p>您可以在Amazon CloudFormation控制台的<strong>状态</strong>列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
 <p><strong>在Route53创建记录用于解析域名</strong></p>
 <ol>
 <li>
@@ -785,10 +785,10 @@
 </li>
 </ol>
 <h3 id="_3">从全球区域启动堆栈</h3>
-<p><strong>部署AWS CloudFormation模板</strong></p>
+<p><strong>部署Amazon CloudFormation模板</strong></p>
 <ol>
 <li>
-<p>登录到Amazon Web Services管理控制台，选择<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">全球区域链接</a>启动AWS CloudFormation模板。</p>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">全球区域链接</a>启动Amazon CloudFormation模板。</p>
 </li>
 <li>
 <p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
@@ -835,9 +835,9 @@
 <p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
 </li>
 </ol>
-<p>您可以在AWS CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<p>您可以在Amazon CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
 <h2 id="2">步骤2: 访问网页控制台</h2>
-<p>在堆栈创建成功后，您可在AWS CloudFormation的<strong>输出</strong>标签页中查看访问网页控制台需要的认证信息（<strong>APIKey</strong>）和创建的CloudFront地址（<strong>ConsoleUrl</strong>）。</p>
+<p>在堆栈创建成功后，您可在Amazon CloudFormation的<strong>输出</strong>标签页中查看访问网页控制台需要的认证信息（<strong>APIKey</strong>）和创建的CloudFront地址（<strong>ConsoleUrl</strong>）。</p>
 <p>根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。</p>
 <h3 id="_4">从中国区域访问</h3>
 <ol>
