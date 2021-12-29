@@ -695,17 +695,17 @@
 <li>步骤3：上传视频并进行视频字幕操作。</li>
 </ul>
 <h2 id="1">步骤1: 启动堆栈</h2>
-<p>此自动化Amazon CloudFormation模板在亚马逊云科技中部署解决方案。</p>
+<p>此自动化AWS CloudFormation模板在亚马逊云科技中部署解决方案。</p>
 <h3 id="_2">从中国区域启动堆栈</h3>
 <p><strong>前提条件</strong></p>
 <ol>
 <li>确认已有ICP备案的域名。因为中国区域的CloudFront地址不能直接访问，这个域名会作为CNAME指向该解决方案部署后创建的CloudFront地址，您可以通过这个域名来访问。</li>
 <li>创建域名托管区域。如果还没有创建托管区域，请参考<a href="https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/hosted-zones-working-with.html">使用托管区域</a>。</li>
 </ol>
-<p><strong>部署Amazon CloudFormation模板</strong></p>
+<p><strong>部署AWS CloudFormation模板</strong></p>
 <ol>
 <li>
-<p>登录到Amazon Web Services管理控制台，选择<a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由光环新网运营的亚马逊云科技中国（北京）区域链接</a>或<a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由西云数据运营的亚马逊云科技中国（宁夏）区域链接</a>启动Amazon CloudFormation模板。</p>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由光环新网运营的亚马逊云科技中国（北京）区域链接</a>或<a href="https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template">由西云数据运营的亚马逊云科技中国（宁夏）区域链接</a>启动AWS CloudFormation模板。</p>
 </li>
 <li>
 <p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
@@ -718,8 +718,6 @@
 </li>
 <li>
 <p>在<strong>参数</strong>部分，查看解决方案模板的参数并根据需要进行修改，然后选择<strong>下一步</strong>。</p>
-</li>
-</ol>
 <table>
 <thead>
 <tr>
@@ -732,7 +730,7 @@
 <tr>
 <td><strong>APIKey</strong></td>
 <td>无</td>
-<td>输入部署完成后登录系统所需的认证信息</td>
+<td>输入部署完成后登录系统所需的认证信息。</td>
 </tr>
 <tr>
 <td><strong>TranscribeLanguage</strong></td>
@@ -741,7 +739,7 @@
 </tr>
 </tbody>
 </table>
-<ol>
+</li>
 <li>
 <p>在<strong>配置堆栈选项</strong>页面，选择<strong>下一步</strong>。</p>
 </li>
@@ -752,20 +750,20 @@
 <p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
 </li>
 </ol>
-<p>您可以在Amazon CloudFormation控制台的<strong>状态</strong>列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<p>您可以在AWS CloudFormation控制台的<strong>状态</strong>列中查看堆栈的状态。正常情况下，大约10分钟内可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
 <p><strong>在Route53创建记录用于解析域名</strong></p>
 <ol>
 <li>
 <p>登录Route53的管理界面，选择<strong>创建记录</strong>。</p>
 </li>
 <li>
-<p>在<strong>记录名称</strong>文本框内输入所需要的二级域名，后缀默认为ICP备案的一级域名，例如，video-transctiber.ch.test.com。</p>
+<p>在<strong>记录名称</strong>文本框内输入所需要的二级域名，后缀默认为ICP备案的一级域名，例如，<code>video-transctiber.ch.test.com</code>。</p>
 </li>
 <li>
 <p>选择<strong>记录类型</strong>为CNAME。</p>
 </li>
 <li>
-<p>在<strong>值</strong>文本框内输入CloudFront的地址，注意其中不包括https://。例如，xxxxxx.cloudfront.cn。您可在Amazon CloudFormation的<strong>输出</strong>标签页中查看创建的CloudFront的地址。</p>
+<p>在<strong>值</strong>文本框内输入CloudFront的地址，注意其中不包括<code>https://</code>。例如，<code>xxxxxx.cloudfront.cn</code>。您可在Amazon CloudFormation的<strong>输出</strong>标签页中查看创建的CloudFront的地址。</p>
 </li>
 <li>
 <p>选择<strong>创建记录</strong>完成操作。</p>
@@ -780,17 +778,17 @@
 <p>选择<strong>编辑</strong>进入<strong>编辑设置</strong>.</p>
 </li>
 <li>
-<p>在<strong>备用域名(CNAME)</strong>项选择<strong>添加项目</strong>，输入域名。例如：video-transctiber.ch.test.com。</p>
+<p>在<strong>备用域名(CNAME)</strong>项选择<strong>添加项目</strong>，输入域名。例如：<code>video-transctiber.ch.test.com</code>。</p>
 </li>
 <li>
 <p>选择<strong>保存更改</strong>。等待CloudFront自动完成部署，配置即可生效。</p>
 </li>
 </ol>
 <h3 id="_3">从全球区域启动堆栈</h3>
-<p><strong>部署Amazon CloudFormation模板</strong></p>
+<p><strong>部署AWS CloudFormation模板</strong></p>
 <ol>
 <li>
-<p>登录到Amazon Web Services管理控制台，选择<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">全球区域链接</a>启动Amazon CloudFormation模板。</p>
+<p>登录到Amazon Web Services管理控制台，选择<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&amp;templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template">全球区域链接</a>启动AWS CloudFormation模板。</p>
 </li>
 <li>
 <p>默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。</p>
@@ -803,8 +801,6 @@
 </li>
 <li>
 <p>在<strong>参数</strong>部分，查看解决方案模板的参数并根据需要进行修改，然后选择<strong>下一步</strong>。</p>
-</li>
-</ol>
 <table>
 <thead>
 <tr>
@@ -826,7 +822,7 @@
 </tr>
 </tbody>
 </table>
-<ol>
+</li>
 <li>
 <p>在<strong>配置堆栈选项</strong>页面，选择<strong>下一步</strong>。</p>
 </li>
@@ -837,14 +833,14 @@
 <p>选择<strong>创建堆栈</strong>以部署堆栈。</p>
 </li>
 </ol>
-<p>您可以在Amazon CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
+<p>您可以在AWS CloudFormation控制台的状态列中查看堆栈的状态。正常情况下，大约10分钟可以看到状态为<strong>CREATE_COMPLETE</strong>。</p>
 <h2 id="2">步骤2: 访问网页控制台</h2>
-<p>在堆栈创建成功后，您可在Amazon CloudFormation的<strong>输出</strong>标签页中查看访问网页控制台需要的认证信息（<strong>APIKey</strong>）和创建的CloudFront地址（<strong>ConsoleUrl</strong>）。</p>
+<p>在堆栈创建成功后，您可在AWS CloudFormation的<strong>输出</strong>标签页中查看访问网页控制台需要的认证信息（<strong>APIKey</strong>）和创建的CloudFront地址（<strong>ConsoleUrl</strong>）。</p>
 <p>根据您启动堆栈的区域情况，您可以选择从中国区域或全球区域访问网页控制台。</p>
 <h3 id="_4">从中国区域访问</h3>
 <ol>
 <li>
-<p>在浏览器的地址栏输入https://&lt;域名&gt;。例如，域名为 video-transcriber.ch.test.com。</p>
+<p>在浏览器的地址栏输入https://&lt;域名&gt;。例如，域名为<code>video-transcriber.ch.test.com</code>。</p>
 </li>
 <li>
 <p>选择<strong>Enter API Key</strong>，在弹出的输入框中输入认证信息。</p>

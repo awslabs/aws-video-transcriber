@@ -425,19 +425,19 @@
 
   <h1>Architecture overview</h1>
 
-<p>Deploying this solution with the default parameters builds the following environment in the Amazon Web Services Cloud.</p>
-<p><img alt="architecture" src="../images/Video-Transcriber-Architecture.png" /></p>
+<p>Deploying this solution with the default parameters builds the following environment in the AWS Cloud.</p>
+<p><img alt="architecture" src="../images/Video-Transcriber-Architecture-Base.png" /></p>
 <p>Figure: Solution Architecture</p>
-<p>This solution deploys the Amazon CloudFormation template in your Amazon Cloud account and completes the following settings.</p>
+<p>This solution deploys the Amazon CloudFormation template in your AWS Cloud account and completes the following settings.</p>
 <ol>
 <li><a href="https://aws.amazon.com/s3/">Amazon S3</a> (Web App) stores front-end static files</li>
 <li>Client side sends the request through <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a></li>
-<li><a href="https://aws.amazon.com/lambda/">Amazon Lambda</a> Function receives the request from Amazon API Gateway, and process the business logic</li>
-<li>Client side gets the pre-signed URL from Amazon Lambda, then uploads the video to be processed</li>
-<li>Amazon Lambda Function gets/updates videos' profile from <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a></li>
-<li>Amazon Lambda Function invokes <a href="https://aws.amazon.com/mediaconvert/">Amazon Elemental MediaConvert</a> to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)</li>
-<li>Amazon Lambda Function invokes <a href="https://aws.amazon.com/transcribe/">Amazon Transcribe</a> captions from audio and store the result into Amazon S3 (Captions)</li>
-<li>Amazon Lambda Function invokes <a href="https://aws.amazon.com/translate/">Amazon Translate</a> to translate captions to another language and stores the result into Amazon S3 (Captions)</li>
+<li><a href="https://aws.amazon.com/lambda/">AWS Lambda</a> Function receives the request from Amazon API Gateway, and process the business logic</li>
+<li>Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed</li>
+<li>AWS Lambda Function gets/updates videos' profile from <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a></li>
+<li>AWS Lambda Function invokes <a href="https://aws.amazon.com/mediaconvert/">AWS Elemental MediaConvert</a> to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)</li>
+<li>AWS Lambda Function invokes <a href="https://aws.amazon.com/transcribe/">Amazon Transcribe</a> captions from audio and store the result into Amazon S3 (Captions)</li>
+<li>AWS Lambda Function invokes <a href="https://aws.amazon.com/translate/">Amazon Translate</a> to translate captions to another language and stores the result into Amazon S3 (Captions)</li>
 </ol>
 <p>The solution deploys a Web application into Amazon S3 bucket，and the resources in Amazon S3 can only be accessed through Amazon CloudFront。</p>
 <p>Amazon API Gateway authenticates through API Key, and clients must enter the correct API Key to access Amazon API Gateway.</p>
