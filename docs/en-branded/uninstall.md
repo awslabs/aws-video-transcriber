@@ -1,5 +1,9 @@
 To uninstall the Video Transcriber solution, you must delete the Amazon CloudFormation stack. 
 
+!!! warning "Important"
+  
+    The uploaded videos and related data will be removed when you uninstall the Video Transcriber solution. Make sure to back up what you need beforehand.
+
 You can use either the Amazon Web Services Management Console or the Amazon Web Services Command Line Interface (CLI) to delete the CloudFormation stack.
 
 ## Uninstall the stack using the Amazon Management Console

@@ -21,7 +21,7 @@ This automatic AWS CloudFormation template deploys the solution in AWS.
 **Prerequisites**
 
 1. Make sure a domain registered by ICP is available. Because the CloudFront address in AWS China Regions cannot be accessed directly, this domain name will be used as a CNAME to point to the CloudFront address created after the solution is deployed, and you can access the solution through this domain.
-2. Make sure a domain hosting zone is available. If you haven’t created a hosted zone, please refer to[Use hosted zone][hostedzone].
+2. Make sure a domain hosting zone is available. If you haven’t created a hosted zone, please refer to [Use hosted zone][hostedzone].
 
 **Launch Amazon CloudFormation template**
 

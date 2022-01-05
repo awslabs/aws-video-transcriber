@@ -2,11 +2,11 @@ Built on [Amazon Lambda][lambda] serverless architecture, the Video Transcriber 
 
 The solution includes the following main functions:
 
-- Generating captions: supports MP4, MOV and MKV; supports videos within four hours according to [Amazon Transcribe Restriction][transcribe_restrict].
+- Generating captions: supports uploading MP4, MOV and MKV videos; supports videos within four hours according to [Amazon Transcribe Restriction][transcribe_restrict].
 - Editing captions: supports proofreading, editing, paragraph splitting and merging, mapping, and replacement of captions.
 - Translating captions: supports translation from the source language to the target language. **Currently, this is only supported by the deployment in Amazon Web Services Standard Regions.**
 - Downloading captions: supports SRT or WEBVTT.
-- Burning captions: supports burning generated captions into videos.
+- Burning captions: supports burning generated captions into videos, and then downloading the videos with captions.
 
 The Video Transcriber solution is intended for customers with video caption processing requirements in industries like education or media. Specifically, customers can use the solution to generate video captions precisely or translate video captions with lower cost and higher efficiency.
 
