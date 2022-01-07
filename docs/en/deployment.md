@@ -6,11 +6,11 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 Use the following steps to deploy this solution on AWS.
 
-- Step 1：Launch the AWS CloudFormation template into your AWS account
+- Step 1: Launch the AWS CloudFormation template into your AWS account
       - Launch CloudFormation tempalte in AWS China Regions 
       - Launch CloudFormation template in AWS Standard Regions
-- Step 2：Access the web interface 
-- Step 3：Upload videos and perform operations related to video captions
+- Step 2: Access the web interface 
+- Step 3: Upload videos and perform operations related to video captions
 
 ## Step 1: Launch the AWS CloudFormation template
 
@@ -64,11 +64,11 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 **Configure CNAME in the CloudFront**
 
-1. Log in to CloudFront Console，and choose **Distributions** of this solution.
+1. Log in to CloudFront Console, and choose **Distributions** of this solution.
 
 2. Choose **Edit** to enter the **Edit settings**.
 
-3. Choose **Add item**, then enter domain name in **Alternate domain name (CNAME)** text box. For example, `video-transctiber.ch.test.com`。
+3. Choose **Add item**, then enter domain name in **Alternate domain name (CNAME)** text box. For example, `video-transctiber.ch.test.com`.
 
 4. Choose **Save changes**. The configuration take effect upon the automatic CloudFront deployment.
 
@@ -174,7 +174,7 @@ You can burn the generated captions into the video to create the video with capt
 
 2. Select the language link from the **Video Language** column to enter the captions editing page.
 
-3. Select **Burn in**。
+3. Select **Burn in**.
 ![](./images/user-guide-video-burn.png)
 
 ### Download captions or video with captions

@@ -19,9 +19,9 @@ The cost of using this solution to process this video is shown below:
 | Amazon Elemental MediaConvert | Burn captions into 1 hour video | ¥3.87 |
 | Amazon Transcribe | Extract text from 1 hour audio | ¥9.72 |
 | Amazon API Gateway | 500 requests | ¥0.015 |
-| Amazon Lambda | 500 requests (avg 300ms，128MB Memory) | ¥0.00281 |
+| Amazon Lambda | 500 requests (avg 300ms, 128MB Memory) | ¥0.00281 |
 | Amazon DynamoDB | 1000 reads/writes | ¥0.007 |
-|  |  | Total：¥14.86 |
+|  |  | Total: ¥14.86 |
 
 ## Example 2
 
@@ -36,6 +36,6 @@ The cost of using this solution to process this video is shown below:
 | Amazon Transcribe | Extract text from 1 hour audio | $1.44 |
 | Amazon Translate | Tranlsate 10000 characters | $0.15 |
 | Amazon API Gateway | 500 requests | $0.0017 |
-| Amazon Lambda | 500 requests (avg 300ms，128MB Memory) | $0.0001 |
+| Amazon Lambda | 500 requests (avg 300ms, 128MB Memory) | $0.0001 |
 | Amazon DynamoDB | 1000 reads/writes | $0.00075 |
-|  |  | Total：$2.22 |
+|  |  | Total: $2.22 |

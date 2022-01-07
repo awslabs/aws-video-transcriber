@@ -16,7 +16,7 @@ This solution deploys the Amazon CloudFormation template in your AWS Cloud accou
 3. [AWS Lambda][lambda] Function receives the request from Amazon API Gateway, and process the business logic
 4. Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed
 5. AWS Lambda Function gets/updates videos' profile from [Amazon DynamoDB][dynamodb]
-6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)
+6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video, which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos)
 7. AWS Lambda Function invokes [Amazon Transcribe][transcribe] captions from audio and store the result into Amazon S3 (Captions)
 8. AWS Lambda Function invokes [Amazon Translate][translate] to translate captions to another language and stores the result into Amazon S3 (Captions)
 
@@ -40,7 +40,7 @@ The API Key is used to provide to users access to the system. You must provide a
 
 ## Solution Pricing
 
-You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021， the cost of the solution varies depending on:
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the cost of the solution varies depending on:
 
 - The number of requests to Amazon API Gateway
 - The number of invoking AWS Lambda 
@@ -49,7 +49,7 @@ You are responsible for the cost of using Amazon Web Service's services used whi
 - The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions
 - The number of captions characters that Amazon Translate processed. The solution uses Amazon Translate to translate the captions to another language. 
 
-## Example: In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions
+## Example: In US East (N. Virginia) Region (us-east-1), process 1 hour video, edit video captions for 500 times, tranlsate 10000 characters captions
 
 The cost of using this solution to process this video is shown below:
 
@@ -60,9 +60,9 @@ The cost of using this solution to process this video is shown below:
 | Amazon Transcribe | Extract text from 1 hour audio | $1.44 |
 | Amazon Translate | tranlsate 10000 characters | $0.15 |
 | Amazon API Gateway | 500 requests | $0.0017 |
-| AWS Lambda | 500 requests （avg 300ms，128MB Memory） | $0.0001 |
+| AWS Lambda | 500 requests (avg 300ms, 128MB Memory) | $0.0001 |
 | Amazon DynamoDB | 1000 read/write | $0.00075 |
-|  |  | Total：$2.22 |
+|  |  | Total: $2.22 |
 
 ## Access the web interface
 
@@ -125,7 +125,7 @@ You can burn the generated captions into the video to create the video with capt
 
 2. Select the language link from the **Video Language** column to enter the captions editing page.
 
-3. Select **Burn in**。
+3. Select **Burn in**.
 ![](./docs/en/images/user-guide-video-burn.png)
 
 ### Download captions or video with captions

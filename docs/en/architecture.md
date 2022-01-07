@@ -11,7 +11,7 @@ This solution deploys the Amazon CloudFormation template in your AWS Cloud accou
 3. [AWS Lambda][lambda] Function receives the request from Amazon API Gateway, and process the business logic.
 4. Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed.
 5. AWS Lambda Function gets/updates videos' profile from [Amazon DynamoDB][dynamodb].
-6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos).
+6. AWS Lambda Function invokes [AWS Elemental MediaConvert][mediaconvert] to process video, which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos).
 7. AWS Lambda Function invokes [Amazon Transcribe][transcribe] captions from audio and store the result into Amazon S3 (Captions).
 8. AWS Lambda Function invokes [Amazon Translate][translate] to translate captions to another language and stores the result into Amazon S3 (Captions).
 
