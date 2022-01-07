@@ -435,7 +435,7 @@
 <li><a href="https://aws.amazon.com/lambda/">AWS Lambda</a> Function receives the request from Amazon API Gateway, and process the business logic.</li>
 <li>Client side gets the pre-signed URL from AWS Lambda, then uploads the video to be processed.</li>
 <li>AWS Lambda Function gets/updates videos' profile from <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a>.</li>
-<li>AWS Lambda Function invokes <a href="https://aws.amazon.com/mediaconvert/">AWS Elemental MediaConvert</a> to process video，which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos).</li>
+<li>AWS Lambda Function invokes <a href="https://aws.amazon.com/mediaconvert/">AWS Elemental MediaConvert</a> to process video, which includes extracting audio from video and burning captions into video and stores the result into Amazon S3 (Videos).</li>
 <li>AWS Lambda Function invokes <a href="https://aws.amazon.com/transcribe/">Amazon Transcribe</a> captions from audio and store the result into Amazon S3 (Captions).</li>
 <li>AWS Lambda Function invokes <a href="https://aws.amazon.com/translate/">Amazon Translate</a> to translate captions to another language and stores the result into Amazon S3 (Captions).</li>
 </ol>
