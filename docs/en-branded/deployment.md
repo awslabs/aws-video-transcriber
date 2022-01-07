@@ -6,7 +6,7 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 Use the following steps to deploy this solution on Amazon Web Services.
 
-- Step 1：Launch the Amazon CloudFormation template into your Amazon account.
+- Step 1：Launch the Amazon CloudFormation template into your Amazon account
     - Launch CloudFormation tempalte in Amazon Web Services China Regions 
     - Launch CloudFormation template in Amazon Web Services Standard Regions
 - Step 2：Access the web interface 
@@ -35,10 +35,10 @@ This automatic Amazon CloudFormation template deploys the solution in Amazon Web
 
 5. In the **Parameters** section, view the parameters of the solution template and modify as needed, and then choose **Next**.
 
-|  Parameter Name   |  Default Value |  Description |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
-| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    |  Parameter Name   |  Default Value |  Description |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment.|
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, choose **Next**.
 
@@ -58,7 +58,7 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 4. Enter the CloudFront URL into **Value** text box, not including https://. For example: xxxxxx.cloudfront.cn. 
 
-  You can get CloudFront URL from the solution Amazon CloudFormation stack **Outputs** page.
+    You can get CloudFront URL from the solution Amazon CloudFormation stack **Outputs** page.
 
 5. Choose **Create records**.
 
@@ -66,7 +66,7 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 1. Log in to CloudFront Console，and choose **Distributions** of this solution.
 
-2. Choose "Edit" to enter the **Edit settings**.
+2. Choose **Edit** to enter the **Edit settings**.
 
 3. Choose **Add item**, then enter domain name in **Alternate domain name (CNAME)** text box. For example, video-transctiber.ch.test.com。
 
@@ -86,10 +86,10 @@ You can check the status of the stack in the **Status** column of the Amazon Clo
 
 5. In the **Parameters** section, view the parameters of the solution template and modify as needed, and then select **Next**.
 
-|  Parameter Name   |  Default Value |  Description |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
-| **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    |  Parameter Name   |  Default Value |  Description |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment.|
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN,pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, select **Next**.
 
@@ -105,7 +105,7 @@ After the stack is successfully created, you can view the authentication informa
 
 Depending on the region where you create the stack, you can choose to access the web interface from the Amazon Web Services China Regions or the Amazon Web Services Standard Regions.
 
-### Access from Amazon China Regions
+### Access from Amazon Web Services China Regions
 
 1. Enter https://<domain> in the address bar of the browser. For example, the domain is video-transcriber.ch.test.com.
 
@@ -147,14 +147,18 @@ You can proofread and edit the video captions.
 1. On the **Videos** page, select the **Ready to edit** tab.
 
 2. Select the language link from the **Video Language** column to enter the captions editing page. The functions include:
-- Play the video content paragraph by paragraph to proofread the captions.
-- Modify the captions.
-- Merge or split captions parapraphs.
+
+    - Play the video content paragraph by paragraph to proofread the captions.
+    - Modify the captions.
+    - Merge or split captions parapraphs.
 
 ### Translate captions
 
 You can translate the video captions, and then proofread and edit translated captions.
-**Note: Currently, this feature is only supported by the deployment in Amazon Web Services Standard Regions.**
+
+!!! note "Note"
+    
+    Currently, this feature is only supported by the deployment in Amazon Web Services Standard Regions.
 
 1. On the captions editing page, select **Translate to**.
 

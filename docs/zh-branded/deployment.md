@@ -25,7 +25,9 @@
 
 **部署Amazon CloudFormation模板**
 
-1. 登录到Amazon Web Services管理控制台，选择[由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]或[由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]启动Amazon CloudFormation模板。
+1. 登录到Amazon Web Services管理控制台，选择链接启动Amazon CloudFormation模板。
+    - [由光环新网运营的亚马逊云科技中国（北京）区域链接][template-china1]
+    - [由西云数据运营的亚马逊云科技中国（宁夏）区域链接][template-china2]
 
 2. 默认情况下，该模板将在您登录控制台后默认的区域启动。若需在指定的Amazon Web Service区域中启动该解决方案，请在控制台导航栏中的区域下拉列表中选择。
 
@@ -35,10 +37,10 @@
 
 5. 在**参数**部分，查看解决方案模板的参数并根据需要进行修改，然后选择**下一步**。
 
-|  参数名称   |  默认值 |  描述 |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息|
-| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
+    |  参数名称   |  默认值 |  描述 |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -84,10 +86,10 @@
 
 5. 在**参数**部分，查看解决方案模板的参数并根据需要进行修改，然后选择**下一步**。
 
-|  参数名称   |  默认值 |  描述 |
-|  ----------  | ---------| -----------  |
-| **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
-| **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
+    |  参数名称   |  默认值 |  描述 |
+    |  ----------  | ---------| -----------  |
+    | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -145,14 +147,18 @@
 1. 在**Videos**页面，选择**Ready to edit**页签。
 
 2. 从**Video Language**列选择语言，进入字幕编辑页面。功能包括：
-- 逐段播放视频内容从而校对字幕内容。
-- 修改字幕内容。
-- 将字幕段落进行合并和拆分。
+
+    - 逐段播放视频内容从而校对字幕内容。
+    - 修改字幕内容。
+    - 将字幕段落进行合并和拆分。
 
 ### 翻译字幕
 
 您可以对视频字幕进行翻译以及后续的校对和编辑操作。
-**注意：该功能目前仅全球区域部署版本支持。**
+
+!!! Note "说明"
+    
+    该功能目前仅全球区域部署版本支持。
 
 1. 在字幕编辑页面，选择**Translate to**。
 
