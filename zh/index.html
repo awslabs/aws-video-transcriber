@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://www.amazonaws.cn/solutions/video-transcriber/">
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.edf004c2.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.e6a45f82.min.css">
@@ -415,11 +415,11 @@
 <p>视频字幕解决方案基于<a href="https://aws.amazon.com/cn/lambda/">Amazon Lambda</a>无服务器架构，集成<a href="https://aws.amazon.com/cn/transcribe/">Amazon Transcribe</a>等服务，并提供网页控制台帮助客户完成视频字幕相关操作。例如，自动生成视频字幕，对照视频校对和编辑字幕，翻译字幕以及生成硬字幕视频。</p>
 <p>本解决方案主要包括以下功能：</p>
 <ul>
-<li>字幕生成：支持MP4、MOV和MKV的视频格式；支持四个小时以内的视频（基于<a href="https://docs.aws.amazon.com/zh_cn/transcribe/latest/dg/input.html">Amazon Transcribe的限制</a>）。</li>
-<li>字幕编辑：支持校对字幕、编辑字幕、段落拆分与合并，字幕映射和字幕替换。</li>
+<li>字幕生成：为上传的视频自动生成字幕。支持MP4、MOV和MKV的视频格式；支持四个小时以内的视频（基于<a href="https://docs.aws.amazon.com/zh_cn/transcribe/latest/dg/input.html">Amazon Transcribe的限制</a>）。</li>
+<li>字幕编辑：支持对照视频校对字幕、编辑字幕、段落拆分与合并，字幕映射和字幕替换。</li>
 <li>字幕翻译：支持从源语言翻译成目标语言，并生成字幕。<strong>目前仅全球区域部署版本支持。</strong></li>
 <li>字幕下载：将已经生成的字幕下载成SRT或WEBVTT格式的字幕。</li>
-<li>硬字幕制作：将已经生成的字幕烧入视频中。</li>
+<li>硬字幕制作：客户可以将已经生成好的字幕烧入视频中，并下载带字幕的视频。</li>
 </ul>
 <p>本解决方案适用于教育、媒体等需要处理视频字幕的行业。例如，对视频精准添加字幕和翻译字幕等场景，都可以大幅减少人工成本，提高效率。</p>
 <p>本实施指南介绍在Amazon Web Services（亚马逊云科技）云中部署视频字幕解决方案的架构信息和具体配置步骤。它包含指向<a href="https://aws.amazon.com/en/cloudformation/">CloudFormation</a>模板的链接，这些模板使用亚马逊云科技在安全性和可用性方面的最佳实践来启动和配置本解决方案所需的亚马逊云科技服务。</p>
@@ -474,10 +474,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": ["tabs", "search.suggest", "search.highlight"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "assets/javascripts/workers/search.0bbba5b5.min.js"}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["tabs", "search.suggest", "search.highlight"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "search": "assets/javascripts/workers/search.361d90f1.min.js"}</script>
     
     
-      <script src="assets/javascripts/bundle.e1a181d9.min.js"></script>
+      <script src="assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
   </body>
