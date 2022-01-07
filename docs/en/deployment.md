@@ -6,7 +6,7 @@ Before you launch the solution, review the architecture, supported regions, and 
 
 Use the following steps to deploy this solution on AWS.
 
-- Step 1：Launch the AWS CloudFormation template into your AWS account.
+- Step 1：Launch the AWS CloudFormation template into your AWS account
       - Launch CloudFormation tempalte in AWS China Regions 
       - Launch CloudFormation template in AWS Standard Regions
 - Step 2：Access the web interface 
@@ -37,7 +37,7 @@ This automatic AWS CloudFormation template deploys the solution in AWS.
 
     |  Parameter Name   |  Default Value |  Description |
     |  ----------  | ---------| -----------  |
-    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment|
+    | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment.|
     | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, choose **Next**.
@@ -58,7 +58,7 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
 
 4. Enter the CloudFront URL into **Value** text box, not including `https://`. For example, `xxxxxx.cloudfront.cn`. 
 
-  You can get CloudFront URL from the solution AWS CloudFormation stack **Outputs** page.
+    You can get CloudFront URL from the solution AWS CloudFormation stack **Outputs** page.
 
 5. Choose **Create records**.
 
@@ -147,14 +147,18 @@ You can proofread and edit the video captions.
 1. On the **Videos** page, select the **Ready to edit** tab.
 
 2. Select the language link from the **Video Language** column to enter the captions editing page. The functions include:
-- Play the video content paragraph by paragraph to proofread the captions.
-- Modify the captions.
-- Merge or split captions parapraphs.
+
+    - Play the video content paragraph by paragraph to proofread the captions.
+    - Modify the captions.
+    - Merge or split captions parapraphs.
 
 ### Translate captions
 
 You can translate the video captions, and then proofread and edit translated captions.
-**Note: Currently, this feature is only supported by the deployment in AWS Standard Regions.**
+
+!!! note "Note"
+    
+    Currently, this feature is only supported by the deployment in Amazon Web Services Standard Regions.
 
 1. On the captions editing page, select **Translate to**.
 
