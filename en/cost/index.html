@@ -504,17 +504,17 @@
 
   <h1>Cost</h1>
 
-<p>You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021， the cost of the solution varies depending on:</p>
+<p>You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the cost of the solution varies depending on:</p>
 <ul>
 <li>The number of requests to Amazon API Gateway</li>
-<li>The number of invoking AWS Lambda </li>
-<li>The number of read/write Amazon DynamoDB</li>
-<li>The number of videos that AWS Elemental MediaConvert processed. The solution uses AWS Elemental MediaConvert to extract audios from videos or burn captions into videos</li>
-<li>The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions</li>
+<li>The number of times AWS Lambda is invoked</li>
+<li>The number of Amazon DynamoDB reads/writes </li>
+<li>The number of videos processed by AWS Elemental MediaConvert. The solution uses AWS Elemental MediaConvert to extract audios from videos or burn captions into videos.</li>
+<li>The number of audios that Amazon Transcribe processed. The solution uses Amazon Transcribe to extract text from audio and generate captions.</li>
 <li>The number of captions characters that Amazon Translate processed. The solution uses Amazon Translate to translate the captions to another language. <strong>Currently, this is only supported by the deployment in AWS Standard Regions.</strong></li>
 </ul>
 <h2 id="example-1">Example 1</h2>
-<p>In AWS China (Ningxia) Region operated by NWCD (cn-northwest-1)，process 1 hour video, edit video captions for 500 times</p>
+<p>In AWS China (Ningxia) Region operated by NWCD (cn-northwest-1), process 1 hour video, edit video captions for 500 times</p>
 <p>The cost of using this solution to process the video is shown below:</p>
 <table>
 <thead>
@@ -547,12 +547,12 @@
 </tr>
 <tr>
 <td>AWS Lambda</td>
-<td>500 requests （avg 300ms，128MB Memory）</td>
+<td>500 requests (avg 300ms，128MB Memory)</td>
 <td>¥0.00281</td>
 </tr>
 <tr>
 <td>Amazon DynamoDB</td>
-<td>1000 read/write</td>
+<td>1000 reads/writes</td>
 <td>¥0.007</td>
 </tr>
 <tr>
@@ -563,7 +563,7 @@
 </tbody>
 </table>
 <h2 id="example-2">Example 2</h2>
-<p>In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times，tranlsate 10000 characters captions</p>
+<p>In US East (N. Virginia) Region（us-east-1), process 1 hour video, edit video captions for 500 times, tranlsate 10000 characters captions</p>
 <p>The cost of using this solution to process this video is shown below:</p>
 <table>
 <thead>
@@ -591,7 +591,7 @@
 </tr>
 <tr>
 <td>Amazon Translate</td>
-<td>tranlsate 10000 characters</td>
+<td>Tranlsate 10000 characters</td>
 <td>$0.15</td>
 </tr>
 <tr>
@@ -601,12 +601,12 @@
 </tr>
 <tr>
 <td>AWS Lambda</td>
-<td>500 requests （avg 300ms，128MB Memory）</td>
+<td>500 requests (avg 300ms，128MB Memory)</td>
 <td>$0.0001</td>
 </tr>
 <tr>
 <td>Amazon DynamoDB</td>
-<td>1000 read/write</td>
+<td>1000 reads/writes</td>
 <td>$0.00075</td>
 </tr>
 <tr>

@@ -699,7 +699,7 @@
 <h2 id="deployment-overview">Deployment overview</h2>
 <p>Use the following steps to deploy this solution on AWS.</p>
 <ul>
-<li>Step 1：Launch the AWS CloudFormation template into your AWS account.<ul>
+<li>Step 1：Launch the AWS CloudFormation template into your AWS account<ul>
 <li>Launch CloudFormation tempalte in AWS China Regions </li>
 <li>Launch CloudFormation template in AWS Standard Regions</li>
 </ul>
@@ -743,7 +743,7 @@
 <tr>
 <td><strong>APIKey</strong></td>
 <td>N/A</td>
-<td>Enter the authentication information required to log in to the web interface after the deployment</td>
+<td>Enter the authentication information required to log in to the web interface after the deployment.</td>
 </tr>
 <tr>
 <td><strong>TranscribeLanguage</strong></td>
@@ -777,11 +777,11 @@
 </li>
 <li>
 <p>Enter the CloudFront URL into <strong>Value</strong> text box, not including <code>https://</code>. For example, <code>xxxxxx.cloudfront.cn</code>. </p>
-</li>
-</ol>
 <p>You can get CloudFront URL from the solution AWS CloudFormation stack <strong>Outputs</strong> page.</p>
-<ol>
-<li>Choose <strong>Create records</strong>.</li>
+</li>
+<li>
+<p>Choose <strong>Create records</strong>.</p>
+</li>
 </ol>
 <p><strong>Configure CNAME in the CloudFront</strong></p>
 <ol>
@@ -900,14 +900,19 @@
 </li>
 <li>
 <p>Select the language link from the <strong>Video Language</strong> column to enter the captions editing page. The functions include:</p>
-</li>
+<ul>
 <li>Play the video content paragraph by paragraph to proofread the captions.</li>
 <li>Modify the captions.</li>
 <li>Merge or split captions parapraphs.</li>
+</ul>
+</li>
 </ol>
 <h3 id="translate-captions">Translate captions</h3>
-<p>You can translate the video captions, and then proofread and edit translated captions.
-<strong>Note: Currently, this feature is only supported by the deployment in AWS Standard Regions.</strong></p>
+<p>You can translate the video captions, and then proofread and edit translated captions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, this feature is only supported by the deployment in Amazon Web Services Standard Regions.</p>
+</div>
 <ol>
 <li>
 <p>On the captions editing page, select <strong>Translate to</strong>.</p>
