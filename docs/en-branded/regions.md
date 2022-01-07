@@ -24,5 +24,5 @@ As of December 2021, this solution is supported in the following Amazon Web Serv
 
 | Region Name | Region ID |
 |----------|--------|
-| China (Beijing) Region Operated by Sinnet | cn-northwest-1
-| China (Ningxia) Regions operated by NWCD | cn-north-1
+| China (Beijing) Region Operated by Sinnet | cn-north-1
+| China (Ningxia) Region operated by NWCD | cn-northwest-1
