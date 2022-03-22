@@ -145,7 +145,7 @@ async function transcribeAudio(params) {
       Subtitles: {
         Formats: ["srt"],
       },
-      MediaFormat: "mp4",
+      MediaFormat: "mp3",
       OutputKey: "sourcecaptions/",
       LanguageCode: "zh-CN",
       TranscriptionJobName: params.videoId,

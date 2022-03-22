@@ -253,23 +253,36 @@ async function extractAudio(params) {
           Outputs: [
             {
               ContainerSettings: {
-                Container: "MP4",
-                Mp4Settings: {},
+                Container: "RAW"
               },
               AudioDescriptions: [
                 {
                   AudioSourceName: "Audio Selector 1",
                   CodecSettings: {
-                    Codec: "AAC",
-                    AacSettings: {
-                      Bitrate: 32000,
-                      CodingMode: "CODING_MODE_2_0",
-                      SampleRate: 24000,
-                    },
+                    Codec: "MP3",
+                    Mp3Settings: {
+                      Channels: 1,
+                      RateControlMode: "VBR",
+                      VbrQuality: 0
+                    }
                   },
+                  RemixSettings: {
+                    ChannelMapping: {
+                      OutputChannels: [
+                        {
+                          InputChannelsFineTune: [
+                            6,
+                            6
+                          ]
+                        }
+                      ]
+                    },
+                    ChannelsIn: 2,
+                    ChannelsOut: 1
+                  }                  
                 },
               ],
-              Extension: "mp4",
+              Extension: "mp3",
               NameModifier: "_" + params.videoId,
             },
           ],
@@ -294,6 +307,9 @@ async function extractAudio(params) {
             },
           },
           VideoSelector: {},
+          FilterEnable: "FORCE",
+          DeblockFilter: "ENABLED",
+          DenoiseFilter: "ENABLED",          
           TimecodeSource: "ZEROBASED",
           FileInput: params.inputS3Path,
         },
