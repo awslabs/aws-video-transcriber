@@ -79,14 +79,7 @@ exports.handler = async (event, context, callback) => {
       });
       video.s3CaptionsSignUrl = captionsUrl;
       video.translated = translated;
-      var enableTranslate = false;
-      if (
-        process.env.REGION != "cn-north-1" &&
-        process.env.REGION != "cn-northwest-1"
-      ) {
-        enableTranslate = true;
-      }
-      video.enableTranslate = enableTranslate;
+      video.enableTranslate = true;
 
       console.log("[INFO] made signed url: " + url);
 

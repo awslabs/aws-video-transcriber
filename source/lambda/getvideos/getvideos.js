@@ -51,13 +51,7 @@ exports.handler = async (event, context, callback) => {
     var scanResponse = await dynamoDB.scan(scanParams).promise();
     var videos = scanResponse.Items.map(mapper);
 
-    var enableTranslate = false;
-    if (
-      process.env.REGION != "cn-north-1" &&
-      process.env.REGION != "cn-northwest-1"
-    ) {
-      enableTranslate = true;
-    }
+    var enableTranslate = true;
 
     const vocabularyList = await getVocabularyList();
 

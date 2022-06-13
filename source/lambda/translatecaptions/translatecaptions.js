@@ -16,8 +16,11 @@
 var AWS = require("aws-sdk");
 AWS.config.update({ region: process.env.REGION });
 var dynamoDB = new AWS.DynamoDB();
-var translate = new AWS.Translate();
+var secretManagerClient = new AWS.SecretsManager();
+// var translate = new AWS.Translate();
 var s3 = new AWS.S3();
+
+
 
 /**
  * Burn captions into videos.
@@ -54,6 +57,8 @@ exports.handler = async (event, context, callback) => {
 
       var captions = JSON.parse(captionsStr);
 
+      const translate = await getTranslateClient();
+
       for (var i in captions) {
         var caption = captions[i];
 
@@ -64,7 +69,8 @@ exports.handler = async (event, context, callback) => {
         var captionTranslatedText = await translateText(
           sourceLanguage,
           targetLanguage,
-          captionText
+          captionText,
+          translate
         );
         caption.text = escapeHtml(captionTranslatedText);
       }
@@ -97,7 +103,7 @@ exports.handler = async (event, context, callback) => {
   }
 };
 
-async function translateText(sourceLanguage, targetLanguage, text) {
+async function translateText(sourceLanguage, targetLanguage, text, translate) {
   var params = {
     SourceLanguageCode: sourceLanguage /* required */,
     TargetLanguageCode: targetLanguage /* required */,
@@ -232,4 +238,22 @@ function escapeHtml(string) {
   return String(string).replace(/[&<>`=\/]/g, function (s) {
     return entityMap[s];
   });
+}
+
+async function getTranslateClient() {
+  const secretName = "arn:aws-cn:secretsmanager:cn-northwest-1:360183261883:secret:video-translate-5gxXY2";
+
+  const response = await secretManagerClient.getSecretValue({SecretId: secretName}).promise();
+  const secretJson = JSON.parse(response.SecretString);
+  const translateAccessKeyId = secretJson.translateAccessKeyId;
+  const translateSecretAccessKey = secretJson.translateSecretAccessKey;
+  const translateRegion = secretJson.translateRegion;
+  
+  AWS.config.update({
+    accessKeyId: translateAccessKeyId,
+    secretAccessKey: translateSecretAccessKey,
+    region: translateRegion
+  });
+  
+  return new AWS.Translate();
 }
