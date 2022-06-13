@@ -73,6 +73,14 @@
 					<option value="ar-AE">ar-AE</option>
 					<option value="ar-SA">ar-SA</option>
 				</select>
+				{{#if vocabularyList.length}}
+					<select id="vocabularySelection" class="form-select btn btn-success" aria-label="Default select example">
+						<option disabled selected value> -- select a vocabulary -- </option>
+						{{#each vocabularyList}}
+							<option value={{VocabularyName}}>{{VocabularyName}}</option>
+						{{/each}}
+					</select>
+				{{/if}}
 				<button data-dz-remove class="btn btn-default cancel">
 					<i class="fa fa-ban"></i>
 					<span>Cancel</span>
@@ -491,9 +499,15 @@
 							console.log('[ERROR] failed to fetch signed url', error);
 						});
 						var languageSelect = document.getElementById("languageSelection");
+ 						var vocabularySelect = document.getElementById("vocabularySelection");
+						var vocabularyValue;
+						if(vocabularySelect){
+							vocabularyValue= vocabularySelect.value;
+						}
 						console.log('language is: ' + languageSelect.value);
+						console.log('vocabularyValue is: ' + vocabularyValue);
 						console.log('file name is: ' + file.name);
-						putLanguage(file.name, languageSelect.value);
+						putPreParameters(file.name, languageSelect.value, vocabularyValue);
 					};
 				});
 			}

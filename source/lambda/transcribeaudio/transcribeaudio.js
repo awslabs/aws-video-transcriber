@@ -85,16 +85,14 @@ async function computeParameters(event) {
     mediaFileUrl: mediaFileUrl,
     region: process.env.REGION,
     transcribeLanguage: videoInfo.language,
-    vocabularyName: process.env.VOCABULARY_NAME,
+    vocabularyName: videoInfo.vocabulary,
     vocabularyExists: false,
     dynamoVideoTable: process.env.DYNAMO_VIDEO_TABLE,
     status: "PROCESSING",
     statusText: "Transcribing audio",
   };
 
-  var vocabularies = await getVocabularies(null);
-
-  if (vocabularies.length > 0) {
+  if (videoInfo.vocabulary) {
     params.vocabularyExists = true;
   }
 

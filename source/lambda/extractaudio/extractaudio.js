@@ -209,6 +209,7 @@ async function checkForPriorProcessing(params) {
       params.videoId = queryResponse.Items[0].videoId.S;
       params.videoName = queryResponse.Items[0].name.S;
       params.language = queryResponse.Items[0].language.S;
+      params.vocabulary = queryResponse.Items[0].vocabulary.S;
 
       if (queryResponse.Items[0].description) {
         params.videoDescription = queryResponse.Items[0].description.S;
@@ -447,7 +448,8 @@ async function updateDynamoDB(params) {
       s3VideoPath: { S: params.inputS3Path },
       s3AudioPath: { S: params.outputAudioS3Path },
       status: { S: params.status },
-      language: { S: params.language },
+      language: { S: params.language || process.env.TRANSCRIBE_LANGUAGE },
+      vocabulary: { S: params.vocabulary || '' },
       statusText: { S: params.statusText },
       processedDate: { S: new Date().toISOString() },
     },

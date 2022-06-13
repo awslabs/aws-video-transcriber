@@ -219,7 +219,7 @@ function updateCaptions(
 /**
  * Saves the captions
  */
-function putLanguage(fileName, language) {
+function putPreParameters(fileName, language, vocabularyValue) {
   var api = siteConfig.api_base + siteConfig.api_language;
   console.log("[INFO] put language: " + api);
   let axiosConfig = {
@@ -231,6 +231,7 @@ function putLanguage(fileName, language) {
   var body = {
     videoName: fileName,
     language: language,
+    vocabulary: vocabularyValue,
   };
   axios
     .put(api, body, axiosConfig)
@@ -760,6 +761,7 @@ window.addEventListener("load", () => {
         .get(api, { headers: { "X-Api-Key": localStorage.apiKey } })
         .then(function (response) {
           var videos = response.data.videos;
+          var vocabularyList = response.data.vocabularyList;
           var enableTranslate = response.data.enableTranslate;
           var defaultLanguage = response.data.defaultLanguage;
 
@@ -795,6 +797,7 @@ window.addEventListener("load", () => {
             completedVideos: completedVideos,
             enableTranslate: enableTranslate,
             defaultLanguage: defaultLanguage,
+            vocabularyList: vocabularyList,
             refreshLink: "#videos?t=" + new Date().getTime(),
           });
           appDiv.html(html);

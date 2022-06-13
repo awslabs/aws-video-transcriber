@@ -59,12 +59,15 @@ exports.handler = async (event, context, callback) => {
       enableTranslate = true;
     }
 
+    const vocabularyList = await getVocabularyList();
+
     for (let video of videos) {
       video.enableTranslate = enableTranslate;
     }
     var responseBody = {
       videos: videos,
       enableTranslate: enableTranslate,
+      vocabularyList: vocabularyList,
       defaultLanguage: process.env.TRANSCRIBE_LANGUAGE,
     };
     console.log("Successfully scanned: %d videos from Dynamo", videos.length);
@@ -91,6 +94,42 @@ exports.handler = async (event, context, callback) => {
     callback(null, response);
   }
 };
+
+async function getVocabularyList() {
+  console.log('getVocabularyList start!');
+  AWS.config.update({ region: process.env.REGION });
+  var transcribe;
+  if (
+    process.env.REGION === "cn-northwest-1" ||
+    process.env.REGION === "cn-north-1"
+  ) {
+    transcribe = new AWS.TranscribeService({
+      endpoint:
+        "https://cn.transcribe." + process.env.REGION + ".amazonaws.com.cn",
+    });
+  } else {
+    transcribe = new AWS.TranscribeService();
+  }
+
+  var params = {
+      MaxResults: 100,
+      StateEquals: 'READY',
+  };
+  let vocabularyList = [];
+
+  await transcribe.listVocabularies(params, function(err, data) {
+      if (err) {
+          console.log(err, err.stack); // an error occurred
+      } 
+      else {
+          vocabularyList = data.Vocabularies;
+      }     
+  }).promise();
+
+  console.log('vocabularyList: ', vocabularyList);
+  return vocabularyList;
+
+}
 
 /**
  * Mapper which flattens item keys for 'S' types

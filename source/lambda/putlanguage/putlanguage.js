@@ -37,6 +37,7 @@ exports.handler = async (event, context, callback) => {
     ddbParams.videoId = videoId;
     ddbParams.videoName = body.videoName;
     ddbParams.language = body.language;
+    ddbParams.vocabulary = body.vocabulary || '';
 
     ddbParams.inputS3Path =
       "s3://" + process.env.INPUT_BUCKET + "/videos/" + body.videoName;
@@ -81,6 +82,7 @@ async function updateDynamoDB(ddbParams) {
       name: { S: ddbParams.videoName },
       s3VideoPath: { S: ddbParams.inputS3Path },
       language: { S: ddbParams.language },
+      vocabulary: { S: ddbParams.vocabulary },
     },
   };
 
