@@ -53,6 +53,7 @@ exports.handler = async (event, context, callback) => {
       captionsStr = captionsObject.Body.toString();
 
       var captions = JSON.parse(captionsStr);
+      var translatePromises = new Set();
 
       for (var i in captions) {
         var caption = captions[i];
@@ -61,13 +62,25 @@ exports.handler = async (event, context, callback) => {
           continue;
         }
         var captionText = caption.text;
-        var captionTranslatedText = await translateText(
-          sourceLanguage,
-          targetLanguage,
-          captionText
-        );
-        caption.text = escapeHtml(captionTranslatedText);
+
+        var params = {
+          SourceLanguageCode: sourceLanguage /* required */,
+          TargetLanguageCode: targetLanguage /* required */,
+          Text: captionText,
+        };
+
+        translatePromises.add(translate.translateText(params).promise())
+
       }
+
+      await Promise.all(translatePromises).then(function(values) {
+        console.log('[INFO] All promise are resolved')
+        for (var i in captions) {
+          captions[i].text = escapeHtml(values[i].TranslatedText);
+        }
+      }).catch(function(reason) {
+        throw new Error("Translate promise failed reason: ", reason);
+      })
 
       await saveCaptions(videoId, captions, targetLanguage);
 
@@ -96,17 +109,6 @@ exports.handler = async (event, context, callback) => {
     callback(null, response);
   }
 };
-
-async function translateText(sourceLanguage, targetLanguage, text) {
-  var params = {
-    SourceLanguageCode: sourceLanguage /* required */,
-    TargetLanguageCode: targetLanguage /* required */,
-    Text: text,
-  };
-  const data = await translate.translateText(params).promise();
-  var translatedText = data.TranslatedText;
-  return translatedText;
-}
 
 async function getVideoInfo(videoId) {
   getParams = {
