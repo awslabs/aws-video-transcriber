@@ -1,23 +1,24 @@
 /**
-  Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
-  Licensed under the Apache License, Version 2.0 (the "License").
-  You may not use this file except in compliance with the License.
-  A copy of the License is located at
-  
-      http://www.apache.org/licenses/LICENSE-2.0
-  
-  or in the "license" file accompanying this file. This file is distributed 
-  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-  express or implied. See the License for the specific language governing 
-  permissions and limitations under the License.
-*/
+ Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License").
+ You may not use this file except in compliance with the License.
+ A copy of the License is located at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ or in the "license" file accompanying this file. This file is distributed
+ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ express or implied. See the License for the specific language governing
+ permissions and limitations under the License.
+ */
 
 var AWS = require("aws-sdk");
 AWS.config.update({ region: process.env.REGION });
 var dynamoDB = new AWS.DynamoDB();
 var translate = new AWS.Translate();
 var s3 = new AWS.S3();
+
 
 /**
  * Burn captions into videos.
@@ -53,34 +54,16 @@ exports.handler = async (event, context, callback) => {
       captionsStr = captionsObject.Body.toString();
 
       var captions = JSON.parse(captionsStr);
-      var translatePromises = new Set();
 
-      for (var i in captions) {
-        var caption = captions[i];
-
-        if (caption.text.trim() === "") {
-          continue;
-        }
-        var captionText = caption.text;
-
-        var params = {
-          SourceLanguageCode: sourceLanguage /* required */,
-          TargetLanguageCode: targetLanguage /* required */,
-          Text: captionText,
-        };
-
-        translatePromises.add(translate.translateText(params).promise())
-
-      }
-
-      await Promise.all(translatePromises).then(function(values) {
-        console.log('[INFO] All promise are resolved')
-        for (var i in captions) {
-          captions[i].text = escapeHtml(values[i].TranslatedText);
-        }
-      }).catch(function(reason) {
-        throw new Error("Translate promise failed reason: ", reason);
-      })
+      await transcribePromisePool(50, captions, sourceLanguage, targetLanguage)
+          .then(function(values) {
+            console.log('all promise are resolved')
+            for (var i in captions) {
+              captions[i].text = escapeHtml(values[i].TranslatedText);
+            }
+          }).catch(function(reason) {
+            throw new Error("Translate Promise failed reason: ", reason);
+          })
 
       await saveCaptions(videoId, captions, targetLanguage);
 
@@ -109,6 +92,39 @@ exports.handler = async (event, context, callback) => {
     callback(null, response);
   }
 };
+
+async function transcribePromisePool(poolLimit, captions, sourceLanguage, targetLanguage) {
+  let i = 0;
+  const ret = [];
+  const executing = [];
+  const enqueue = function () {
+    if (i === captions.length) {
+      return Promise.resolve();
+    }
+    var caption = captions[i++];
+    var captionText = caption.text;
+
+    var params = {
+      SourceLanguageCode: sourceLanguage /* required */,
+      TargetLanguageCode: targetLanguage /* required */,
+      Text: captionText,
+    };
+
+    const p = translate.translateText(params).promise();
+    ret.push(p);
+
+    const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+    executing.push(e);
+
+    let r = Promise.resolve();
+    if (executing.length >= poolLimit) {
+      r = Promise.race(executing);
+    }
+
+    return r.then(() => enqueue());
+  };
+  return enqueue().then(() => Promise.all(ret));
+}
 
 async function getVideoInfo(videoId) {
   getParams = {
@@ -167,11 +183,11 @@ async function saveCaptions(videoId, captions, language) {
 
     console.log("[INFO] Store captions into s3 %j", captionS3Parmas);
     await s3
-      .putObject(captionS3Parmas, function (err, data) {
-        if (err) console.log(err, err.stack);
-        else console.log(data);
-      })
-      .promise();
+        .putObject(captionS3Parmas, function (err, data) {
+          if (err) console.log(err, err.stack);
+          else console.log(data);
+        })
+        .promise();
   } catch (error) {
     console.log("[ERROR] Failed to save captions", error);
     throw error;
