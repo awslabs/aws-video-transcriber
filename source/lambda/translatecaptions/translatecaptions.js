@@ -57,23 +57,17 @@ exports.handler = async (event, context, callback) => {
 
       var captions = JSON.parse(captionsStr);
 
-      const translate = await getTranslateClient();
-
-      for (var i in captions) {
-        var caption = captions[i];
-
-        if (caption.text.trim() === "") {
-          continue;
-        }
-        var captionText = caption.text;
-        var captionTranslatedText = await translateText(
-          sourceLanguage,
-          targetLanguage,
-          captionText,
-          translate
-        );
-        caption.text = escapeHtml(captionTranslatedText);
-      }
+      const translate = await getTranslateClient(); 
+      
+      await transcribePromisePool(30, captions, sourceLanguage, targetLanguage, translate)
+          .then(function(values) {
+            console.log('all promise are resolved')
+            for (var i in captions) {
+              captions[i].text = escapeHtml(values[i].TranslatedText);
+            }
+          }).catch(function(reason) {
+            throw new Error("Translate Promise failed reason: ", reason);
+          })      
 
       await saveCaptions(videoId, captions, targetLanguage);
 
@@ -103,15 +97,37 @@ exports.handler = async (event, context, callback) => {
   }
 };
 
-async function translateText(sourceLanguage, targetLanguage, text, translate) {
-  var params = {
-    SourceLanguageCode: sourceLanguage /* required */,
-    TargetLanguageCode: targetLanguage /* required */,
-    Text: text,
+async function transcribePromisePool(poolLimit, captions, sourceLanguage, targetLanguage, translate) {
+  let i = 0;
+  const ret = [];
+  const executing = [];
+  const enqueue = function () {
+    if (i === captions.length) {
+      return Promise.resolve();
+    }
+    var caption = captions[i++];
+    var captionText = caption.text;
+
+    var params = {
+      SourceLanguageCode: sourceLanguage /* required */,
+      TargetLanguageCode: targetLanguage /* required */,
+      Text: captionText,
+    };
+
+    const p = translate.translateText(params).promise();
+    ret.push(p);
+
+    const e = p.then(() => executing.splice(executing.indexOf(e), 1));
+    executing.push(e);
+
+    let r = Promise.resolve();
+    if (executing.length >= poolLimit) {
+      r = Promise.race(executing);
+    }
+
+    return r.then(() => enqueue());
   };
-  const data = await translate.translateText(params).promise();
-  var translatedText = data.TranslatedText;
-  return translatedText;
+  return enqueue().then(() => Promise.all(ret));
 }
 
 async function getVideoInfo(videoId) {
@@ -241,7 +257,7 @@ function escapeHtml(string) {
 }
 
 async function getTranslateClient() {
-  const secretName = "arn:aws-cn:secretsmanager:cn-northwest-1:360183261883:secret:video-translate-5gxXY2";
+  const secretName = "";   //TODO added by customer
 
   const response = await secretManagerClient.getSecretValue({SecretId: secretName}).promise();
   const secretJson = JSON.parse(response.SecretString);
