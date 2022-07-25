@@ -19,7 +19,6 @@ var dynamoDB = new AWS.DynamoDB();
 var translate = new AWS.Translate();
 var s3 = new AWS.S3();
 
-
 /**
  * Burn captions into videos.
  */
@@ -55,15 +54,15 @@ exports.handler = async (event, context, callback) => {
 
       var captions = JSON.parse(captionsStr);
 
-      await transcribePromisePool(50, captions, sourceLanguage, targetLanguage)
-          .then(function(values) {
-            console.log('all promise are resolved')
-            for (var i in captions) {
-              captions[i].text = escapeHtml(values[i].TranslatedText);
-            }
-          }).catch(function(reason) {
-            throw new Error("Translate Promise failed reason: ", reason);
-          })
+      await transcribePromisePool(10, captions, sourceLanguage, targetLanguage)
+        .then(function (values) {
+          console.log('all promise are resolved')
+          for (var i in captions) {
+            captions[i].text = escapeHtml(values[i].TranslatedText);
+          }
+        }).catch(function (reason) {
+          throw new Error("Translate Promise failed reason: ", reason);
+        })
 
       await saveCaptions(videoId, captions, targetLanguage);
 
@@ -183,11 +182,11 @@ async function saveCaptions(videoId, captions, language) {
 
     console.log("[INFO] Store captions into s3 %j", captionS3Parmas);
     await s3
-        .putObject(captionS3Parmas, function (err, data) {
-          if (err) console.log(err, err.stack);
-          else console.log(data);
-        })
-        .promise();
+      .putObject(captionS3Parmas, function (err, data) {
+        if (err) console.log(err, err.stack);
+        else console.log(data);
+      })
+      .promise();
   } catch (error) {
     console.log("[ERROR] Failed to save captions", error);
     throw error;
