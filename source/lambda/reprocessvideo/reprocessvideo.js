@@ -14,6 +14,7 @@
 */
 
 var AWS = require("aws-sdk");
+var parseS3Url = require('parse-aws-s3-url');
 AWS.config.update({ region: process.env.REGION });
 var lambda = new AWS.Lambda();
 var dynamoDB = new AWS.DynamoDB();
@@ -50,12 +51,12 @@ exports.handler = async (event, context, callback) => {
     if (getResponse.Item) {
       var video = mapper(getResponse.Item);
 
-      const videoBucket = process.env.VIDEO_BUCKET;
+      const videoBucket = parseS3Url(video.s3VideoPath).Bucket;
 
-      const inputVideoKey = video.s3VideoPath.substring(6 + videoBucket.length);
+      const inputVideoKey = parseS3Url(video.s3VideoPath).Key;
 
-      const audioBucket = process.env.AUDIO_BUCKET;
-      const audioKey = video.s3AudioPath.substring(6 + videoBucket.length);
+      const audioBucket = parseS3Url(video.s3AudioPath).Bucket;
+      const audioKey = parseS3Url(video.s3AudioPath).Key;
 
       const transcribeBucket = process.env.TRANSCRIBE_BUCKET;
       const transcribeKey = videoId + ".json";

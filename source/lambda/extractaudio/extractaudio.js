@@ -34,7 +34,9 @@ exports.handler = async (event, context, callback) => {
       /**
        * Minimum parameters to check for prior processings
        */
-      params.inputBucket = process.env.INPUT_BUCKET;
+      params.inputBucket = decodeURIComponent(
+        event.Records[0].s3.bucket.name.replace(/\+/g, " ")
+      );
       params.inputKey = decodeURIComponent(
         event.Records[0].s3.object.key.replace(/\+/g, " ")
       );
@@ -57,6 +59,7 @@ exports.handler = async (event, context, callback) => {
         0,
         params.videoName.length - 4
       );
+      params.videoId = body.videoId;
     }
 
     /**
@@ -186,35 +189,59 @@ function computeRemainingParams(event, params) {
  */
 async function checkForPriorProcessing(params) {
   try {
-    var queryParams = {
-      TableName: params.dynamoVideoTable,
-      IndexName: "s3VideoPathIndex",
-      KeyConditionExpression: "s3VideoPath = :s3_video_path",
-      ExpressionAttributeValues: {
-        ":s3_video_path": { S: params.inputS3Path },
-      },
-    };
-
-    console.log(
-      "[INFO] checking DynamoDB for existing video using: %j",
-      queryParams
-    );
-    var queryResponse = await dynamoDB.query(queryParams).promise();
-    console.log(
-      "[INFO] got successful response from GSI query: %j",
-      queryResponse
-    );
-
-    if (queryResponse.Items && queryResponse.Items[0]) {
-      params.videoId = queryResponse.Items[0].videoId.S;
-      params.videoName = queryResponse.Items[0].name.S;
-      params.language = queryResponse.Items[0].language.S;
-      params.vocabulary = queryResponse.Items[0].vocabulary.S;
-
-      if (queryResponse.Items[0].description) {
-        params.videoDescription = queryResponse.Items[0].description.S;
-      }
+    if (params.videoId != null) {
+      var getParams = {
+        TableName: params.dynamoVideoTable,
+        Key: {
+          videoId: { S: params.videoId },
+        },
+      };
+      console.log("[INFO] loading video using request: %j", getParams);
+      var response = await dynamoDB.getItem(getParams).promise();
+      console.log(
+        "[INFO] got successful response from GSI query: %j",
+        response
+      );
+      if (response.Item) {
+        params.videoId = response.Item.videoId.S;
+        params.videoName = response.Item.name.S;
+        params.language = response.Item.language.S;
+        params.vocabulary = response.Item.vocabulary.S;
+  
+        if (response.Item.description) {
+          params.videoDescription = response.Item.description.S;
+        }
+      }      
+    } else {
+      var queryParams = {
+        TableName: params.dynamoVideoTable,
+        IndexName: "s3VideoPathIndex",
+        KeyConditionExpression: "s3VideoPath = :s3_video_path",
+        ExpressionAttributeValues: {
+          ":s3_video_path": { S: params.inputS3Path },
+        },
+      };
+      console.log(
+        "[INFO] checking DynamoDB for existing video using: %j",
+        queryParams
+      );
+      var response = await dynamoDB.query(queryParams).promise(); 
+      console.log(
+        "[INFO] got successful response from GSI query: %j",
+        response
+      );
+      if (response.Items && response.Items[0]) {
+        params.videoId = response.Items[0].videoId.S;
+        params.videoName = response.Items[0].name.S;
+        params.language = response.Items[0].language.S;
+        params.vocabulary = response.Items[0].vocabulary.S;
+  
+        if (response.Items[0].description) {
+          params.videoDescription = response.Items[0].description.S;
+        }
+      }          
     }
+
   } catch (error) {
     console.log("[ERROR] failed to check if video exists in DynamoDB", error);
     throw error;
