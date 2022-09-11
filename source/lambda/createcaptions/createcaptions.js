@@ -34,11 +34,18 @@ exports.handler = async (event, context, callback) => {
         event.Records[0].s3.object.key.replace(/\+/g, " ")
       ),
     };
-
     var transcribeFile = path.basename(getObjectParams.Key);
-    var videoId = transcribeFile.substring(0, transcribeFile.length - 4);
+    var videoId = transcribeFile.substring(0, transcribeFile.length - 5);
 
-    console.log("[INFO] found video id: " + videoId);
+    getObjectParams.Key = getObjectParams.Key.replace('.json', '.srt');
+
+    try {
+      await s3.headObject(getObjectParams).promise();
+    } catch (err) {
+      console.log("the object is not exist " + err.code);
+      await updateDynamoDB(videoId, "ERRORED", "Amazon Transcribe service cannot create srt file, please check Amazon Transcribe service");
+      callback(err);
+    }
 
     var getObjectResponse = await s3.getObject(getObjectParams).promise();
 
