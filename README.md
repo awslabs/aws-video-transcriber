@@ -45,7 +45,7 @@ The API Key is used to provide to users access to the system. You must provide a
 
 ## Solution Pricing
 
-You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the cost of the solution varies depending on:
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2022, the cost of the solution varies depending on:
 
 - The number of requests to Amazon API Gateway
 - The number of invoking AWS Lambda 
@@ -96,7 +96,9 @@ You can upload videos without captions for processing.
 
 2. Select the video, then select **Open**.
 
-3. Select the video language, and then choose **Start**. The system will start uploading the video and automatically process and generate captions.
+3. Select the video language, select custom vocabulary from **select a vocabulary** if you need (refer to [Custom Vocabulary][transcribe-custom-vocabulary] to learn more about custom vocabulary), and then choose **Start**. The system will start uploading the video and automatically process and generate captions.
+
+![](./docs/en/images/user-guide-video-upload.png)
 
     Firstly, the video is displayed on the **Processing** tab, and after the captions are generated, the video will be displayed on the **Ready to edit** tab.
 
@@ -154,3 +156,4 @@ This library is licensed under the Apache 2.0 License.
 [mediaconvert]: https://aws.amazon.com/mediaconvert/
 [transcribe]: https://aws.amazon.com/transcribe/
 [translate]: https://aws.amazon.com/translate/
+[transcribe-custom-vocabulary]:https://docs.aws.amazon.com/transcribe/latest/dg/custom-vocabulary.html
