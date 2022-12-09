@@ -1,4 +1,4 @@
-You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2021, the cost of the solution varies depending on:
+You are responsible for the cost of using Amazon Web Service's services used while running this solution. As of December 2022, the cost of the solution varies depending on:
 
 - The number of requests to Amazon API Gateway
 - The number of times AWS Lambda is invoked

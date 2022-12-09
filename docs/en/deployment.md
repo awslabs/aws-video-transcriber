@@ -38,7 +38,7 @@ This automatic AWS CloudFormation template deploys the solution in AWS.
     |  Parameter Name   |  Default Value |  Description |
     |  ----------  | ---------| -----------  |
     | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment.|
-    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, pt-PT, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, ko-KR, ar-AE and ar-SA. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, choose **Next**.
 
@@ -89,7 +89,7 @@ You can check the status of the stack in the **Status** column of the AWS CloudF
     |  Parameter Name   |  Default Value |  Description |
     |  ----------  | ---------| -----------  |
     | **APIKey**  | N/A  | Enter the authentication information required to log in to the web interface after the deployment. |
-    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, and ko-KR. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
+    | **TranscribeLanguage**    | zh-CN    | Select the default caption processing language. Currently, it supports en-AU, en-US, en-GB, es-US, en-IN, de-DE, hi-IN, pt-BR, pt-PT, fr-CA, fr-FR, it-IT, ta-IN, te-IN, zh-CN, ja-JP, ko-KR, ar-AE, and ar-SA. Refer to [Amazon Transcribe][transcribe-support-language] to learn more about supported language and language code. |
 
 6. On the **Configure stack options** page, select **Next**.
 
@@ -136,7 +136,9 @@ You can upload videos without captions for processing.
 
 2. Select the video, then select **Open**.
 
-3. Select the video language, and then choose **Start**. The system will start uploading the video and automatically process and generate captions.
+3. Select the video language, select custom vocabulary from **select a vocabulary** if you need (refer to [Custom Vocabulary][transcribe-custom-vocabulary] to learn more about custom vocabulary), and then choose **Start**. The system will start uploading the video and automatically process and generate captions.
+
+![](./images/user-guide-video-upload.png)
 
     Firstly, the video is displayed on the **Processing** tab, and after the captions are generated, the video will be displayed on the **Ready to edit** tab.
 
@@ -194,6 +196,8 @@ After the captions or videos with captions are generated, you can download them 
 [template-china2]:https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template
 
 [transcribe-support-language]:https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html
+
+[transcribe-custom-vocabulary]:https://docs.aws.amazon.com/transcribe/latest/dg/custom-vocabulary.html
 
 [template-global]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template
 

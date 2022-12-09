@@ -1,4 +1,4 @@
-As of December 2021, this solution is supported in the following Amazon Web Services Regions.
+As of December 2022, this solution is supported in the following Amazon Web Services Regions.
 
 ## Supported regions for deployment in AWS Standard Regions
 

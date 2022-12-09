@@ -40,7 +40,7 @@
     |  参数名称   |  默认值 |  描述 |
     |  ----------  | ---------| -----------  |
     | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
-    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、pt-PT、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR、ar-AE、ar-SA。想要了解Amazon Translate支持的语言和语言代码，可参阅[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -89,7 +89,7 @@
     |  参数名称   |  默认值 |  描述 |
     |  ----------  | ---------| -----------  |
     | **APIKey**  | 无  | 输入部署完成后登录系统所需的认证信息。|
-    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
+    | **TranscribeLanguage**    | zh-CN    | 从列表中选择默认的字幕处理语言。目前支持en-AU、en-US、en-GB、es-US、en-IN、de-DE、hi-IN、pt-BR、pt-PT、fr-CA、fr-FR、it-IT、ta-IN、te-IN、zh-CN、ja-JP、ko-KR、ar-AE、ar-SA。想要了解Amazon Translate支持的语言和语言代码，可参考[什么是Amazon Translate][what-is-translate]。 |
 
 6. 在**配置堆栈选项**页面，选择**下一步**。
 
@@ -136,7 +136,9 @@
 
 2. 选中视频，然后选择**打开**。
 
-3. 从列表中选中想要生成的字幕语言，然后选择**Start**。系统将开始上传视频并自动处理生成字幕。
+3. 从列表中选中想要生成的字幕语言，如果需要使用自定义的词汇表，请从**select a vocabulary**中选择词汇表（请参考 [自定义词汇表][transcribe-custom-vocabulary] 了解自定义词汇表详情），然后选择**Start**。系统将开始上传视频并自动处理生成字幕。
+
+![](./images/user-guide-video-upload.png)
 
     首先视频显示在**Processing**页签，当生成字幕完成后，将显示在**Ready to edit**页签。
 
@@ -194,6 +196,8 @@
 [template-china2]:https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template
 
 [what-is-translate]:https://docs.aws.amazon.com/zh_cn/translate/latest/dg/what-is.html
+
+[transcribe-custom-vocabulary]:https://docs.aws.amazon.com/zh_cn/transcribe/latest/dg/custom-vocabulary.html
 
 [template-global]: https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template
 
