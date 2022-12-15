@@ -137,10 +137,8 @@
 2. 选中视频，然后选择**打开**。
 
 3. 从列表中选中想要生成的字幕语言，如果需要使用自定义的词汇表，请从**select a vocabulary**中选择词汇表（请参考 [自定义词汇表][transcribe-custom-vocabulary] 了解自定义词汇表详情），然后选择**Start**。系统将开始上传视频并自动处理生成字幕。
-
 ![](./images/user-guide-video-upload.png)
-
-    首先视频显示在**Processing**页签，当生成字幕完成后，将显示在**Ready to edit**页签。
+首先视频显示在**Processing**页签，当生成字幕完成后，将显示在**Ready to edit**页签。
 
 ### 对照视频校对和编辑字幕
 
