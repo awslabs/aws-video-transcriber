@@ -143,6 +143,40 @@ After the captions or videos with captions are generated, you can download them 
 - If the video is in the completed status, you can directly download the captions or videos in the corresponding language of the video on the **Completed** tab of the **Videos** page.
 ![](./docs/en/images/user-guide-video-download-2.png)
 
+
+### Custom code and build locally.
+If you wish to customize the solution, you can follow the steps below:
+
+1. Clone the repo to your local machine
+
+2. Go to the **deployment** directory
+```
+cd deployment
+```
+
+3. Run the following commands to build the solution:
+```
+chmod +x ./build-s3-dist.sh
+./build-s3-dist.sh <DIST_OUTPUT_BUCKET> <SOLUTION_NAME> <VERSION>
+```
+**DIST_OUTPUT_BUCKET**: the S3 bucket where the cloudformation template is located, you can use existing one or create a new bucket, e.g. your-bucket
+**SOLUTION_NAME**: the desired name of the solution, e.g. video-transcriber
+**VERSION**: e.g. v1.0.0
+
+4. Run the following commands to upload the built CloudFormation template to the corresponding S3 Bucket:
+```
+aws s3 cp deployment/global-s3-assets/ s3://<DIST_OUTPUT_BUCKET>/<SOLUTION_NAME>/<VERSION>/ --recursive
+```
+
+5. Run the following commands to upload the built resources to the corresponding S3 Bucket, if you want to deploy the solution in us-east-1 region, the bucket should be <DIST_OUTPUT_BUCKET>-us-east-1.
+
+```
+aws s3 cp deployment/regional-s3-assets/ s3://<DIST_OUTPUT_BUCKET>-us-east-1/<SOLUTION_NAME>/<VERSION>/ --recursive
+```
+
+6. Use the cloudformation template to deploy the solution. The template link should be: s3://<DIST_OUTPUT_BUCKET>/<SOLUTION_NAME>/<VERSION>/video-transcriber-deploy.template
+
+
 ## License
 
 This library is licensed under the Apache 2.0 License.
