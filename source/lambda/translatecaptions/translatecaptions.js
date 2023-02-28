@@ -102,6 +102,10 @@ async function transcribePromisePool(poolLimit, captions, sourceLanguage, target
     }
     var caption = captions[i++];
     var captionText = caption.text;
+    // Handle the case that empty captionText will cause translation error.
+    if (!captionText || captionText.length === 0) {
+      var captionText = ' ';
+    }
 
     var params = {
       SourceLanguageCode: sourceLanguage /* required */,
