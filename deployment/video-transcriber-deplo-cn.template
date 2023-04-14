@@ -2751,10 +2751,6 @@ Resources:
           DefaultRootObject: index.html
           HttpVersion: http2
           IPV6Enabled: false
-          Logging:
-              Bucket: !Join [".", [Ref: "PublicBucket", "s3", Ref: "AWS::Region", "amazonaws.com.cn"]]
-              IncludeCookies: true
-              Prefix: "video-transcriber-logs/"
           Origins:
               -
                   DomainName: !Join ["", ["prod-aws-captions-public-", Ref: "AWS::Region", "-", Ref: "AWS::AccountId", ".s3.", Ref: "AWS::Region", ".amazonaws.com.cn"]]
