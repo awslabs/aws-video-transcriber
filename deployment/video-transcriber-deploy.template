@@ -132,7 +132,7 @@ Resources:
   CustomResourceLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/lambda/prod-aws-captions-customresource
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-prod-aws-captions-customresource"
       RetentionInDays: 7
   GetBurnedVideoLogGroup:
     Type: AWS::Logs::LogGroup
