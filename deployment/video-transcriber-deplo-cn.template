@@ -960,7 +960,7 @@ Resources:
       Code:
         S3Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
         S3Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "lambda/CustomResource.zip"]]
-      FunctionName: prod-aws-captions-customresource
+      FunctionName: !Sub "${AWS::StackName}-prod-aws-captions-customresource"
       Handler: lambda/customresource.handler
       MemorySize: 128
       Role: !GetAtt 'CustomerResourceRole.Arn'
@@ -2691,7 +2691,8 @@ Resources:
         - - arn:aws-cn:lambda
           - !Ref 'AWS::Region'
           - !Ref 'AWS::AccountId'
-          - function:prod-aws-captions-customresource
+          - function
+          - !Sub "${AWS::StackName}-prod-aws-captions-customresource"
       InputManifest:
         Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
         Key: !Join ["/", [!FindInMap ["SourceCode", "General", "KeyPrefix"],  "web/manifest.json"]]
@@ -2699,7 +2700,7 @@ Resources:
         Bucket: !Join ["-", [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"]]
         ContentPrefix:  !FindInMap ["SourceCode", "General", "KeyPrefix"]
       LogGroup:
-        Name: /aws/lambda/prod-aws-captions-customresource
+        Name: !Sub "/aws/lambda/${AWS::StackName}-prod-aws-captions-customresource"
       WebDeployTarget:
         Bucket: !Ref 'PublicBucket'
         Key: web/
