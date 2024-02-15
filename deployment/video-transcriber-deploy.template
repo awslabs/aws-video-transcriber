@@ -154,7 +154,7 @@ Resources:
       Handler: extractaudio.handler
       MemorySize: 2048
       Role: !GetAtt 'MediaConvertForLambdaRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 600
       Description: Uses Media Convert to extract MP3 audio from input videos
       Environment:
@@ -202,7 +202,7 @@ Resources:
       Handler: batchcomplete.handler
       MemorySize: 2048
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       Description: Move captions files and burned video to specific s3 path
       Environment:
@@ -233,7 +233,7 @@ Resources:
       Handler: lambda/transcribeaudio.handler
       MemorySize: 512
       Role: !GetAtt 'TranscribeRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 15
       Description: Uses Transcribe to extract text from audio
       Environment:
@@ -271,7 +271,7 @@ Resources:
       Handler: lambda/createcaptions.handler
       MemorySize: 512
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Description: Creates captions for videos from transcription results
       Environment:
@@ -305,7 +305,7 @@ Resources:
       Handler: lambda/getvideos.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Loads videos from DynamoDB
       Environment:
@@ -332,7 +332,7 @@ Resources:
       Handler: lambda/getvideo.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Loads a single video from DynamoDB
       Environment:
@@ -371,7 +371,7 @@ Resources:
       Handler: lambda/updatevideolanguage.handler
       MemorySize: 128
       Role: !GetAtt 'TranscribeRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Updates the language of a video in DynamoDB
       Environment:
@@ -397,7 +397,7 @@ Resources:
       Handler: lambda/updatevideostatus.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Updates the status of a video in DynamoDB
       Environment:
@@ -423,7 +423,7 @@ Resources:
       Handler: lambda/updatevideoname.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Updates the name of a video in DynamoDB
       Environment:
@@ -449,7 +449,7 @@ Resources:
       Handler: lambda/updatevideodescription.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Updates the description of a video in DynamoDB
       Environment:
@@ -475,7 +475,7 @@ Resources:
       Handler: lambda/deletevideo.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Purges a single video from the system
       Environment:
@@ -515,7 +515,7 @@ Resources:
       Handler: lambda/reprocessvideo.handler
       MemorySize: 128
       Role: !GetAtt 'InvokeLambdaRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Reprocesses a video
       Environment:
@@ -555,7 +555,7 @@ Resources:
       Handler: lambda/getupload.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Fetches a signed URL for uploading video into S3
       Environment:
@@ -586,7 +586,7 @@ Resources:
       Handler: lambda/putcaption.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Saves captions to DynamoDB
       Environment:
@@ -618,7 +618,7 @@ Resources:
       Handler: lambda/burncaption.handler
       MemorySize: 2048
       Role: !GetAtt 'MediaConvertForLambdaRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       Description: Burn captions to uploaded video
       Environment:
@@ -674,7 +674,7 @@ Resources:
       Handler: lambda/getcaption.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Fetches captions in WEBVTT format
       Environment:
@@ -701,7 +701,7 @@ Resources:
       Handler: lambda/getvocabulary.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Loads vocabulary from DynamoDB
       Environment:
@@ -732,7 +732,7 @@ Resources:
       Handler: lambda/headvocabulary.handler
       MemorySize: 128
       Role: !GetAtt 'TranscribeRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Checks if vocabulary is ready to save
       Environment:
@@ -761,7 +761,7 @@ Resources:
       Handler: lambda/putvocabulary.handler
       MemorySize: 128
       Role: !GetAtt 'TranscribeRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Saves vocabulary to DynamoDB
       Environment:
@@ -792,7 +792,7 @@ Resources:
       Handler: lambda/gettweaks.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Loads tweaks from DynamoDB
       Environment:
@@ -818,7 +818,7 @@ Resources:
       Handler: lambda/puttweaks.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Saves tweaks to DynamoDB
       Environment:
@@ -844,7 +844,7 @@ Resources:
       Handler: lambda/putlanguage.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: Saves tweaks to DynamoDB
       Environment:
@@ -876,7 +876,7 @@ Resources:
       Handler: lambda/translatecaptions.handler
       MemorySize: 128
       Role: !GetAtt 'TranslateRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 890
       Description: Translate captions 
       Environment:
@@ -908,7 +908,7 @@ Resources:
       Handler: lambda/getburnedvideo.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 600
       Description: Get burned video signUrl
       Environment:
@@ -940,7 +940,7 @@ Resources:
       Handler: lambda/updateburnedvideopath.handler
       MemorySize: 128
       Role: !GetAtt 'CommonRoleForLambda.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 29
       Description: update burned video s3 path to DDB
       Environment:
@@ -966,7 +966,7 @@ Resources:
       Handler: lambda/customresource.handler
       MemorySize: 128
       Role: !GetAtt 'CustomerResourceRole.Arn'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       Description: Performs custom cloudformation initialisation
       Environment:
