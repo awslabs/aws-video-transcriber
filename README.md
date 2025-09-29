@@ -33,15 +33,7 @@ The API Key is used to provide to users access to the system. You must provide a
 ![Invalid Key Error](./docs/img/InvalidKey.png)
 
 
-### One click deployment
-
-| AWS Region Name | AWS Region Id | Deploy Solution |
-| ---- | ----  | ---- |
-| US East (N. Virginia) | us-east-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.amazonaws.com/Video-Transcriber/latest/video-transcriber-deploy.template) |
-| China (Beijing) | cn-north-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://cn-north-1.console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template) |
-| China (Ningxia) | cn-northwest-1 | [![Launch Stack](./docs/img/launch-stack.svg)](https://cn-northwest-1.console.amazonaws.cn/cloudformation/home?region=cn-northwest-1#/stacks/create/template?stackName=VideoTranscriber&templateURL=https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/Video-Transcriber/latest/video-transcriber-deplo-cn.template) |
-
-![Stack parameters](./docs/img/stack-info.png)
+Please refer to the "Custom code and build locally" section below for instructions on how to build and deploy this solution in your preferred AWS region.
 
 ## Solution Pricing
 
