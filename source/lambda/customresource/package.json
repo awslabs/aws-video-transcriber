@@ -12,7 +12,7 @@
   "dependencies": {
     "@anttiviljami/serverless-stack-output": "^0.3.1",
     "axios": "^0.21.2",
-    "debug": "4.1.1",
+    "debug": "4.3.1",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
